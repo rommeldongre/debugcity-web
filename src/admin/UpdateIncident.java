@@ -96,8 +96,7 @@ public class UpdateIncident extends HttpServlet {
 				}
 				if((incident_date_closed).equals(""))
 				{
-					Date date=new Date();
-					timestamp_closed=new Timestamp(date.getTime());			
+					timestamp_closed=null;
 				}
 				else
 				{
