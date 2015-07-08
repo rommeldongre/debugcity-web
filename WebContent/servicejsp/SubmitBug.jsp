@@ -19,9 +19,21 @@ function submitBug()
 	var state=document.getElementById("state").value;
 	//var datecreated=document.getElementById("datecreated").value;
 	//var dateclosed=document.getElementById("dateclosed").value;
-	var severity=document.getElementById("severity").value;
+	//var severity=document.getElementById("severity").value;
+	
+	if(document.getElementById("severity").value=="")
+		var severity=0;
+	else
+		var severity=document.getElementById("severity").value;
+
 	var notes=document.getElementById("notes").value;
-	var votes=document.getElementById("votes").value;
+	//var votes=document.getElementById("votes").value;
+	
+	if(document.getElementById("votes").value=="")
+		var votes=0;
+	else
+		var votes=document.getElementById("votes").value;
+
 	
 	xmlhttp=new XMLHttpRequest();
 	var url = "../service/SubmitBug";

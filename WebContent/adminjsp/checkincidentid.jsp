@@ -8,7 +8,7 @@
 <%
 					String ver=request.getParameter("ver");
 					Class.forName("com.mysql.jdbc.Driver");
-					Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/debugcity","root","titaniums1");
+					Connection con =DriverManager.getConnection("jdbc:mysql://localhost:3306/debugcity","root","root");
 					Statement st=con.createStatement();
 					ResultSet rs = st.executeQuery("select * from incident where incident_id='"+ver+"'");  
 					if(rs.next())

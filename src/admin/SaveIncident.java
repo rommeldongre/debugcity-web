@@ -61,7 +61,7 @@ private static final long serialVersionUID = 1L;
 	{ 
 		try
 		{
-			int incident_id=Integer.parseInt(request.getParameter("incident_id")); 
+			//int incident_id=Integer.parseInt(request.getParameter("incident_id")); 
 			String incident_lat=request.getParameter("incident_lat"); 
 			String incident_long=request.getParameter("incident_long"); 
 			String incident_category=request.getParameter("incident_category"); 
@@ -107,33 +107,33 @@ private static final long serialVersionUID = 1L;
 				date_closed = sdf.parse(incident_date_closed);
 				timestamp_closed=new Timestamp(date_closed.getTime());
 			}
-					InputStream inputstream=null;	
+					InputStream inputstream=null;
 					Part filepart=request.getPart("incident_picture");
 					inputstream = filepart.getInputStream();  
 					dbconn=new DataBaseConn();
 					con = dbconn.setConnection();	 
-					String sql = "insert into incident (incident_id,incident_lat,incident_long,incident_category,incident_picture,incident_locality,"
+					String sql = "insert into incident (incident_lat,incident_long,incident_category,incident_picture,incident_locality,"
 							+ "incident_submitter,incident_owner,incident_state,incident_date_created"
-							+ ",incident_date_closed,incident_severity,incident_notes,incident_votes) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; 
+							+ ",incident_date_closed,incident_severity,incident_notes,incident_votes) values (?,?,?,?,?,?,?,?,?,?,?,?,?)"; 
 					PreparedStatement prep= con.prepareStatement(sql); 
 					
-					prep.setInt(1,incident_id);
-					prep.setString(2, incident_lat);
-					prep.setString(3, incident_long);
-					prep.setString(4, incident_category);
+					//prep.setInt(1,incident_id);
+					prep.setString(1, incident_lat);
+					prep.setString(2, incident_long);
+					prep.setString(3, incident_category);
 					if(inputstream!=null)
 					{
-						prep.setBlob(5, inputstream);
+						prep.setBlob(4, inputstream);
 					}
-					prep.setString(6, incident_locality);
-					prep.setString(7, incident_submitter);
-					prep.setString(8, incident_owner);
-					prep.setString(9, incident_state);
-					prep.setTimestamp(10, timestamp_created);
-					prep.setTimestamp(11, timestamp_closed);
-					prep.setInt(12, incident_severity);
-					prep.setString(13, incident_notes);
-					prep.setInt(14, incident_votes);
+					prep.setString(5, incident_locality);
+					prep.setString(6, incident_submitter);
+					prep.setString(7, incident_owner);
+					prep.setString(8, incident_state);
+					prep.setTimestamp(9, timestamp_created);
+					prep.setTimestamp(10, timestamp_closed);
+					prep.setInt(11, incident_severity);
+					prep.setString(12, incident_notes);
+					prep.setInt(13, incident_votes);
 					prep.executeUpdate(); 
 					prep.close(); 
 					RequestDispatcher rd=request.getRequestDispatcher("../adminjsp/admin.jsp?msg=Inserted Successfully !");

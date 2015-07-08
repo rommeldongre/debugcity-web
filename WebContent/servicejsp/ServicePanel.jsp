@@ -11,11 +11,10 @@
 	<dl>
 		<dt><b>:::Service APIs:::</b></dt>
 		
-		<dd><br><a href="SubmitBug.jsp">SubmitBug</a></dd>
+		<dd><br><a href="SearchBug.jsp">SearchBug</a></dd>
+		<dd><a href="SubmitBug.jsp">SubmitBug</a></dd>
 		<dd><a href="getLocations.jsp">getLocations</a></dd>
 		<dd><a href="getLocationVector.jsp">getLocationVector</a></dd>
-		<dd><a href="SubmitUser.jsp">Submit User</a></dd>
-		<dd><a href="SubmitCategory.jsp">Submit Category</a></dd>
-	</dl>
+		</dl>
 </body>
 </html>

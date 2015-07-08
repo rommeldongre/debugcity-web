@@ -76,7 +76,7 @@ public class DisplayIncident extends HttpServlet {
 					lst.add(rs.getString("incident_lat"));
 					lst.add(rs.getString("incident_long"));
 					lst.add(rs.getString("incident_category"));
-					lst.add(rs.getString("incident_picture"));
+					lst.add(rs.getBlob("incident_picture"));
 					lst.add(rs.getString("incident_locality"));
 					lst.add(rs.getString("incident_submitter"));
 					lst.add(rs.getString("incident_owner"));

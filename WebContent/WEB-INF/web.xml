@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
-  <display-name>debugCity</display-name>
+  <display-name>dbctv1</display-name>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
@@ -12,6 +12,7 @@
     <servlet-name>DataBaseConn</servlet-name>
     <url-pattern>/util/DataBaseConn</url-pattern>
   </servlet-mapping>
+  
   <servlet>
     <servlet-name>DisplayUsers</servlet-name>
     <servlet-class>admin.DisplayUsers</servlet-class>
@@ -111,22 +112,8 @@
     <servlet-name>SaveCategory</servlet-name>
     <url-pattern>/admin/SaveCategory</url-pattern>
   </servlet-mapping>
-   <servlet>
-    <servlet-name>SubUser</servlet-name>
-    <servlet-class>service.SubUser</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>SubUser</servlet-name>
-    <url-pattern>/service/SubUser</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <servlet-name>SubCategory</servlet-name>
-    <servlet-class>service.SubCategory</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>SubCategory</servlet-name>
-    <url-pattern>/service/SubCategory</url-pattern>
-  </servlet-mapping>
+  
+  
   <servlet>
     <servlet-name>SubmitBug</servlet-name>
     <servlet-class>service.SubmitBug</servlet-class>
@@ -150,5 +137,13 @@
   <servlet-mapping>
     <servlet-name>GetLocationVector</servlet-name>
     <url-pattern>/service/GetLocationVector</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>SearchBug</servlet-name>
+    <servlet-class>service.SearchBug</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SearchBug</servlet-name>
+    <url-pattern>/service/SearchBug</url-pattern>
   </servlet-mapping>
 </web-app>

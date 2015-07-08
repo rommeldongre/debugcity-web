@@ -12,7 +12,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Dispaly Incident</title>
 <script type="text/javascript">
-function validateIncident()
+/*function validateIncident()
 {
 	if(document.saveincident.incident_id.value == "")
 	{
@@ -48,7 +48,7 @@ xmlhttp.onreadystatechange=function()
  }
 xmlhttp.open("GET",urls,true);
 xmlhttp.send();
-}
+}*/
 </script>
 </head>
 <body>
@@ -97,14 +97,14 @@ xmlhttp.send();
 		<%}%>
 		</tr>
 	</table>
-   <form name="saveincident" method="post" action="../admin/SaveIncident" onsubmit="return validateIncident(this);">
+   <form name="saveincident" method="post" action="../admin/SaveIncident" enctype="multipart/form-data" >
   <table>
    
-   			<tr>
+   <!-- 	<tr>
   				<td>incident_id</td>
-  				<td><input type="text" name="incident_id" id="incident_id" onkeyup="loadXMLDoc();"></td>
+  				<td><input type="text" name="incident_id" id="incident_id" ></td>
       		</tr>
-  		 	<tr>
+  -->		 	<tr>
 				<td>incident_lat</td>
 				<td><input type="text" name="incident_lat"></td>
 			</tr>
@@ -156,7 +156,7 @@ xmlhttp.send();
 				<td>incident_votes</td>
 				<td><input type="text" placeholder="enter the number" name="incident_votes"></td>
 			</tr>			
-   		<tr><td colspan="2"><span id="err"></span></td></tr>
+   		<tr><td colspan="2"><input type="submit" value="Insert"></td></tr>
 		
    </table>
    </form>

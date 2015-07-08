@@ -9,13 +9,16 @@
 <script type="text/javascript">
 function getLocations()
 {
-	//var retok=document.getElementById("returntoken").value;
-	//var token=null;
-	//if(retok==null)
-		token=document.getElementById("token").value;
-		
-	//else
-		//token=document.getElementById("returntoken").value;
+	var retok=document.getElementById("returntoken").value;
+	var token=document.getElementById("token").value;
+	
+	if(document.getElementById("token").value=="" && document.getElementById("returntoken").value=="")
+		token=0;
+	else if(document.getElementById("returntoken").value=="" && document.getElementById("token").value!="")
+		token=token;
+	else
+		token=retok;
+	
 	xmlhttp=new XMLHttpRequest();
 	var url = "../service/GetLocations";
 	

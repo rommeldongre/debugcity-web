@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -19,7 +18,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import util.DataBaseConn;
 
 import com.mysql.jdbc.Statement;
@@ -68,9 +66,13 @@ public class SubmitBug extends HttpServlet {
 					String state=subbugreq.getState();
 					Timestamp datecreated=new Timestamp(new Date().getTime());
 					Timestamp dateclosed=null;
+					
 					int severity=Integer.parseInt(subbugreq.getSeverity());
 					String notes=subbugreq.getNotes();
 					int votes=Integer.parseInt(subbugreq.getVotes());
+					
+					
+					
 					dbconn=new DataBaseConn();
 					con = dbconn.setConnection ();
 					//System.out.print("connected");

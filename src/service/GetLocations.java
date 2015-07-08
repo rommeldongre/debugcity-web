@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.util.HashSet;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -53,10 +52,11 @@ public class GetLocations extends HttpServlet {
 			try
 			{
 				
-					String location=getlocreq.getToken();
+					int token=Integer.parseInt(getlocreq.getToken());
+					int max=0;
 					int count = 0;
 					String locality[]=new String[10];
-					HashSet<String> noDuplicate = new HashSet<String>();
+					int returntoken=0;
 					
 					for(int i=0;i<10;i++)
 					{
@@ -66,26 +66,69 @@ public class GetLocations extends HttpServlet {
 					con = dbconn.setConnection ();
 					//System.out.println("connected");
 					stmt=(Statement) con.createStatement();
-					String query = "select * from incident where incident_locality='"+location+"' or incident_lat='"+location+"' or incident_long='"+location+"' or incident_category='"+location+"' or incident_picture='"+location+"' or incident_submitter='"+location+"' or incident_owner='"+location+"' or incident_state='"+location+"' or incident_date_created='"+location+"'or incident_date_closed='"+location+"' or incident_notes='"+location+"'";
+					//String query = "select * from incident where incident_locality='"+location+"' or incident_lat='"+location+"' or incident_long='"+location+"' or incident_category='"+location+"' or incident_picture='"+location+"' or incident_submitter='"+location+"' or incident_owner='"+location+"' or incident_state='"+location+"' or incident_date_created='"+location+"'or incident_date_closed='"+location+"' or incident_notes='"+location+"'";
+					String query=null;
+					
+					if(token==0)
+					{
+						query="select * from incident";
+						rs=dbconn.getResult(query, con);
+						while(rs.next())
+						{
+							token=rs.getInt("incident_id");
+							rs.close();
+							break;
+						}
+						
+					}
+					
+					query="select * from incident";
+					rs=dbconn.getResult(query, con);
+					while(rs.next())
+					{
+						max=(rs.getInt("incident_id"));
+					}
+					rs.close();
+					
+					query="select distinct incident_locality from incident where incident_id between "+token+" and "+(token+9)+"";
+					
 					rs=dbconn.getResult(query, con);
 					while(rs.next())
 					{
 						locality[count]=rs.getString("incident_locality");
-						noDuplicate.add(locality[count]);
+						//noDuplicate.add(locality[count]);
 						count++;
+						if(count==10)
+						{
+							//returntoken=token+10;
+							break;
+						}	
 					}
 					
-					String[] localityArray = new String[noDuplicate.size()];
-					noDuplicate.toArray(localityArray);
+					returntoken=token+10;
 					
+					if((returntoken)>max)
+					{
+						returntoken=0;
+					}
+					
+					//String[] localityArray = new String[noDuplicate.size()];
+					//noDuplicate.toArray(localityArray);
+					
+				/*	String locality_str="";
+					for(int i=0;i<count;i++)
+					{
+						locality_str=locality_str+","+locality[count];
+					}
+				*/	
 					rs.close();
 					if(con!=null)
 						con.close();
 					JSONObject ResponseObj=new JSONObject();
 					ResponseObj.put("count", count);
-					ResponseObj.put("locality", localityArray);
+					ResponseObj.put("locality", locality);
 					ResponseObj.put("returnCode", 0);
-					ResponseObj.put("returnToken", "");
+					ResponseObj.put("returnToken", returntoken);
 					response.setContentType("text/json");				
 					response.setContentType("application/json; charset=UTF-8");
 					PrintWriter printout = response.getWriter();
