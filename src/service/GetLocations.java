@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -105,6 +106,14 @@ public class GetLocations extends HttpServlet {
 						}	
 					}
 					
+					
+					String[] locfinal = new String[count];
+					
+					for(int i=0;i<count;i++)
+					{
+						locfinal[i] = locality[i];
+					}
+					
 					returntoken=token+10;
 					
 					if((returntoken)>max)
@@ -126,7 +135,7 @@ public class GetLocations extends HttpServlet {
 						con.close();
 					JSONObject ResponseObj=new JSONObject();
 					ResponseObj.put("count", count);
-					ResponseObj.put("locality", locality);
+					ResponseObj.put("locality", locfinal);
 					ResponseObj.put("returnCode", 0);
 					ResponseObj.put("returnToken", returntoken);
 					response.setContentType("text/json");				

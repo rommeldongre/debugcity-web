@@ -83,7 +83,7 @@ private static final long serialVersionUID = 1L;
 				incident_votes=0;
 			else
 				incident_votes=Integer.parseInt(str_incident_votes); 
-			SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-dd-MM hh:mm:ss");
 			Date date_created = null,date_closed = null;
 			Timestamp timestamp_created,timestamp_closed;
 			if((incident_date_created).equals(""))

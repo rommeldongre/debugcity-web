@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Testing JSON Service</title>
+<title>SubmitBug</title>
 
 <script type="text/javascript">
 function submitBug()
@@ -36,7 +36,7 @@ function submitBug()
 
 	
 	xmlhttp=new XMLHttpRequest();
-	var url = "../service/SubmitBug";
+	var url = "service/SubmitBug";
 	
 	var subBugData=new Object();
 		

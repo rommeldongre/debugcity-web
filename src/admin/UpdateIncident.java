@@ -80,7 +80,7 @@ public class UpdateIncident extends HttpServlet {
 					incident_votes=0;
 				else
 					incident_votes=Integer.parseInt(str_incident_votes); 
-				SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+				SimpleDateFormat sdf=new SimpleDateFormat("yyyy-dd-MM hh:mm:ss");
 				Date date_created = null,date_closed = null;
 				Timestamp timestamp_created=null, timestamp_closed=null;
 				if((incident_date_created).equals(""))
@@ -96,8 +96,7 @@ public class UpdateIncident extends HttpServlet {
 				}
 				if((incident_date_closed).equals(""))
 				{
-					timestamp_closed=null;
-				}
+					timestamp_closed=null;}
 				else
 				{
 					date_closed = sdf.parse(incident_date_closed);

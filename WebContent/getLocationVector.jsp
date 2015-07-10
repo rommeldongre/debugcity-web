@@ -4,44 +4,31 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>getLocations</title>
+<title>getLocationVector</title>
 
 <script type="text/javascript">
-function getLocations()
+function getLocationVector()
 {
-	var retok=document.getElementById("returntoken").value;
-	var token=document.getElementById("token").value;
-	
-	if(document.getElementById("token").value=="" && document.getElementById("returntoken").value=="")
-		token=0;
-	else if(document.getElementById("returntoken").value=="" && document.getElementById("token").value!="")
-		token=token;
-	else
-		token=retok;
+	var location=document.getElementById("location").value;
 	
 	xmlhttp=new XMLHttpRequest();
-	var url = "../service/GetLocations";
+	var url = "service/GetLocationVector";
 	
-	var getLocationsData=new Object();
+	var getLocationVectorData=new Object();
 		
-	getLocationsData["token"]=token;
+	getLocationVectorData["location"]=location;
 	
 	xmlhttp.onreadystatechange=function() {
 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 				//alert(xmlhttp.responseText);
 				var json = JSON.parse(xmlhttp.responseText);
 				
-
-				document.getElementById("count").value=json.count;
-				if(json.count!=0)
-					document.getElementById("locality").value=json.locality;
+				if(json.vector!="")
+					document.getElementById("vector").value='{"'+json.vector+'"}';
 				else
-					document.getElementById("locality").value="";
-				
+					document.getElementById("vector").value="no vector matched";
+					
 				document.getElementById("returncode").value=json.returnCode;
-				
-				document.getElementById("returntoken").value=json.returnToken;
-				
 				if(json.returnCode!=0)
 				{
 					document.getElementById("errorstring").value=json.errorString;		
@@ -53,21 +40,21 @@ function getLocations()
 			
 	xmlhttp.open("POST", url, true);
 	xmlhttp.responseType = 'JSON';
-	xmlhttp.send(JSON.stringify(getLocationsData));	
+	xmlhttp.send(JSON.stringify(getLocationVectorData));	
 }
 </script>
 
 </head>
 <body>
-	<h1>getLocations</h1>
+	<h1>getLocationVector</h1>
 	<table>
 			<tr>
-				<td>Token</td>
-				<td><input type="text" id="token" name="token"></td>
+				<td>Location</td>
+				<td><input type="text" id="location" name="location"></td>
 			</tr>
 			<tr>
 				<td colspan="2"><input type="Button" name="submit" id="submit"
-					onclick="getLocations()" value="getLocations"></td>
+					onclick="getLocationVector()" value="getLocationVector"></td>
 			</tr>
 			<tr>
 				<td></td>	
@@ -91,16 +78,8 @@ function getLocations()
 				<td><input type="text" id="errorstring" name="errorstring"></td>
 			</tr>
 			<tr>
-				<td>Count</td>
-				<td><input type="text" id="count" name="count"></td>
-			</tr>
-			<tr>
-				<td>Locality[]</td>
-				<td><input type="text" id="locality" name="locality"></td>
-			</tr>
-			<tr>
-				<td>ReturnToken</td>
-				<td><input type="text" id="returntoken" name="returntoken"></td>
+				<td>Vector</td>
+				<td><input type="text" id="vector" name="vector"></td>
 			</tr>
 		
 		</table>

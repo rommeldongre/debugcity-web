@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>getLocations</title>
+<title>SearchBug</title>
 
 <script type="text/javascript">
 function SearchBug()
@@ -31,7 +31,7 @@ function SearchBug()
 	}
 	
 	xmlhttp=new XMLHttpRequest();
-	var url = "../service/SearchBug";
+	var url = "service/SearchBug";
 	
 	var SearchBugData=new Object();
 		
