@@ -87,11 +87,29 @@
              map: map,
              title: "Current location!"
              });
-        	 initialize(latitude, longitude, coords);
+             
+           	 //document.getElementById('pac-input').value=latitude+","+longitude;
+             
+           	//getAddressFromLatLang(latitude,longitude);
+            
+           	 var geocoder = new google.maps.Geocoder();
+             var latLng = new google.maps.LatLng(latitude, longitude);
+             geocoder.geocode( { 'latLng': latLng}, function(results, status) {
+             	if (status == google.maps.GeocoderStatus.OK) {
+           			 if (results[0]) {
+            			document.getElementById('pac-input').value=results[0].formatted_address;
+            		}
+          			else{
+        	  			document.getElementById('pac-input').value="Geocode was unsucessfull in detecting your current location";
+               		}
+          		}
+      	  	});  	
+        	
+            initialize(latitude, longitude);
     }	       
     
     
-function initialize(lat, lng, coords) {
+function initialize(lat, lng) {
 
   var markers = [];
   
@@ -125,7 +143,7 @@ function initialize(lat, lng, coords) {
 					      // Create a marker for each place.
 					      var marker = new google.maps.Marker({
 					        map: map,
-					        icon: image,
+					        //icon: image,
 					        title: place.name,
 					        position: place.geometry.location
 					      });
