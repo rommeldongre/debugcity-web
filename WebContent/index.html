@@ -58,6 +58,25 @@
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
     <script>
     
+    
+    xmlhttp=new XMLHttpRequest();
+ 	var url = "GetLatLng";
+ 	
+ 	
+ 
+ 	xmlhttp.onreadystatechange=function() {
+ 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+ 	    		var json = JSON.parse(xmlhttp.responseText);
+ 				markers=json.returnCode;
+ 			}
+ 	}
+ 			
+ 	xmlhttp.open("POST", url, true);
+ 	xmlhttp.responseType = 'JSON';
+ 	xmlhttp.send();	
+ 	
+ 	
+    
     if (navigator.geolocation)
     {
         navigator.geolocation.getCurrentPosition(showCurrentLocation);
@@ -88,10 +107,27 @@
              title: "Current location!"
              });
              
-           	 //document.getElementById('pac-input').value=latitude+","+longitude;
-             
-           	//getAddressFromLatLang(latitude,longitude);
-            
+          		    var bounds = new google.maps.LatLngBounds();
+      		  for(var i = 0; i < markers.length; i++ ) {
+                  // Create a marker for each place.
+			     var position = new google.maps.LatLng(markers[i][1], markers[i][2]);
+			     bounds.extend(position);
+                  var marker = new google.maps.Marker({
+			        map: map,
+			        title: ""+markers[i][0]+"",
+			        position: position
+			      });
+                  
+                  //map.fitBounds(bounds);
+      	    }
+
+      	    // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+      	    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+      	        this.setZoom(4);
+      	        google.maps.event.removeListener(boundsListener);
+      	    });
+      	    
+      	    
            	 var geocoder = new google.maps.Geocoder();
              var latLng = new google.maps.LatLng(latitude, longitude);
              geocoder.geocode( { 'latLng': latLng}, function(results, status) {
@@ -133,14 +169,10 @@ function initialize(lat, lng) {
 					    markers = [];
 					    var bounds = new google.maps.LatLngBounds();
 					    for (var i = 0, place; place = places[i]; i++) {
-					      var image = {
-					        url: place.icon,
-					        size: new google.maps.Size(71, 71),
-					        origin: new google.maps.Point(0, 0),
-					        anchor: new google.maps.Point(17, 34),
-					        scaledSize: new google.maps.Size(35, 35)
-					      };
+					      
 					      // Create a marker for each place.
+					      bounds.extend(place.geometry.location);
+						    
 					      var marker = new google.maps.Marker({
 					        map: map,
 					        //icon: image,
@@ -150,18 +182,23 @@ function initialize(lat, lng) {
 					
 					      markers.push(marker);
 					
-					      bounds.extend(place.geometry.location);
+					      map.fitBounds(bounds);
+							
 					    }
 					
-					    map.fitBounds(bounds);
 					   
-					  });
-
+				  	    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+			      	        this.setZoom(7);
+			      	        google.maps.event.removeListener(boundsListener);
+			      	    });
+  					});
   
  				 google.maps.event.addListener(map, 'bounds_changed', function() {
 			     var bounds = map.getBounds();
-    			 searchBox.setBounds(bounds);
+		  		 
+			     searchBox.setBounds(bounds);
   		});
+  		
 }
 
 //google.maps.event.addDomListener(window, 'load', initialize);
