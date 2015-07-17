@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>getLocations</title>
+<title>getCategory</title>
 
 <script type="text/javascript">
 function getCategory()
@@ -14,11 +14,14 @@ function getCategory()
 	
 	xmlhttp.onreadystatechange=function() {
 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-				//alert(xmlhttp.responseText);
 				var json = JSON.parse(xmlhttp.responseText);
 				
-				document.getElementById("category").value=json.category;		
-	    }
+				//alert(json.categorylist);
+				if(json.categorylist!="")
+					document.getElementById("categorylist").value='{"'+json.categorylist+'"}';
+				else
+					document.getElementById("categorylist").value="no category found.";
+				}
 	}
 			
 	xmlhttp.open("POST", url, true);
@@ -33,7 +36,7 @@ function getCategory()
 	<table>
 			<tr>
 				<td>Categories</td>
-				<td><input type="text" id="category" name="category"></td>
+				<td><input type="text" id="categorylist" name="categorylist"></td>
 			</tr>
 			<tr>
 				<td colspan="2"><input type="Button" name="submit" id="submit"

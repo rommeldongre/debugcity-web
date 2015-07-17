@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import util.DataBaseConn;
@@ -44,54 +45,58 @@ public class GetCategory extends HttpServlet {
 	
 		response.setContentType("application/json; charset=UTF-8");
 		
-			int count=0;
+		String vector = ""; 
 			
-			try
-			{
+		try
+		{
+				dbconn=new DataBaseConn();
+				con = dbconn.setConnection ();
+				//System.out.println("connected");
+				stmt=(Statement) con.createStatement();
+				//String query = "select cat_name, count(*) as count from category group by cat_name";
+				String query = "select * from category";
+				rs=dbconn.getResult(query, con);
+				int count=1;
+				String category=null;
 				
-					dbconn=new DataBaseConn();
-					con = dbconn.setConnection ();
-					//System.out.println("connected");
-					stmt=(Statement) con.createStatement();
+				while(rs.next())
+				{
+					category=rs.getString("cat_name");
+					//count=rs.getInt("count");
 					
-					query="select distinct incident_category from incident";
-					
-					rs=dbconn.getResult(query, con);
-					
-					while(rs.next())
-					{
-						count++;	
-					}					
-					
-					rs.close();
-					
-					String[] category = new String[count];
-					
-					count=0;
-					
-					rs=dbconn.getResult(query, con);
-					
-					while(rs.next())
-					{
-						category[count]=rs.getString("incident_category");
-						count++;
-					}
-					
-					if(con!=null)
-						con.close();
-					//System.out.println(category);
-					JSONObject ResponseObj=new JSONObject();
-					ResponseObj.put("category", category);
-					response.setContentType("text/json");				
-					response.setContentType("application/json; charset=UTF-8");
-					PrintWriter printout = response.getWriter();
-					printout.print(ResponseObj.toString());
+					vector=vector+category+":"+count+", ";
+				}
+				
+				if(vector.length() > 0)
+					vector = vector.substring(0,vector.length()-2);
+				
+				rs.close();
+				if(con!=null)
+					con.close();
+	
+				JSONObject ResponseObj=new JSONObject();
+				ResponseObj.put("categorylist", vector);
+				response.setContentType("text/json");				
+				response.setContentType("application/json; charset=UTF-8");
+				PrintWriter printout = response.getWriter();
+				printout.print(ResponseObj.toString());
 			}
 			
-			catch(Exception e)
-			{
-				e.printStackTrace();
+		catch(Exception e)
+		{
+			JSONObject ResponseObj=new JSONObject();
+			try{
+				ResponseObj.put("categorylist", e.getMessage());
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
+			
+			response.setContentType("text/json");				
+			response.setContentType("application/json; charset=UTF-8");
+			PrintWriter printout = response.getWriter();
+			printout.print(ResponseObj.toString());
+		}
 			
 	}
 
