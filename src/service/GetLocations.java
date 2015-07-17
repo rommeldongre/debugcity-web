@@ -154,6 +154,7 @@ public class GetLocations extends HttpServlet {
 					ResponseObj.put("returnCode", returnCode );
 					ResponseObj.put("errorString", e.getMessage());
 					ResponseObj.put("returnToken", "");
+					ResponseObj.put("count", 0);
 					}
 				catch (JSONException e1) {
 					// TODO Auto-generated catch block
