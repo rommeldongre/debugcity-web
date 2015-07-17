@@ -52,6 +52,12 @@
         font-size: 13px;
         font-weight: 300;
       }
+      
+     .scrollFix {
+		line-height: 1.35;
+		overflow: hidden;
+		white-space: nowrap;
+	  } 
 
     </style>
     <title>Places search box</title>
@@ -67,7 +73,8 @@
  	xmlhttp.onreadystatechange=function() {
  	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
  	    		var json = JSON.parse(xmlhttp.responseText);
- 				markers=json.returnCode;
+ 				markers1=json.arr1;
+ 				markers2=json.arr2;
  			}
  	}
  			
@@ -107,17 +114,24 @@
              title: "Current location!"
              });
              
-          		    var bounds = new google.maps.LatLngBounds();
-      		  for(var i = 0; i < markers.length; i++ ) {
+             var infowindow = new google.maps.InfoWindow({
+            	    content: ''
+            	  });
+            
+             bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
+         	
+            	
+          	  var bounds = new google.maps.LatLngBounds();
+      		  for(var i = 0; i < markers1.length; i++ ) {
                   // Create a marker for each place.
-			     var position = new google.maps.LatLng(markers[i][1], markers[i][2]);
+			     var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
 			     bounds.extend(position);
                   var marker = new google.maps.Marker({
 			        map: map,
-			        title: ""+markers[i][0]+"",
+			        title: ""+markers1[i][0]+"",
 			        position: position
 			      });
-                  
+                  bindInfoWindow(marker, map, infowindow, "<p><b>id: </b>" + markers1[i][0] +"<br><b>lat: </b>"+ markers1[i][1] + "<br><b>long: </b>"+ markers1[i][2] + "<br><b>category: </b>"+ markers2[i][0] + "<br><b>picture: </b>"+ markers2[i][1] + "<br><b>locality: </b>"+ markers2[i][2] + "<br><b>submitter: </b>"+ markers2[i][3] + "<br><b>owner: </b>"+ markers2[i][4] + "<br><b>state: </b>"+ markers2[i][5] + "<br><b>date_created: </b>"+ markers2[i][6] + "<br><b>date_closed: </b>"+ markers2[i][7] + "<br><b>severity: </b>"+ markers1[i][3] + "<br><b>notes: </b>"+ markers2[i][8] + "<br><b>votes: </b>"+ markers1[i][4] + "</p>");  
                   //map.fitBounds(bounds);
       	    }
 
@@ -179,7 +193,8 @@ function initialize(lat, lng) {
 					        title: place.name,
 					        position: place.geometry.location
 					      });
-					
+							
+					      
 					      markers.push(marker);
 					
 					      map.fitBounds(bounds);
@@ -200,6 +215,19 @@ function initialize(lat, lng) {
   		});
   		
 }
+
+
+function bindInfoWindow(marker, map, infowindow, html) { 
+	google.maps.event.addListener(marker, 'mouseover', function() { 
+		infowindow.setContent(html); 
+		infowindow.open(map, marker); 
+	}); 
+	
+	google.maps.event.addListener(marker, 'mouseout', function() {
+		infowindow.close();
+	});
+
+} 
 
 //google.maps.event.addDomListener(window, 'load', initialize);
 

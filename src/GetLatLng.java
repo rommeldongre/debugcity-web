@@ -70,20 +70,37 @@ public class GetLatLng extends HttpServlet {
 		
 		query = "select * from incident";
 		rs=dbconn.getResult(query, con);
-		float[][] arr=new float[count][3];
+		float[][] arr1=new float[count][5];
+		String[][] arr2=new String[count][9];
 		count=0;
 		while(rs.next())
 		{
-			arr[count][0]=rs.getInt("incident_id");
-			arr[count][1]=Float.parseFloat(rs.getString("incident_lat"));
-			arr[count][2]=Float.parseFloat(rs.getString("incident_long"));
+			arr1[count][0]=rs.getInt("incident_id");
+			arr1[count][1]=Float.parseFloat(rs.getString("incident_lat"));
+			arr1[count][2]=Float.parseFloat(rs.getString("incident_long"));
+			arr1[count][3]=rs.getInt("incident_severity");
+			arr1[count][4]=rs.getInt("incident_votes");
+			
+			
+			
+			arr2[count][0]=rs.getString("incident_category");
+			arr2[count][1]=rs.getString("incident_picture");
+			arr2[count][2]=rs.getString("incident_locality");
+			arr2[count][3]=rs.getString("incident_submitter");
+			arr2[count][4]=rs.getString("incident_owner");
+			arr2[count][5]=rs.getString("incident_state");
+			arr2[count][6]=rs.getString("incident_date_created");
+			arr2[count][7]=rs.getString("incident_date_closed");
+			arr2[count][8]=rs.getString("incident_notes");
+			
 			count++;		
 		}
 		if(con!=null)
 			con.close();
 		JSONObject ResponseObj=new JSONObject();
 		try {
-			ResponseObj.put("returnCode",arr);	
+			ResponseObj.put("arr1",arr1);	
+			ResponseObj.put("arr2",arr2);	
 			//System.out.println(arr[1]);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
