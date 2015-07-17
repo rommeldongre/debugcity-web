@@ -44,6 +44,26 @@ function getCategories()
 	<h1>getCategories</h1>
 	<table>
 			<tr>
+				<td colspan="2"><input type="Button" name="submit" id="submit"
+					onclick="getCategories()" value="getCategories"></td>
+			</tr>	
+			<tr>
+				<td></td>
+				<td></td>
+			</tr>	
+			<tr>
+				<td></td>
+				<td></td>
+			</tr>	
+			<tr>
+				<td></td>
+				<td></td>
+			</tr>	
+			<tr>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
 				<td>Categories</td>
 				<td><input type="text" id="categories" name="categories"></td>
 			</tr>
@@ -59,10 +79,7 @@ function getCategories()
 				<td>ErrorString</td>
 				<td><input type="text" id="errorstring" name="errorstring"></td>
 			</tr>
-			<tr>
-				<td colspan="2"><input type="Button" name="submit" id="submit"
-					onclick="getCategories()" value="getCategories"></td>
-			</tr>		
+				
 		</table>
 </body>
 </html>

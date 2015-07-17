@@ -111,4 +111,76 @@ public class GetLocationVector extends HttpServlet {
 			
 	}
 
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+	
+		ObjectMapper objectmapper = new ObjectMapper();
+		GetLocationVectorReq getlocvecreq = objectmapper.readValue(request.getInputStream(), GetLocationVectorReq.class);
+		response.setContentType("application/json; charset=UTF-8");
+		
+			String vector = ""; 
+
+			try
+			{
+				
+					String location=getlocvecreq.getLocation();
+					
+					dbconn=new DataBaseConn();
+					con = dbconn.setConnection ();
+					//System.out.println("connected");
+					stmt=(Statement) con.createStatement();
+					String query = "select incident_category, count(*) as count from incident where incident_locality='"+location+"' group by incident_category";
+					rs=dbconn.getResult(query, con);
+					int count=0;
+					String category=null;
+					
+					while(rs.next())
+					{
+						category=rs.getString("incident_category");
+						count=rs.getInt("count");
+						
+						vector=vector+category+":"+count+", ";
+					}
+					
+					if(vector.length() > 0)
+						vector = vector.substring(0,vector.length()-2);
+					
+					rs.close();
+					if(con!=null)
+						con.close();
+					 
+					int returnCode=0;
+					JSONObject ResponseObj=new JSONObject();
+					ResponseObj.put("vector", vector);
+					ResponseObj.put("returnCode", returnCode);
+					response.setContentType("text/json");				
+					response.setContentType("application/json; charset=UTF-8");
+					PrintWriter printout = response.getWriter();
+					printout.print(ResponseObj.toString());
+			}
+			
+			catch(Exception e)
+			{
+				//e.printStackTrace();
+				//String bId = null;
+				int returnCode = 1048;
+				JSONObject ResponseObj=new JSONObject();
+				try {
+					ResponseObj.put("returnCode", returnCode );
+					ResponseObj.put("errorString", e.getMessage());
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				response.setContentType("text/json");				
+				response.setContentType("application/json; charset=UTF-8");
+				PrintWriter printout = response.getWriter();
+				printout.print(ResponseObj.toString());
+		
+			}
+			
+	}
+
 }
