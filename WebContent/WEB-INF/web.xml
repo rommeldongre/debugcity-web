@@ -148,4 +148,12 @@
     <servlet-name>SearchBug</servlet-name>
     <url-pattern>/service/SearchBug</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>GetCategory</servlet-name>
+    <servlet-class>service.GetCategory</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetCategory</servlet-name>
+    <url-pattern>/service/GetCategory</url-pattern>
+  </servlet-mapping>
 </web-app>

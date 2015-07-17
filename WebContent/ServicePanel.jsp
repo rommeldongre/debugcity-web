@@ -15,6 +15,7 @@
 		<dd><a href="SubmitBug.jsp">SubmitBug</a></dd>
 		<dd><a href="getLocations.jsp">getLocations</a></dd>
 		<dd><a href="getLocationVector.jsp">getLocationVector</a></dd>
+		<dd><a href="getCategory.jsp">getCategory</a></dd>
 		</dl>
 </body>
 </html>
