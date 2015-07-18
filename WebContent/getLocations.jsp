@@ -12,12 +12,8 @@ function getLocations()
 	var retok=document.getElementById("returntoken").value;
 	var token=document.getElementById("token").value;
 	
-	if(document.getElementById("token").value=="" && document.getElementById("returntoken").value=="")
+	if(document.getElementById("token").value=="")
 		token=0;
-	else if(document.getElementById("returntoken").value=="" && document.getElementById("token").value!="")
-		token=token;
-	else
-		token=retok;
 	
 	xmlhttp=new XMLHttpRequest();
 	var url = "service/GetLocations";
@@ -63,7 +59,7 @@ function getLocations()
 	<table>
 			<tr>
 				<td>Token</td>
-				<td><input type="text" id="token" name="token"></td>
+				<td><input type="text" id="token" name="token" value=""></td>
 			</tr>
 			<tr>
 				<td colspan="2"><input type="Button" name="submit" id="submit"

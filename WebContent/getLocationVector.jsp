@@ -22,12 +22,7 @@ function getLocationVector()
 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 				//alert(xmlhttp.responseText);
 				var json = JSON.parse(xmlhttp.responseText);
-				
-				if(json.vector!="")
-					document.getElementById("vector").value='{"'+json.vector+'"}';
-				else
-					document.getElementById("vector").value="no vector matched";
-					
+				document.getElementById("vector").value = JSON.stringify(json.locationVector);	
 				document.getElementById("returncode").value=json.returnCode;
 				if(json.returnCode!=0)
 				{

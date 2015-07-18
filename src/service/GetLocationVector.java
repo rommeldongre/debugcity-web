@@ -47,13 +47,20 @@ public class GetLocationVector extends HttpServlet {
 		GetLocationVectorReq getlocvecreq = objectmapper.readValue(request.getInputStream(), GetLocationVectorReq.class);
 		response.setContentType("application/json; charset=UTF-8");
 		
-			String vector = ""; 
+			//String vector = ""; 
 
 			try
 			{
 				
 					String location=getlocvecreq.getLocation();
 					
+					JSONObject obj = new JSONObject();
+
+				     /* obj.put("name", "foo");
+				      obj.put("num", new Integer(100));
+				      obj.put("balance", new Double(1000.21));
+				      obj.put("is_vip", new Boolean(true));
+					*/
 					dbconn=new DataBaseConn();
 					con = dbconn.setConnection ();
 					//System.out.println("connected");
@@ -67,12 +74,10 @@ public class GetLocationVector extends HttpServlet {
 					{
 						category=rs.getString("incident_category");
 						count=rs.getInt("count");
-						
-						vector=vector+category+":"+count+", ";
+						obj.put(category, count);
 					}
 					
-					if(vector.length() > 0)
-						vector = vector.substring(0,vector.length()-2);
+					//System.out.println(obj);
 					
 					rs.close();
 					if(con!=null)
@@ -80,7 +85,7 @@ public class GetLocationVector extends HttpServlet {
 					 
 					int returnCode=0;
 					JSONObject ResponseObj=new JSONObject();
-					ResponseObj.put("vector", vector);
+					ResponseObj.put("locationVector", obj);
 					ResponseObj.put("returnCode", returnCode);
 					response.setContentType("text/json");				
 					response.setContentType("application/json; charset=UTF-8");
@@ -119,13 +124,20 @@ public class GetLocationVector extends HttpServlet {
 		GetLocationVectorReq getlocvecreq = objectmapper.readValue(request.getInputStream(), GetLocationVectorReq.class);
 		response.setContentType("application/json; charset=UTF-8");
 		
-			String vector = ""; 
+			//String vector = ""; 
 
 			try
 			{
 				
 					String location=getlocvecreq.getLocation();
 					
+					JSONObject obj = new JSONObject();
+
+				     /* obj.put("name", "foo");
+				      obj.put("num", new Integer(100));
+				      obj.put("balance", new Double(1000.21));
+				      obj.put("is_vip", new Boolean(true));
+					*/
 					dbconn=new DataBaseConn();
 					con = dbconn.setConnection ();
 					//System.out.println("connected");
@@ -139,12 +151,10 @@ public class GetLocationVector extends HttpServlet {
 					{
 						category=rs.getString("incident_category");
 						count=rs.getInt("count");
-						
-						vector=vector+category+":"+count+", ";
+						obj.put(category, count);
 					}
 					
-					if(vector.length() > 0)
-						vector = vector.substring(0,vector.length()-2);
+					//System.out.println(obj);
 					
 					rs.close();
 					if(con!=null)
@@ -152,7 +162,7 @@ public class GetLocationVector extends HttpServlet {
 					 
 					int returnCode=0;
 					JSONObject ResponseObj=new JSONObject();
-					ResponseObj.put("vector", vector);
+					ResponseObj.put("locationVector", obj);
 					ResponseObj.put("returnCode", returnCode);
 					response.setContentType("text/json");				
 					response.setContentType("application/json; charset=UTF-8");
@@ -180,6 +190,7 @@ public class GetLocationVector extends HttpServlet {
 				printout.print(ResponseObj.toString());
 		
 			}
+			
 			
 	}
 
