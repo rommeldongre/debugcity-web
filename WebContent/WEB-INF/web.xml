@@ -5,6 +5,14 @@
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
   <servlet>
+    <servlet-name>FilterCategory</servlet-name>
+    <servlet-class>FilterCategory</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>FilterCategory</servlet-name>
+    <url-pattern>/FilterCategory</url-pattern>
+  </servlet-mapping>
+  <servlet>
     <servlet-name>GetLatLng</servlet-name>
     <servlet-class>GetLatLng</servlet-class>
   </servlet>
