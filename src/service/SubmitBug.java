@@ -59,19 +59,39 @@ public class SubmitBug extends HttpServlet {
 					String lat=subbugreq.getLat();
 					String lng=subbugreq.getLng();
 					String cat=subbugreq.getCat();
-					String pic=subbugreq.getPic();
+					
+					String pic=null;
+					if(!subbugreq.getPic().equals(""))
+						pic=subbugreq.getPic();
+					
 					String locality=subbugreq.getLocality();
-					String submitter=subbugreq.getSubmitter();
-					String owner=subbugreq.getOwner();
-					String state=subbugreq.getState();
+					
+					String submitter=null;
+					if(!subbugreq.getSubmitter().equals(""))		
+						submitter=subbugreq.getSubmitter();
+					
+					String owner=null;
+					if(!subbugreq.getOwner().equals(""))
+						owner=subbugreq.getOwner();
+					
+					String state=null;
+					if(!subbugreq.getOwner().equals(""))
+						state=subbugreq.getState();
+					
 					Timestamp datecreated=new Timestamp(new Date().getTime());
 					Timestamp dateclosed=null;
 					
-					int severity=Integer.parseInt(subbugreq.getSeverity());
-					String notes=subbugreq.getNotes();
-					int votes=Integer.parseInt(subbugreq.getVotes());
+					int severity=0;
+					if(!subbugreq.getSeverity().equals(""))
+						severity=Integer.parseInt(subbugreq.getSeverity());
 					
+					String notes=null;
+					if(!subbugreq.getNotes().equals(""))
+						notes=subbugreq.getNotes();
 					
+					int votes=0;
+					if(!subbugreq.getVotes().equals(""))
+						votes=Integer.parseInt(subbugreq.getVotes());
 					
 					dbconn=new DataBaseConn();
 					con = dbconn.setConnection ();

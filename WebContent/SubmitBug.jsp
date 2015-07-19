@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>SubmitBug</title>
-
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
 <script type="text/javascript">
 function submitBug()
 {
@@ -21,39 +21,46 @@ function submitBug()
 	//var dateclosed=document.getElementById("dateclosed").value;
 	//var severity=document.getElementById("severity").value;
 	
-	if(document.getElementById("severity").value=="")
-		var severity=0;
-	else
-		var severity=document.getElementById("severity").value;
+	var severity=document.getElementById("severity").value;
 
 	var notes=document.getElementById("notes").value;
 	//var votes=document.getElementById("votes").value;
 	
-	if(document.getElementById("votes").value=="")
-		var votes=0;
-	else
-		var votes=document.getElementById("votes").value;
+	var votes=document.getElementById("votes").value;
 
-	
-	xmlhttp=new XMLHttpRequest();
-	var url = "service/SubmitBug";
-	
 	var subBugData=new Object();
-		
+	
 	subBugData["lat"]=lat;
 	subBugData["lng"]=lng;
 	subBugData["cat"]=cat;
-	subBugData["pic"]=pic;
-	subBugData["locality"]=locality;
-	subBugData["submitter"]=submitter;
-	subBugData["owner"]=owner;
-	subBugData["state"]=state;
-	//subIncidentData["datecreated"]=datecreated;
-	//subIncidentData["dateclosed"]=dateclosed;
-	subBugData["severity"]=severity;
-	subBugData["notes"]=notes;
-	subBugData["votes"]=votes;
 	
+	if(document.getElementById("pic").value!="");
+		subBugData["pic"]=pic;
+		
+	if(document.getElementById("locality").value!="")
+		subBugData["locality"]=locality;
+	
+	if(document.getElementById("submitter").value!="");
+		subBugData["submitter"]=submitter;
+	
+	if(document.getElementById("owner").value!="");	
+		subBugData["owner"]=owner;
+
+	if(document.getElementById("state").value!="");	
+		subBugData["state"]=state;
+	
+	if(document.getElementById("severity").value!="");	
+		subBugData["severity"]=severity;
+	
+	if(document.getElementById("notes").value!="");
+		subBugData["notes"]=notes;
+		
+	if(document.getElementById("votes").value!="");	
+		subBugData["votes"]=votes;
+	
+	xmlhttp=new XMLHttpRequest();
+	var url = "service/SubmitBug";
+
 	xmlhttp.onreadystatechange=function() {
 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 				//alert(xmlhttp.responseText);
