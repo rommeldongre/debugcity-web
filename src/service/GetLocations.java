@@ -175,6 +175,7 @@ public class GetLocations extends HttpServlet {
 		// TODO Auto-generated method stub
 	
 
+
 		ObjectMapper objectmapper = new ObjectMapper();
 		GetLocationsReq getlocreq = objectmapper.readValue(request.getInputStream(), GetLocationsReq.class);
 		response.setContentType("application/json; charset=UTF-8");

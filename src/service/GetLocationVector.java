@@ -144,13 +144,13 @@ public class GetLocationVector extends HttpServlet {
 					stmt=(Statement) con.createStatement();
 					String query = "select incident_category, count(*) as count from incident where incident_locality='"+location+"' group by incident_category";
 					rs=dbconn.getResult(query, con);
-					int count=0;
+					String count="0";
 					String category=null;
 					
 					while(rs.next())
 					{
 						category=rs.getString("incident_category");
-						count=rs.getInt("count");
+						count=rs.getString("count");
 						obj.put(category, count);
 					}
 					
@@ -190,7 +190,6 @@ public class GetLocationVector extends HttpServlet {
 				printout.print(ResponseObj.toString());
 		
 			}
-			
 			
 	}
 
