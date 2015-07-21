@@ -5,26 +5,63 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>SubmitBug</title>
-<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
+<script type="text/javascript" src="js/jquery-1.7.min.js"></script>
 <script type="text/javascript">
+
+canvasCtx = null;
+imageFile = null;
+url = null;
+flag=0;
+
+window.onload = function () {
+	canvasCtx = document.getElementById("panel").getContext("2d");
+	document.getElementById("pic").onchange = function(event) {
+		
+		flag=1;
+		
+		this.imageFile = event.target.files[0];
+		
+		var reader = new FileReader();
+		reader.onload =  function(event) {
+			var img = new Image();
+			img.onload = function() {
+				drawImage(img);
+			}
+			img.src = event.target.result;
+		}
+		reader.readAsDataURL(this.imageFile);
+	}
+
+	drawImage = function(img) {
+		this.canvasCtx.canvas.width = img.width;
+		this.canvasCtx.canvas.height = img.height;
+		this.canvasCtx.drawImage(img,0,0);
+		url = canvasCtx.canvas.toDataURL("image/png");
+		console.log(url);
+		flag=1;
+		setURL(url,flag);
+	}
+}
+
+function setURL(url,flag)
+{
+	flag=flag;
+	pic= url;
+}
+
 function submitBug()
 {
 	var lat=document.getElementById("lat").value;
 	var lng=document.getElementById("lng").value;
 	var cat=document.getElementById("cat").value;
-	var pic=document.getElementById("pic").value;
 	var locality=document.getElementById("locality").value;
 	var submitter=document.getElementById("submitter").value;
 	var owner=document.getElementById("owner").value;
 	var state=document.getElementById("state").value;
-	//var datecreated=document.getElementById("datecreated").value;
-	//var dateclosed=document.getElementById("dateclosed").value;
-	//var severity=document.getElementById("severity").value;
 	
 	var severity=document.getElementById("severity").value;
 
 	var notes=document.getElementById("notes").value;
-	//var votes=document.getElementById("votes").value;
 	
 	var votes=document.getElementById("votes").value;
 
@@ -34,9 +71,12 @@ function submitBug()
 	subBugData["lng"]=lng;
 	subBugData["cat"]=cat;
 	
-	if(document.getElementById("pic").value!="");
-		subBugData["pic"]=pic;
 		
+	if(flag==1)
+		subBugData["pic"]=pic;
+	else
+		subBugData["pic"]="";
+	
 	if(document.getElementById("locality").value!="")
 		subBugData["locality"]=locality;
 	
@@ -84,8 +124,9 @@ function submitBug()
 			
 	xmlhttp.open("POST", url, true);
 	xmlhttp.responseType = 'JSON';
-	xmlhttp.send(JSON.stringify(subBugData));	
+	xmlhttp.send(JSON.stringify(subBugData));
 }
+
 </script>
 
 </head>
@@ -106,7 +147,7 @@ function submitBug()
 		</tr>
 		<tr>
 			<td>Pic</td>
-			<td><input type="text" id="pic" name="pic"></td>
+			<td><input type="file" id="pic"><canvas id="panel"></canvas></td>
 		</tr>
 		<tr>
 			<td>Locality</td>

@@ -70,17 +70,20 @@ public class GetLocations extends HttpServlet {
 					//String query = "select * from incident where incident_locality='"+location+"' or incident_lat='"+location+"' or incident_long='"+location+"' or incident_category='"+location+"' or incident_picture='"+location+"' or incident_submitter='"+location+"' or incident_owner='"+location+"' or incident_state='"+location+"' or incident_date_created='"+location+"'or incident_date_closed='"+location+"' or incident_notes='"+location+"'";
 					String query=null;
 					
+					int min=0;
+					
+					query="select * from incident";
+					rs=dbconn.getResult(query, con);
+					while(rs.next())
+					{
+						min=rs.getInt("incident_id");
+						rs.close();
+						break;
+					}
+					
 					if(token==0)
 					{
-						query="select * from incident";
-						rs=dbconn.getResult(query, con);
-						while(rs.next())
-						{
-							token=rs.getInt("incident_id");
-							rs.close();
-							break;
-						}
-						
+						token=min;
 					}
 					
 					query="select * from incident";
@@ -91,25 +94,48 @@ public class GetLocations extends HttpServlet {
 					}
 					rs.close();
 					
+					String check[]=new String[max]; 
+					int i=0;
+					
+					query="select distinct incident_locality from incident where incident_id between "+min+" and "+(token-1)+"";
+					rs=dbconn.getResult(query, con);
+					while(rs.next())
+					{
+						check[i]=(rs.getString("incident_locality"));
+						i++;
+					}
+					rs.close();
+					
+					int flag;
+					
 					query="select distinct incident_locality from incident where incident_id between "+token+" and "+(token+9)+"";
 					
 					rs=dbconn.getResult(query, con);
 					while(rs.next())
 					{
-						locality[count]=rs.getString("incident_locality");
-						//noDuplicate.add(locality[count]);
-						count++;
-						if(count==10)
+						flag=0;
+						
+						for(int j=0;j<i;j++)
 						{
-							//returntoken=token+10;
-							break;
-						}	
+							if(rs.getString("incident_locality").equals(check[j]))
+							{
+								flag=1;
+								break;
+							}
+						}
+						
+						if(flag==0)
+						{
+							locality[count]=rs.getString("incident_locality");
+							//noDuplicate.add(locality[count]);
+							count++;
+						}
 					}
 					
 					
 					String[] locfinal = new String[count];
 					
-					for(int i=0;i<count;i++)
+					for(i=0;i<count;i++)
 					{
 						locfinal[i] = locality[i];
 					}
