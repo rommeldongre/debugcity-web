@@ -30,7 +30,7 @@ public class SearchBugReq extends HttpServlet {
 	    this.token = token;
 	}
 	
-	
+	private String id;
 	private String lat;
 	private String lng;
 	private String cat;
@@ -45,6 +45,15 @@ public class SearchBugReq extends HttpServlet {
 	private String notes;
 	private String votes;
 	
+	 public String getId()
+	 {
+	     return id;
+	 }
+	 public void setId(String id)
+	 {
+	     this.id = id;
+	 }
+
 	 public String getLat()
 	 {
 	     return lat;

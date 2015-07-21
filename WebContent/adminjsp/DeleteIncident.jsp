@@ -45,7 +45,9 @@ function validateIncident()
 				out.println("<td>"+rs.getString("incident_lat")+"</td>");
 				out.println("<td>"+rs.getString("incident_long")+"</td>");
 				out.println("<td>"+rs.getString("incident_category")+"</td>");
-				out.println("<td>"+rs.getString("incident_picture")+"</td>");
+				out.println("<td><img src='");
+				out.println(rs.getString("incident_picture"));
+				out.println("' height='40' width='100'></td>");
 				out.println("<td>"+rs.getString("incident_locality")+"</td>");
 				out.println("<td>"+rs.getString("incident_submitter")+"</td>");
 				out.println("<td>"+rs.getString("incident_owner")+"</td>");

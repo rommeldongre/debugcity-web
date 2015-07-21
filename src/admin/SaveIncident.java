@@ -1,8 +1,6 @@
 package admin;
 
 import java.io.IOException;
-import java.io.InputStream;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -10,8 +8,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse; 
-import javax.servlet.http.Part;
-
 import util.DataBaseConn;
 
 import com.mysql.jdbc.Statement;
@@ -106,9 +102,7 @@ private static final long serialVersionUID = 1L;
 				date_closed = sdf.parse(incident_date_closed);
 				timestamp_closed=new Timestamp(date_closed.getTime());
 			}
-					InputStream inputstream=null;
-					Part filepart=request.getPart("incident_picture");
-					inputstream = filepart.getInputStream();  
+					String pic=request.getParameter("hidden");
 					dbconn=new DataBaseConn();
 					con = dbconn.setConnection();	 
 					String sql = "insert into incident (incident_lat,incident_long,incident_category,incident_picture,incident_locality,"
@@ -116,14 +110,10 @@ private static final long serialVersionUID = 1L;
 							+ ",incident_date_closed,incident_severity,incident_notes,incident_votes) values (?,?,?,?,?,?,?,?,?,?,?,?,?)"; 
 					PreparedStatement prep= con.prepareStatement(sql); 
 					
-					//prep.setInt(1,incident_id);
 					prep.setString(1, incident_lat);
 					prep.setString(2, incident_long);
 					prep.setString(3, incident_category);
-					if(inputstream!=null)
-					{
-						prep.setBlob(4, inputstream);
-					}
+					prep.setString(4, pic);
 					prep.setString(5, incident_locality);
 					prep.setString(6, incident_submitter);
 					prep.setString(7, incident_owner);

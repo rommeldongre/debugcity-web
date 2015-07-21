@@ -11,6 +11,46 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Edit Incident</title>
 <script type="text/javascript">
+canvasCtx = null;
+imageFile = null;
+url = null;
+flag=0;
+
+window.onload = function () {
+	canvasCtx = document.getElementById("panel").getContext("2d");
+	document.getElementById("pic").onchange = function(event) {
+		
+		flag=1;
+		
+		this.imageFile = event.target.files[0];
+		
+		var reader = new FileReader();
+		reader.onload =  function(event) {
+			var img = new Image();
+			img.onload = function() {
+				drawImage(img);
+			}
+			img.src = event.target.result;
+		}
+		reader.readAsDataURL(this.imageFile);
+	}
+
+	drawImage = function(img) {
+		this.canvasCtx.canvas.width = img.width;
+		this.canvasCtx.canvas.height = img.height;
+		this.canvasCtx.drawImage(img,0,0);
+		url = canvasCtx.canvas.toDataURL("image/png");
+		//console.log(url);
+		flag=1;
+		setURL(url,flag);
+	}
+}
+
+function setURL(url,flag)
+{
+	flag=flag;
+	document.getElementById("hidden").value= url;
+}
 function validateIncident()
 {
 	if(confirm("Are you sure to update incident_id: "+document.editincident.incident_id.value+" ?"))
@@ -47,7 +87,10 @@ function validateIncident()
 			out.println("<td><input type='text' value='"+rs.getString("incident_lat")+"' name='incident_lat' ></td>");
 			out.println("<td><input type='text' value='"+rs.getString("incident_long")+"' name='incident_long' ></td>");
 			out.println("<td><input type='text' value='"+rs.getString("incident_category")+"' name='incident_category' ></td>");
-			out.println("<td><input type='file'   											name='incident_picture'> </td>");
+			out.println("<td><img src='");
+			out.println(rs.getString("incident_picture"));
+			out.println("' height='40' width='100'>");
+			out.println("<input type='file' id='pic' name='incident_picture'  ><canvas id='panel'></canvas></td>");
 			out.println("<td><input type='text' value='"+rs.getString("incident_locality")+"' name='incident_locality' ></td>");
 			out.println("<td><input type='text' value='"+rs.getString("incident_submitter")+"' name='incident_submitter' ></td>");
 			out.println("<td><input type='text' value='"+rs.getString("incident_owner")+"' name='incident_owner' ></td>");
@@ -62,6 +105,7 @@ function validateIncident()
 			out.println("<td colspan='14'><input type='submit' value='update'></td>");
 			out.println("</tr>");
 			out.println("</table>");
+			out.println("<input type='hidden' id='hidden' name='hidden'>");
 			out.println("</form>");
 		}
 	}

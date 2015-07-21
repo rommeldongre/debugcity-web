@@ -103,10 +103,7 @@ public class SubmitBug extends HttpServlet {
 					prep.setString(1, lat);
 					prep.setString(2, lng);
 					prep.setString(3, cat);
-					//if(inputstream!=null)
-					{
-						prep.setString(4, pic);
-					}
+					prep.setString(4, pic);
 					prep.setString(5, locality);
 					prep.setString(6, submitter);
 					prep.setString(7, owner);
@@ -122,7 +119,6 @@ public class SubmitBug extends HttpServlet {
 				    	con.close();
 					dbconn=new DataBaseConn();
 					con = dbconn.setConnection ();
-					//System.out.println("connected");
 					stmt=(Statement) con.createStatement();
 					String query = "select * from incident";
 					rs=dbconn.getResult(query, con);
@@ -144,7 +140,6 @@ public class SubmitBug extends HttpServlet {
 			
 			catch(Exception e)
 			{
-				//e.printStackTrace();
 				String bId = null;
 				int returnCode = 1048;
 				JSONObject ResponseObj=new JSONObject();
@@ -230,10 +225,7 @@ public class SubmitBug extends HttpServlet {
 					prep.setString(1, lat);
 					prep.setString(2, lng);
 					prep.setString(3, cat);
-					//if(inputstream!=null)
-					{
-						prep.setString(4, pic);
-					}
+					prep.setString(4, pic);
 					prep.setString(5, locality);
 					prep.setString(6, submitter);
 					prep.setString(7, owner);
@@ -249,7 +241,6 @@ public class SubmitBug extends HttpServlet {
 				    	con.close();
 					dbconn=new DataBaseConn();
 					con = dbconn.setConnection ();
-					//System.out.println("connected");
 					stmt=(Statement) con.createStatement();
 					String query = "select * from incident";
 					rs=dbconn.getResult(query, con);
@@ -271,7 +262,6 @@ public class SubmitBug extends HttpServlet {
 			
 			catch(Exception e)
 			{
-				//e.printStackTrace();
 				String bId = null;
 				int returnCode = 1048;
 				JSONObject ResponseObj=new JSONObject();

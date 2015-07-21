@@ -1,7 +1,6 @@
 package admin;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,8 +15,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
-
 import util.DataBaseConn;
 
 import com.mysql.jdbc.Statement;
@@ -103,12 +100,8 @@ public class UpdateIncident extends HttpServlet {
 					timestamp_closed=new Timestamp(date_closed.getTime());
 				}
 				
-				InputStream inputstream=null;
-				Part filepart=request.getPart("incident_picture");
-				if (filepart != null)
-				{  
-			            inputstream = filepart.getInputStream();
-			    } 
+						String pic=request.getParameter("hidden");
+						
 						dbconn=new DataBaseConn();
 						con = dbconn.setConnection ();	  
 						String sql = "update incident set incident_lat=?, incident_long=?, incident_category=?, incident_picture=?, incident_locality=?, incident_submitter=?, incident_owner=?, incident_state=?, incident_date_created=?, incident_date_closed=?, incident_severity=?, incident_notes=?, incident_votes=? where incident_id=?" ; 
@@ -116,10 +109,7 @@ public class UpdateIncident extends HttpServlet {
 						prep.setString(1, incident_lat);
 						prep.setString(2, incident_long);
 						prep.setString(3, incident_category);
-						if(inputstream!=null)
-						{
-							prep.setBlob(4, inputstream);
-						}
+						prep.setString(4, pic);
 						prep.setString(5, incident_locality);
 						prep.setString(6, incident_submitter);
 						prep.setString(7, incident_owner);

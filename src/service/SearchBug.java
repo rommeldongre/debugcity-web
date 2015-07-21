@@ -52,84 +52,61 @@ public class SearchBug extends HttpServlet {
 			try
 			{
 					int token=Integer.parseInt(searchbugreq.getToken());
+					int id=Integer.parseInt(searchbugreq.getId());
 					String locality=searchbugreq.getLocality();
 					String lat=searchbugreq.getLat();
 					String lng=searchbugreq.getLng();
 					String cat=searchbugreq.getCat();
 					int max=0,flag=0;
-					int returntoken=token;
-					
-					//System.out.println(lat);
-					//System.out.println(lng);
-					//System.out.println(cat);
-					//System.out.println(locality);
-					
-					query="select * from incident";
-					
-					if(!lat.equals(""))
-					{
-						//System.out.println("1");
-						query=query+" where incident_lat='"+lat+"' ";
-						flag=1;
-					}
-					
-					if(!lng.equals(""))
-					{
-						//System.out.println("2");
-						if(flag==0)
-						{
-							query=query+" where incident_long='"+lng+"' ";
-							flag=1;
-						}
-						else
-							query=query+" and incident_long='"+lng+"' ";
-					}
-					
-					if(!cat.equals(""))
-					{
-						//System.out.println("3");if(flag==0)
-						if(flag==0)
-						{
-							query=query+" where incident_category='"+cat+"' ";
-							flag=1;
-						}
-						else
-							query=query+" and incident_category='"+cat+"' ";
-					}
-					
-					if(!locality.equals(""))
-					{
-						//System.out.println("4");if(flag==0)
-						if(flag==0)
-						{
-							query=query+" where incident_locality='"+locality+"' ";
-							flag=1;
-						}
-						else
-							query=query+" and incident_locality='"+locality+"' ";
-					}
-					
-					//System.out.println(query);
-					
+
 					dbconn=new DataBaseConn();
 					con = dbconn.setConnection ();
 					stmt=(Statement) con.createStatement();
 					
-					/*if(token==0)
-					{
-						
-						query="select * from incident";
-						rs=dbconn.getResult(query, con);
-						while(rs.next())
-						{
-							token=rs.getInt("incident_id");
-							//locality=rs.getString("incident_locality");
-							rs.close();
-							break;
-						}
-						
-					}*/
 					
+				if(id==0)
+				{
+							query="select * from incident";
+						
+							if(!lat.equals(""))
+							{
+								query=query+" where incident_lat='"+lat+"' ";
+								flag=1;
+							}
+							
+							if(!lng.equals(""))
+							{
+								if(flag==0)
+								{
+									query=query+" where incident_long='"+lng+"' ";
+									flag=1;
+								}
+								else
+									query=query+" and incident_long='"+lng+"' ";
+							}
+									
+							if(!cat.equals(""))
+							{
+								if(flag==0)
+								{
+									query=query+" where incident_category='"+cat+"' ";
+									flag=1;
+								}
+								else
+									query=query+" and incident_category='"+cat+"' ";
+							}
+									
+							if(!locality.equals(""))
+							{
+								if(flag==0)
+								{
+									query=query+" where incident_locality='"+locality+"' ";
+									flag=1;
+								}
+								else
+									query=query+" and incident_locality='"+locality+"' ";
+							}
+							
 					String mquery = "select * from incident";
 					rs=dbconn.getResult(mquery, con);
 					while(rs.next())
@@ -138,15 +115,14 @@ public class SearchBug extends HttpServlet {
 					}
 					rs.close();
 				
-					//String query = "select * from incident where incident_locality='"+locality+"' and incident_lat='"+lat+"' and incident_long='"+lng+"' ";
-					
-					//query="select * from incident where incident_id ="+token+"";
-					
 					query=query+" and incident_id between "+(token)+" and "+max+"";
-					
+				
 					if(flag==0)
 						query="select * from incident where incident_id between "+token+" and "+max+" ";
-						
+			}		
+			else
+					query="select * from incident where incident_id='"+id+"'";
+				
 					rs=dbconn.getResult(query, con);
 					int rid = 0;
 					String rlat = null;
@@ -182,6 +158,7 @@ public class SearchBug extends HttpServlet {
 						break;
 					}
 					
+					int returntoken=0;
 					if(token > max)
 						returntoken=0;
 					else
@@ -221,8 +198,6 @@ public class SearchBug extends HttpServlet {
 			
 			catch(Exception e)
 			{
-				//e.printStackTrace();
-				//String bId = null;
 				int returnCode = 1048;
 				JSONObject ResponseObj=new JSONObject();
 				try {
@@ -248,6 +223,7 @@ public class SearchBug extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 	
+		
 		ObjectMapper objectmapper = new ObjectMapper();
 		SearchBugReq searchbugreq = objectmapper.readValue(request.getInputStream(), SearchBugReq.class);
 		response.setContentType("application/json; charset=UTF-8");
@@ -256,84 +232,61 @@ public class SearchBug extends HttpServlet {
 			try
 			{
 					int token=Integer.parseInt(searchbugreq.getToken());
+					int id=Integer.parseInt(searchbugreq.getId());
 					String locality=searchbugreq.getLocality();
 					String lat=searchbugreq.getLat();
 					String lng=searchbugreq.getLng();
 					String cat=searchbugreq.getCat();
 					int max=0,flag=0;
-					int returntoken=token;
-					
-					//System.out.println(lat);
-					//System.out.println(lng);
-					//System.out.println(cat);
-					//System.out.println(locality);
-					
-					query="select * from incident";
-					
-					if(!lat.equals(""))
-					{
-						//System.out.println("1");
-						query=query+" where incident_lat='"+lat+"' ";
-						flag=1;
-					}
-					
-					if(!lng.equals(""))
-					{
-						//System.out.println("2");
-						if(flag==0)
-						{
-							query=query+" where incident_long='"+lng+"' ";
-							flag=1;
-						}
-						else
-							query=query+" and incident_long='"+lng+"' ";
-					}
-					
-					if(!cat.equals(""))
-					{
-						//System.out.println("3");if(flag==0)
-						if(flag==0)
-						{
-							query=query+" where incident_category='"+cat+"' ";
-							flag=1;
-						}
-						else
-							query=query+" and incident_category='"+cat+"' ";
-					}
-					
-					if(!locality.equals(""))
-					{
-						//System.out.println("4");if(flag==0)
-						if(flag==0)
-						{
-							query=query+" where incident_locality='"+locality+"' ";
-							flag=1;
-						}
-						else
-							query=query+" and incident_locality='"+locality+"' ";
-					}
-					
-					//System.out.println(query);
-					
+
 					dbconn=new DataBaseConn();
 					con = dbconn.setConnection ();
 					stmt=(Statement) con.createStatement();
 					
-					/*if(token==0)
-					{
-						
-						query="select * from incident";
-						rs=dbconn.getResult(query, con);
-						while(rs.next())
-						{
-							token=rs.getInt("incident_id");
-							//locality=rs.getString("incident_locality");
-							rs.close();
-							break;
-						}
-						
-					}*/
 					
+				if(id==0)
+				{
+							query="select * from incident";
+						
+							if(!lat.equals(""))
+							{
+								query=query+" where incident_lat='"+lat+"' ";
+								flag=1;
+							}
+							
+							if(!lng.equals(""))
+							{
+								if(flag==0)
+								{
+									query=query+" where incident_long='"+lng+"' ";
+									flag=1;
+								}
+								else
+									query=query+" and incident_long='"+lng+"' ";
+							}
+									
+							if(!cat.equals(""))
+							{
+								if(flag==0)
+								{
+									query=query+" where incident_category='"+cat+"' ";
+									flag=1;
+								}
+								else
+									query=query+" and incident_category='"+cat+"' ";
+							}
+									
+							if(!locality.equals(""))
+							{
+								if(flag==0)
+								{
+									query=query+" where incident_locality='"+locality+"' ";
+									flag=1;
+								}
+								else
+									query=query+" and incident_locality='"+locality+"' ";
+							}
+							
 					String mquery = "select * from incident";
 					rs=dbconn.getResult(mquery, con);
 					while(rs.next())
@@ -342,15 +295,14 @@ public class SearchBug extends HttpServlet {
 					}
 					rs.close();
 				
-					//String query = "select * from incident where incident_locality='"+locality+"' and incident_lat='"+lat+"' and incident_long='"+lng+"' ";
-					
-					//query="select * from incident where incident_id ="+token+"";
-					
 					query=query+" and incident_id between "+(token)+" and "+max+"";
-					
+				
 					if(flag==0)
 						query="select * from incident where incident_id between "+token+" and "+max+" ";
-						
+			}		
+			else
+					query="select * from incident where incident_id='"+id+"'";
+				
 					rs=dbconn.getResult(query, con);
 					int rid = 0;
 					String rlat = null;
@@ -386,6 +338,7 @@ public class SearchBug extends HttpServlet {
 						break;
 					}
 					
+					int returntoken=0;
 					if(token > max)
 						returntoken=0;
 					else
@@ -425,8 +378,6 @@ public class SearchBug extends HttpServlet {
 			
 			catch(Exception e)
 			{
-				//e.printStackTrace();
-				//String bId = null;
 				int returnCode = 1048;
 				JSONObject ResponseObj=new JSONObject();
 				try {

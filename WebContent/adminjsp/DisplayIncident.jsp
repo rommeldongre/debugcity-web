@@ -11,44 +11,49 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Dispaly Incident</title>
+<script type="text/javascript" src="../js/jquery-1.7.min.js"></script>
 <script type="text/javascript">
-/*function validateIncident()
-{
-	if(document.saveincident.incident_id.value == "")
-	{
-		alert("plz fill the incident_id");
-		document.saveincident.incident_id.focus();
-		return false;
-	}
-	
+canvasCtx = null;
+imageFile = null;
+url = null;
+flag=0;
 
-	return true;
+window.onload = function () {
+	canvasCtx = document.getElementById("panel").getContext("2d");
+	document.getElementById("pic").onchange = function(event) {
+		
+		flag=1;
+		
+		this.imageFile = event.target.files[0];
+		
+		var reader = new FileReader();
+		reader.onload =  function(event) {
+			var img = new Image();
+			img.onload = function() {
+				drawImage(img);
+			}
+			img.src = event.target.result;
+		}
+		reader.readAsDataURL(this.imageFile);
+	}
+
+	drawImage = function(img) {
+		this.canvasCtx.canvas.width = img.width;
+		this.canvasCtx.canvas.height = img.height;
+		this.canvasCtx.drawImage(img,0,0);
+		url = canvasCtx.canvas.toDataURL("image/png");
+		//console.log(url);
+		flag=1;
+		setURL(url,flag);
+	}
+}
+
+function setURL(url,flag)
+{
+	flag=flag;
+	document.getElementById("hidden").value= url;
 	
 }
-function loadXMLDoc()
-{
-var xmlhttp;
-var k=document.getElementById("incident_id").value;
-var urls="../adminjsp/checkincidentid.jsp?ver="+k;
-
-if (window.XMLHttpRequest)
- {
- xmlhttp=new XMLHttpRequest();
- }
-else
- {
- xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
- }
-xmlhttp.onreadystatechange=function()
- {
- if (xmlhttp.readyState==4)
-   {
-       document.getElementById("err").innerHTML=xmlhttp.responseText;
-    }
- }
-xmlhttp.open("GET",urls,true);
-xmlhttp.send();
-}*/
 </script>
 </head>
 <body>
@@ -81,7 +86,7 @@ xmlhttp.send();
 			<td align="center"><%=itr.next()%></td>
 			<td align="center"><%=itr.next()%></td>
 			<td align="center"><%=itr.next()%></td>
-			<td align="center"><%=itr.next()%></td>
+			<td align="center"><img src="<%=itr.next()%>" height="40" width="100"></td>
 			<td align="center"><%=itr.next()%></td>
 			<td align="center"><%=itr.next()%></td>
 			<td align="center"><%=itr.next()%></td>
@@ -118,7 +123,7 @@ xmlhttp.send();
 			</tr>
 			<tr>
 				<td>incident_picture</td>
-				<td><input type="file" name="incident_picture"  ></td>
+				<td><input type="file" id="pic" name="incident_picture"  ><canvas id="panel"></canvas></td>
 			</tr>
 			<tr>
 				<td>incident_locality</td>
@@ -157,7 +162,7 @@ xmlhttp.send();
 				<td><input type="text" placeholder="enter the number" name="incident_votes"></td>
 			</tr>			
    		<tr><td colspan="2"><input type="submit" value="Insert"></td></tr>
-		
+		<input type="hidden" id="hidden" name="hidden">
    </table>
    </form>
 </body>

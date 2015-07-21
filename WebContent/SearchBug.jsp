@@ -9,38 +9,34 @@
 <script type="text/javascript">
 function SearchBug()
 {
-	var retok=document.getElementById("returntoken").value;
-	var token=document.getElementById("token").value;
-	//var id=document.getElementById("id").value;
+	var id=document.getElementById("id").value;
 	var lat=document.getElementById("lat").value;
 	var lng=document.getElementById("lng").value;
 	var cat=document.getElementById("cat").value;
 	var locality=document.getElementById("locality").value;
+	var token=document.getElementById("token").value;
 	
-	if(document.getElementById("token").value=="" && document.getElementById("returntoken").value=="")
-	{
-		token=0;
-	}
-	else if(document.getElementById("returntoken").value=="" && document.getElementById("token").value!="")
-	{
-		token=token;
-	}
+	if(document.getElementById("id").value=="")
+		id=0;
 	else
-	{
-		token=retok;
-	}
+		id=id;
+	
+	if(document.getElementById("token").value=="")
+		token=0;
+	else
+		token=token;
 	
 	xmlhttp=new XMLHttpRequest();
 	var url = "service/SearchBug";
 	
 	var SearchBugData=new Object();
 		
-	SearchBugData["token"]=token;
-	//SearchBugData["id"]=id;
+	SearchBugData["id"]=id;
 	SearchBugData["lat"]=lat;
 	SearchBugData["lng"]=lng;
 	SearchBugData["cat"]=cat;
 	SearchBugData["locality"]=locality;
+	SearchBugData["token"]=token;
 	
 	xmlhttp.onreadystatechange=function() {
 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -52,7 +48,7 @@ function SearchBug()
 				
 				if(json.returnCode==0)
 				{
-					document.getElementById("id").value=json.id;
+					//document.getElementById("id").value=json.id;
 					document.getElementById("lat").value=json.slat;
 					document.getElementById("lng").value=json.slng;
 					document.getElementById("cat").value=json.scat;
@@ -62,7 +58,7 @@ function SearchBug()
 					document.getElementById("rlat").value=json.lat;
 					document.getElementById("rlng").value=json.lng;
 					document.getElementById("rcat").value=json.cat;
-					document.getElementById("rpic").value=json.pic;
+					document.getElementById("rpic").src=json.pic;
 					document.getElementById("rlocality").value=json.locality;
 					document.getElementById("rsubmitter").value=json.submitter;
 					document.getElementById("rowner").value=json.owner;
@@ -75,8 +71,11 @@ function SearchBug()
 					
 				}
 				
-				document.getElementById("returntoken").value=json.returnToken;
-				
+				if(document.getElementById("id").value!="")
+					document.getElementById("returntoken").value="";
+				else
+					document.getElementById("returntoken").value=json.returnToken;
+					
 				if(json.returnCode!=0)
 				{
 					document.getElementById("errorstring").value=json.errorString;		
@@ -193,7 +192,7 @@ function SearchBug()
 			</tr>
 			<tr>
 				<td>Pic</td>
-				<td><input type="text" id="rpic" name="rpic"></td>
+				<td><img id="rpic" name="rpic" height="40" width="100"></td>
 			</tr>
 			<tr>
 				<td>Locality</td>
