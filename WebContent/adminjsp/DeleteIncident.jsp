@@ -41,7 +41,7 @@ function validateIncident()
 				out.println("<table border='2' color='#333'>");
 				out.println("<tr>");
 				out.println("<td><input type='text' value='"+rs.getString("incident_id")+"' name='incident_id' readonly='readonly' /></td>");
-				out.println("<td>"+rs.getString("incident_id")+"</td>");
+				//out.println("<td>"+rs.getString("incident_id")+"</td>");
 				out.println("<td>"+rs.getString("incident_lat")+"</td>");
 				out.println("<td>"+rs.getString("incident_long")+"</td>");
 				out.println("<td>"+rs.getString("incident_category")+"</td>");

@@ -135,7 +135,9 @@
           	  var bounds = new google.maps.LatLngBounds();
       		  for(var i = 0; i < markers1.length; i++ ) {
                   // Create a marker for each place.
-			     var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			    if(markers1[i][0]!=0)
+			    	{
+                  var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
 			     bounds.extend(position);
                   var marker = new google.maps.Marker({
 			        map: map,
@@ -143,7 +145,7 @@
 			        position: position
 			      });
                   bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr></table>");  
-                  //map.fitBounds(bounds);
+			    	}  //map.fitBounds(bounds);
       	    }
 
       	    // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
