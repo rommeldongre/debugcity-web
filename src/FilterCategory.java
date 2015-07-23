@@ -41,6 +41,20 @@ public class FilterCategory extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+   	
+   	public static boolean isNumeric(String str)  
+   	{  
+   	  try  
+   	  {  
+   	    double d = Double.parseDouble(str);  
+   	  }  
+   	  catch(NumberFormatException nfe)  
+   	  {  
+   	    return false;  
+   	  }  
+   	  return true;  
+   	}
+   	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
@@ -51,14 +65,29 @@ public class FilterCategory extends HttpServlet {
 		try{
 			
 		String category=filtercatreq.getCategory();
-		String query=null;
 		
 		dbconn=new DataBaseConn();
 		con = dbconn.setConnection ();
 		//System.out.println("connected");
 		stmt=(Statement) con.createStatement();
+		int i=0,flag=0;
+		String query=null;
+		query = "select * from incident";
 		if(!category.equals(""))
-			query = "select * from incident where incident_category='"+category+"'";
+		{	
+			category=category.substring(0,category.length()-1);
+			String[] parts = category.split(" ");
+			for(i=0;i<parts.length;i++)
+			{
+				if(flag==0)
+				{	
+					query = query+" where incident_category='"+parts[i]+"'";
+					flag=1;
+				}
+				else
+					query=query+" OR incident_category='"+parts[i]+"'";
+			}	
+		}
 		else
 			query = "select * from incident";
 		
@@ -76,25 +105,37 @@ public class FilterCategory extends HttpServlet {
 		count=0;
 		while(rs.next())
 		{
-			arr1[count][0]=rs.getInt("incident_id");
-			arr1[count][1]=Float.parseFloat(rs.getString("incident_lat"));
-			arr1[count][2]=Float.parseFloat(rs.getString("incident_long"));
-			arr1[count][3]=rs.getInt("incident_severity");
-			arr1[count][4]=rs.getInt("incident_votes");
-			
-			
-			
-			arr2[count][0]=rs.getString("incident_category");
-			arr2[count][1]=rs.getString("incident_picture");
-			arr2[count][2]=rs.getString("incident_locality");
-			arr2[count][3]=rs.getString("incident_submitter");
-			arr2[count][4]=rs.getString("incident_owner");
-			arr2[count][5]=rs.getString("incident_state");
-			arr2[count][6]=rs.getString("incident_date_created");
-			arr2[count][7]=rs.getString("incident_date_closed");
-			arr2[count][8]=rs.getString("incident_notes");
-			
-			count++;		
+			if(isNumeric(rs.getString("incident_lat")) && isNumeric(rs.getString("incident_long")))
+			{
+				if((!rs.getString("incident_lat").equals("")))
+				{
+					if((!rs.getString("incident_long").equals("")))
+					{	
+						if(Float.parseFloat(rs.getString("incident_lat")) > -85 && Float.parseFloat(rs.getString("incident_lat")) < 85 && Float.parseFloat(rs.getString("incident_long")) > -180 && Float.parseFloat(rs.getString("incident_long")) < 180)
+						{
+							arr1[count][0]=rs.getInt("incident_id");
+							arr1[count][1]=Float.parseFloat(rs.getString("incident_lat"));
+							arr1[count][2]=Float.parseFloat(rs.getString("incident_long"));
+							arr1[count][3]=rs.getInt("incident_severity");
+							arr1[count][4]=rs.getInt("incident_votes");
+							
+							
+							
+							arr2[count][0]=rs.getString("incident_category");
+							arr2[count][1]=rs.getString("incident_picture");
+							arr2[count][2]=rs.getString("incident_locality");
+							arr2[count][3]=rs.getString("incident_submitter");
+							arr2[count][4]=rs.getString("incident_owner");
+							arr2[count][5]=rs.getString("incident_state");
+							arr2[count][6]=rs.getString("incident_date_created");
+							arr2[count][7]=rs.getString("incident_date_closed");
+							arr2[count][8]=rs.getString("incident_notes");
+							
+							count++;
+						}
+					}
+				}
+			}	
 		}
 		if(con!=null)
 			con.close();
@@ -102,6 +143,7 @@ public class FilterCategory extends HttpServlet {
 		try {
 			ResponseObj.put("arr1",arr1);	
 			ResponseObj.put("arr2",arr2);	
+			//System.out.println(arr[1]);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -130,14 +172,30 @@ public class FilterCategory extends HttpServlet {
 		try{
 			
 		String category=filtercatreq.getCategory();
+		category=category.substring(0,category.length()-1);
 		String query=null;
+		
+		String[] parts = category.split(" ");
 		
 		dbconn=new DataBaseConn();
 		con = dbconn.setConnection ();
 		//System.out.println("connected");
 		stmt=(Statement) con.createStatement();
+		int i=0,flag=0;
+		query = "select * from incident";
 		if(!category.equals(""))
-			query = "select * from incident where incident_category='"+category+"'";
+		{	
+			for(i=0;i<parts.length;i++)
+			{
+				if(flag==0)
+				{	
+					query = query+" where incident_category='"+parts[i]+"'";
+					flag=1;
+				}
+				else
+					query=query+" OR incident_category='"+parts[i]+"'";
+			}	
+		}
 		else
 			query = "select * from incident";
 		
@@ -155,25 +213,37 @@ public class FilterCategory extends HttpServlet {
 		count=0;
 		while(rs.next())
 		{
-			arr1[count][0]=rs.getInt("incident_id");
-			arr1[count][1]=Float.parseFloat(rs.getString("incident_lat"));
-			arr1[count][2]=Float.parseFloat(rs.getString("incident_long"));
-			arr1[count][3]=rs.getInt("incident_severity");
-			arr1[count][4]=rs.getInt("incident_votes");
-			
-			
-			
-			arr2[count][0]=rs.getString("incident_category");
-			arr2[count][1]=rs.getString("incident_picture");
-			arr2[count][2]=rs.getString("incident_locality");
-			arr2[count][3]=rs.getString("incident_submitter");
-			arr2[count][4]=rs.getString("incident_owner");
-			arr2[count][5]=rs.getString("incident_state");
-			arr2[count][6]=rs.getString("incident_date_created");
-			arr2[count][7]=rs.getString("incident_date_closed");
-			arr2[count][8]=rs.getString("incident_notes");
-			
-			count++;		
+			if(isNumeric(rs.getString("incident_lat")) && isNumeric(rs.getString("incident_long")))
+			{
+				if((!rs.getString("incident_lat").equals("")))
+				{
+					if((!rs.getString("incident_long").equals("")))
+					{	
+						if(Float.parseFloat(rs.getString("incident_lat")) > -85 && Float.parseFloat(rs.getString("incident_lat")) < 85 && Float.parseFloat(rs.getString("incident_long")) > -180 && Float.parseFloat(rs.getString("incident_long")) < 180)
+						{
+							arr1[count][0]=rs.getInt("incident_id");
+							arr1[count][1]=Float.parseFloat(rs.getString("incident_lat"));
+							arr1[count][2]=Float.parseFloat(rs.getString("incident_long"));
+							arr1[count][3]=rs.getInt("incident_severity");
+							arr1[count][4]=rs.getInt("incident_votes");
+							
+							
+							
+							arr2[count][0]=rs.getString("incident_category");
+							arr2[count][1]=rs.getString("incident_picture");
+							arr2[count][2]=rs.getString("incident_locality");
+							arr2[count][3]=rs.getString("incident_submitter");
+							arr2[count][4]=rs.getString("incident_owner");
+							arr2[count][5]=rs.getString("incident_state");
+							arr2[count][6]=rs.getString("incident_date_created");
+							arr2[count][7]=rs.getString("incident_date_closed");
+							arr2[count][8]=rs.getString("incident_notes");
+							
+							count++;
+						}
+					}
+				}
+			}	
 		}
 		if(con!=null)
 			con.close();
@@ -181,6 +251,7 @@ public class FilterCategory extends HttpServlet {
 		try {
 			ResponseObj.put("arr1",arr1);	
 			ResponseObj.put("arr2",arr2);	
+			//System.out.println(arr[1]);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -195,6 +266,7 @@ public class FilterCategory extends HttpServlet {
 		{
 			e.printStackTrace();
 		}
+		
 	}	
 
 }
