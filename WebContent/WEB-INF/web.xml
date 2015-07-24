@@ -164,4 +164,12 @@
     <servlet-name>GetCategories</servlet-name>
     <url-pattern>/service/GetCategories</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>GetSpider</servlet-name>
+    <servlet-class>GetSpider</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetSpider</servlet-name>
+    <url-pattern>/GetSpider</url-pattern>
+  </servlet-mapping>
 </web-app>

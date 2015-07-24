@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Radar Chart</title>
+		<script src="js/Chart.js"></script>
+		<meta name = "viewport" content = "initial-scale = 1, user-scalable = no">
+		<style>
+			canvas{
+			}
+		</style>
+		<script type="text/javascript">
+	xmlhttp=new XMLHttpRequest();
+	var url = "GetSpider";
+	
+	xmlhttp.onreadystatechange=function() {
+	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				//alert(xmlhttp.responseText);
+				var json = JSON.parse(xmlhttp.responseText);
+				spider=json.spider;
+				//alert(spider);
+				getChart();
+		}
+	}
+			
+	xmlhttp.open("POST", url, true);
+	xmlhttp.responseType = 'JSON';
+	xmlhttp.send();
+</script>
+<script>
+function getChart()
+{
+	var radarChartData = {
+		labels: ["Garbage", "Noise", "Queues", "Spitting", "Traffic"],
+		datasets: [
+			{
+				label: "Ideal",
+				fillColor: "rgba(193,250,157,0.2)",
+				strokeColor: "rgba(193,250,157,1)",
+				pointColor: "rgba(193,250,157,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(193,250,157,1)",
+				data: [spider[0].garbage,spider[0].noise,spider[0].queues,spider[0].spitting,spider[0].traffic]
+			},
+			{
+				label: "Unknown",
+				fillColor: "rgba(250,170,219,0.2)",
+				strokeColor: "rgba(250,170,219,1)",
+				pointColor: "rgba(250,170,219,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(250,170,219,1)",
+				data: [spider[1].garbage,spider[1].noise,spider[1].queues,spider[1].spitting,spider[1].traffic]
+			}
+		]
+	};
+	window.myRadar = new Chart(document.getElementById("canvas").getContext("2d")).Radar(radarChartData, {
+	responsive: true});
+}	
+	</script>
+		
+	</head>
+	<body style="background:"><center>
+		<div style="width:30%;margin-top:50px;">
+			<canvas id="canvas" height="450" width="450"></canvas><div style="margin-top:-400px;margin-left:500px;"><div style="width:10px;height:10px;background:rgba(193,250,157,1);"></div><div style="margin-left:15px; margin-top:-15px;">Ideal</div><div style="width:10px;height:10px;background:rgba(250,170,219,1); margin-top:10px;"></div><div style="margin-left:15px; margin-top:-15px;">Unknown</div></div>
+		</div>
+</center>
+
+</body>
+</html>

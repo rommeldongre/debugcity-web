@@ -79,6 +79,8 @@ function submitBug()
 	
 	if(document.getElementById("locality").value!="")
 		subBugData["locality"]=locality;
+	else
+		subBugData["locality"]="Unknown";
 	
 	if(document.getElementById("submitter").value!="");
 		subBugData["submitter"]=submitter;
