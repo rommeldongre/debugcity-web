@@ -65,7 +65,7 @@ public class FilterCategory extends HttpServlet {
 		try{
 			
 		String category=filtercatreq.getCategory();
-		
+		//System.out.println(category);
 		dbconn=new DataBaseConn();
 		con = dbconn.setConnection ();
 		//System.out.println("connected");
@@ -139,11 +139,23 @@ public class FilterCategory extends HttpServlet {
 		}
 		if(con!=null)
 			con.close();
+		
+		String[] parts = category.split(" ");
+		category="";
+		for(i=0;i<parts.length;i++)
+		{
+			category=category+parts[i]+", ";
+		}
+		category=category.substring(0,category.length()-2);	
+		int no=arr1.length;
+		//System.out.println(no);
+		
 		JSONObject ResponseObj=new JSONObject();
 		try {
 			ResponseObj.put("arr1",arr1);	
 			ResponseObj.put("arr2",arr2);	
-			//System.out.println(arr[1]);
+			ResponseObj.put("category",category);	
+			ResponseObj.put("no",no);			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -172,19 +184,18 @@ public class FilterCategory extends HttpServlet {
 		try{
 			
 		String category=filtercatreq.getCategory();
-		category=category.substring(0,category.length()-1);
-		String query=null;
-		
-		String[] parts = category.split(" ");
-		
+		//System.out.println(category);
 		dbconn=new DataBaseConn();
 		con = dbconn.setConnection ();
 		//System.out.println("connected");
 		stmt=(Statement) con.createStatement();
 		int i=0,flag=0;
+		String query=null;
 		query = "select * from incident";
 		if(!category.equals(""))
 		{	
+			category=category.substring(0,category.length()-1);
+			String[] parts = category.split(" ");
 			for(i=0;i<parts.length;i++)
 			{
 				if(flag==0)
@@ -247,11 +258,23 @@ public class FilterCategory extends HttpServlet {
 		}
 		if(con!=null)
 			con.close();
+		
+		String[] parts = category.split(" ");
+		category="";
+		for(i=0;i<parts.length;i++)
+		{
+			category=category+parts[i]+", ";
+		}
+		category=category.substring(0,category.length()-2);	
+		int no=arr1.length;
+		//System.out.println(no);
+		
 		JSONObject ResponseObj=new JSONObject();
 		try {
 			ResponseObj.put("arr1",arr1);	
 			ResponseObj.put("arr2",arr2);	
-			//System.out.println(arr[1]);
+			ResponseObj.put("category",category);	
+			ResponseObj.put("no",no);			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -266,7 +289,6 @@ public class FilterCategory extends HttpServlet {
 		{
 			e.printStackTrace();
 		}
-		
 	}	
 
 }
