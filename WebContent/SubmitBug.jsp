@@ -6,6 +6,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>SubmitBug</title>
 <script type="text/javascript" src="js/jquery-1.7.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
+
 <script type="text/javascript">
 
 canvasCtx = null;
@@ -49,12 +51,12 @@ function setURL(url,flag)
 	pic= url;
 }
 
-function submitBug()
+function submitBug(loc)
 {
 	var lat=document.getElementById("lat").value;
 	var lng=document.getElementById("lng").value;
 	var cat=document.getElementById("cat").value;
-	var locality=document.getElementById("locality").value;
+	var locality=loc;//document.getElementById("locality").value;
 	var submitter=document.getElementById("submitter").value;
 	var owner=document.getElementById("owner").value;
 	var state=document.getElementById("state").value;
@@ -70,18 +72,19 @@ function submitBug()
 	subBugData["lat"]=lat;
 	subBugData["lng"]=lng;
 	subBugData["cat"]=cat;
+	subBugData["locality"]=loc;
 	
 		
 	if(flag==1)
 		subBugData["pic"]=pic;
 	else
 		subBugData["pic"]="";
-	
+	/*
 	if(document.getElementById("locality").value!="")
 		subBugData["locality"]=locality;
 	else
 		subBugData["locality"]="Unknown";
-	
+	*/
 	if(document.getElementById("submitter").value!="");
 		subBugData["submitter"]=submitter;
 	
@@ -127,6 +130,52 @@ function submitBug()
 	xmlhttp.open("POST", url, true);
 	xmlhttp.responseType = 'JSON';
 	xmlhttp.send(JSON.stringify(subBugData));
+}
+
+function getLocation()
+{
+	if(document.getElementById("locality").value!="")
+	{
+		loc=document.getElementById("locality").value;
+		submitBug(loc);
+	}
+	else
+	{
+
+		lat=document.getElementById("lat").value;
+		lng=document.getElementById("lng").value;
+		var latlng = new google.maps.LatLng(document.getElementById("lat").value,document.getElementById("lng").value);
+		geocoder = new google.maps.Geocoder();
+		var flag=0;
+		var res=null;
+		    geocoder.geocode({'latLng': latlng}, function(results, status) {
+		        if (status == google.maps.GeocoderStatus.OK) {
+		            if (results[0]) {
+		                for (j = 0; j < results[0].address_components.length; j++) {
+		                    if (results[0].address_components[j].types[0] == 'postal_code')
+		                    {
+		                    	//alert("Zip Code: " + results[0].address_components[j].short_name);
+		                    	res=results[0].address_components[j].short_name;
+		                    	flag=1;
+		                    	break;
+		                    }
+		                }
+		                if(flag==1)
+		                {
+		                	submitBug(res);
+		               	}
+		                else
+			            {
+		                	var loc="Unknown";
+			          		submitBug(loc);
+			            }
+		            }
+		        } else {
+		            var loc="Unknown";
+		          	submitBug(loc);
+		        }
+		    });
+	}
 }
 
 </script>
@@ -190,7 +239,7 @@ function submitBug()
 		
 		<tr>
 			<td colspan="2"><input type="Button" name="submit" id="submit"
-				onclick="submitBug()" value="Get BugId"></td>
+				onclick="getLocation()" value="Get BugId"></td>
 		</tr>
 	</table>
 	<br/>
