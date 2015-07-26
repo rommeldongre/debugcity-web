@@ -32,8 +32,7 @@
       	width: 100%;
         margin: 0;
         padding: 0;
-        margin-top:15px;
-        position:relative;
+      	position:relative;
       }
 
       .controls {
@@ -60,24 +59,12 @@
       #pac-input:focus {
         border-color: #4d90fe;
       }
-
-	  #filtercategory {
-        background-color: #fff;
-        font-family: Roboto;
-        font-size: 15px;
-        font-weight: 300;
-        padding: 0 11px 0 13px;
-        text-overflow: ellipsis;
-      	width: 60px;
-      }
-
-      #filtercategory:focus {
-        border-color: #4d90fe;
-      }
+      
 </style>
 
 <script>
     
+    flag=0;
     
     xmlhttp=new XMLHttpRequest();
  	var url = "GetLatLng";
@@ -156,12 +143,14 @@
          	
             	
           	  var bounds = new google.maps.LatLngBounds();
+          	  var count=0;
       		  for(var i = 0; i < markers1.length; i++ ) {
                   // Create a marker for each place.
-			    if(markers1[i][0]!=0)
+                if(markers1[i][0]!=0)
 			    {
-			    	if(markers2[i][0]=="garbage" || markers2[i][0]=="Garbage")
-			    		
+                	
+			    	count=1;
+			    	if(markers2[i][0]=="garbage" || markers2[i][0]=="Garbage")			    		
 			    	{
                   		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
 			     		bounds.extend(position);
@@ -262,16 +251,25 @@
 			      		});
                   		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr></table>");  
 			    	}
-			    }	//map.fitBounds(bounds);
+			    }
+                
       	    }
-
-      	    // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+      		 // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
       	    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
-      	        this.setZoom(4);
+      	        this.setZoom(3);
       	        google.maps.event.removeListener(boundsListener);
       	    });
-      	    
-      	    
+      		
+      		if(flag==1 && count==1)
+      		{
+	      		map.fitBounds(bounds); 
+	       	    google.maps.event.addListener(map, 'bounds_changed', function() {
+				     var bounds = map.getBounds();
+				     map.setBounds(bounds);
+			    });
+	       	    flag=0;
+      		}
+      		
            	 var geocoder = new google.maps.Geocoder();
              var latLng = new google.maps.LatLng(latitude, longitude);
              geocoder.geocode( { 'latLng': latLng}, function(results, status) {
@@ -362,6 +360,10 @@ function bindInfoWindow(marker, map, infowindow, html) {
 function filterCat()
 {
 	var selectedValues = $('#multipleSelect').val();
+	
+	if(selectedValues!=null)
+		flag=1;
+	
 	var category=selectedValues;
     var url = "FilterCategory";
 	
@@ -406,28 +408,50 @@ function filterCat()
 
 </head>
 <body>
-<nav class="navbar navbar-inverse navbar-fixed-top">
+
+<div class="navbar navbar-inverse navbar-fixed-top">
 	<div class="container">
-		<div class="navbar-header">
+		<div class="navbar-header pull-left">
 			<a class="navbar-brand" href="#"><b>DebugCityV1</b></a>
-			<a class="navbar-brand" href="spider.html">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Spider Graph</a>
 		</div>
-		<div class="navbar-header">
-			<a class="navbar-brand" href="SubmitBug.jsp">Submit Bug</a>
-			<a class="navbar-brand" href="DebugCityv1.20150723.apk">Download App</a>
-			<a class="navbar-brand" href="admin.html">Admin</a>
-		</div>
-	</div>
-</nav>
+		<div class="navbar-header pull-right">
+			<ul class="nav navbar-nav pull-left">
+				<li><a class="" href="admin.html">Admin&nbsp;</a></li>
+			</ul>
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            	<span class="icon-bar"></span>
+            	<span class="icon-bar"></span>
+            	<span class="icon-bar"></span>
+          	</button>
+         </div>
+         <div class="navbar-collapse collapse">
+         	
+         	<div class="navbar-right">
+         		<ul class="nav navbar-nav">
+         			<li><a href="spider.html">Spider Graph</a></li> 
+         			<li><a href="SubmitBug.jsp">Submit Bug</a></li> 
+         			<li><a href="DebugCityv1.20150723.apk">Download App</a></li> 
+         		</ul>
+         	</div>
+        </div>
+   </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-body"><center>
+  	"Together we can fix our City"<br>"Report Problems. Take Ownership. Live Better."
+  </center></div>
+</div>
+
 <div class="container">
 <div id="map-canvas" ></div>
 </div>
 <div class="container">
-<div style="margin-top:0px; top:100px; position:absolute;">
+<div style="margin-top:0px; top:185px; position:absolute;">
 	<input id="pac-input"  class="controls" type="text" placeholder="Search Locations">
 </div>
 </div>	
-<div style="margin-left:1005px; top:100px; position:absolute;">
+<div style="margin-left:1007px; top:185px; position:absolute;">
 	<form name="form">
 	<div style="margin-left:-10px;">
 		<div style="margin-left:-30px;">
@@ -436,8 +460,8 @@ function filterCat()
    			</select>
    		</div>
    	</div>
-   	<div style="margin-top:-33px; margin-left:170px;">
-   		<input  type="button" id="filtercategory" class="controls" onclick="filterCat();" value="Filter">
+   	<div style="margin-top:-34px; margin-left:171px;">
+   		<input  type="button" id="filtercategory" class="btn btn-default" onclick="filterCat();" value="Filter">
    	</div>
   	</form> 
 </div>	

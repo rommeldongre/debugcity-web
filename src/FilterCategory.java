@@ -147,7 +147,13 @@ public class FilterCategory extends HttpServlet {
 			category=category+parts[i]+", ";
 		}
 		category=category.substring(0,category.length()-2);	
-		int no=arr1.length;
+		int no=0;//arr1.length;
+		
+		for(i=0;i<arr1.length;i++)
+		{
+			if(arr1[i][0]!=0)
+				no++;
+		}
 		//System.out.println(no);
 		
 		JSONObject ResponseObj=new JSONObject();
@@ -266,7 +272,13 @@ public class FilterCategory extends HttpServlet {
 			category=category+parts[i]+", ";
 		}
 		category=category.substring(0,category.length()-2);	
-		int no=arr1.length;
+		int no=0;//arr1.length;
+		
+		for(i=0;i<arr1.length;i++)
+		{
+			if(arr1[i][0]!=0)
+				no++;
+		}
 		//System.out.println(no);
 		
 		JSONObject ResponseObj=new JSONObject();
@@ -289,6 +301,7 @@ public class FilterCategory extends HttpServlet {
 		{
 			e.printStackTrace();
 		}
+		
 	}	
 
 }
