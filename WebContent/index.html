@@ -76,25 +76,25 @@
  	    		var json = JSON.parse(xmlhttp.responseText);
  				markers1=json.arr1;
  				markers2=json.arr2;
- 			}
+ 				 if (navigator.geolocation)
+ 			    {
+ 			        navigator.geolocation.getCurrentPosition(showCurrentLocation);
+ 			    }
+ 			    else
+ 			    {
+ 			       alert("Geolocation API not supported.");
+ 			    }
+ 	    }
  	}
  	
  	
  	xmlhttp.open("POST", url, true);
- 	xmlhttp.responseType = 'JSON';
+ 	xmlhttp.responseType ="JSON";
  	xmlhttp.send();	
  	
  	
     
-    if (navigator.geolocation)
-    {
-        navigator.geolocation.getCurrentPosition(showCurrentLocation);
-    }
-    else
-    {
-       alert("Geolocation API not supported.");
-    }
-
+   
     
     //xmlhttp=new XMLHttpRequest();
  	/*var url = "GetCategories";
@@ -446,7 +446,7 @@ function filterCat()
 	}
 			
 	xmlhttp.open("POST", url, true);
-	xmlhttp.responseType = 'JSON';
+	xmlhttp.responseType ="JSON";
 	xmlhttp.send(JSON.stringify(filterCatData));
 }
 
