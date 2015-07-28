@@ -76,7 +76,8 @@
  	    		var json = JSON.parse(xmlhttp.responseText);
  				markers1=json.arr1;
  				markers2=json.arr2;
- 				 if (navigator.geolocation)
+ 				flag=1;//for starting with zoom arround the incidents
+ 				if (navigator.geolocation)
  			    {
  			        navigator.geolocation.getCurrentPosition(showCurrentLocation);
  			    }
@@ -84,6 +85,10 @@
  			    {
  			       alert("Geolocation API not supported.");
  			    }
+ 				/*if (navigator.geolocation)
+ 			    {
+ 			        navigator.geolocation.getCurrentPosition(showStar);
+ 			    } */
  	    }
  	}
  	
@@ -92,28 +97,23 @@
  	xmlhttp.responseType ="JSON";
  	xmlhttp.send();	
  	
- 	
-    
-   
-    
-    //xmlhttp=new XMLHttpRequest();
- 	/*var url = "GetCategories";
- 	
- 	
- 
- 	xmlhttp.onreadystatechange=function() {
- 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
- 	    		var json = JSON.parse(xmlhttp.responseText);
- 				document.getElementByid("filtercategory").value=json.categories;
- 			}
+ 	/*function showStar()
+ 	{
+ 		var geocoder = new google.maps.Geocoder();
+        var lat = '';
+        var lng = '';
+        geocoder.geocode( { 'address': "208021"}, function(results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+             lat = results[0].geometry.location.lat();
+             lng = results[0].geometry.location.lng();
+             //alert('Latitude: ' + lat + ' Logitude: ' + lng); 
+          }
+          else {
+            alert("Geocode was not successful for the following reason: " + status);
+          }
+        });
  	}
- 	
- 	
- 	xmlhttp.open("POST", url, true);
- 	xmlhttp.responseType = 'JSON';
- 	xmlhttp.send();	
- 	*/
-    
+    */ 
     function showCurrentLocation(position)
     {
         var latitude = position.coords.latitude;
@@ -143,6 +143,7 @@
          	
             	
           	  var bounds = new google.maps.LatLngBounds();
+          	  bounds.extend(coords);
           	  var count=0;
       		  for(var i = 0; i < markers1.length; i++ ) {
                   // Create a marker for each place.
@@ -333,8 +334,7 @@
       	  	});  	
         	
             initialize(latitude, longitude);
-    }	       
-    
+    }	       	
     
 function initialize(lat, lng) {
 
@@ -410,7 +410,7 @@ function filterCat()
 {
 	var selectedValues = $('#multipleSelect').val();
 	
-	if(selectedValues!=null)
+	//if(selectedValues!=null)
 		flag=1;
 	
 	var category=selectedValues;
