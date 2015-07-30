@@ -50,7 +50,7 @@
         font-family: Roboto;
         font-size: 15px;
         font-weight: 300;
-        margin-left: 12px;
+        margin-left: 10px;
         padding: 0 11px 0 13px;
         text-overflow: ellipsis;
       	width: 280px;
@@ -64,56 +64,378 @@
 
 <script>
     
-    flag=0;
-    
+   // flag=0;
+   	var bounds = new google.maps.LatLngBounds(null);
+    var pos;
     xmlhttp=new XMLHttpRequest();
- 	var url = "GetLatLng";
+ 	var url = "FilterCategory";
+
+ 	var onloadData=new Object();
+ 	onloadData["category"]="";
  	
- 	
- 
  	xmlhttp.onreadystatechange=function() {
  	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
  	    		var json = JSON.parse(xmlhttp.responseText);
- 				markers1=json.arr1;
- 				markers2=json.arr2;
- 				flag=1;//for starting with zoom arround the incidents
+ 				uniloc=json.uniloc;
+ 				console.log(uniloc);
+ 				//flag=1;//for starting with zoom arround the incidents
  				if (navigator.geolocation)
- 			    {
- 			        navigator.geolocation.getCurrentPosition(showCurrentLocation);
- 			    }
- 			    else
- 			    {
- 			       alert("Geolocation API not supported.");
- 			    }
- 				/*if (navigator.geolocation)
- 			    {
- 			        navigator.geolocation.getCurrentPosition(showStar);
- 			    } */
+	 		    {
+	 			        navigator.geolocation.getCurrentPosition(showSpider);
+	 			}
  	    }
  	}
  	
  	
  	xmlhttp.open("POST", url, true);
  	xmlhttp.responseType ="JSON";
- 	xmlhttp.send();	
+ 	xmlhttp.send(JSON.stringify(onloadData));	
  	
- 	/*function showStar()
+ 	
+ 	function showSpiderCurrentLocation(position)
  	{
- 		var geocoder = new google.maps.Geocoder();
-        var lat = '';
-        var lng = '';
-        geocoder.geocode( { 'address': "208021"}, function(results, status) {
-          if (status == google.maps.GeocoderStatus.OK) {
-             lat = results[0].geometry.location.lat();
-             lng = results[0].geometry.location.lng();
-             //alert('Latitude: ' + lat + ' Logitude: ' + lng); 
-          }
-          else {
-            alert("Geocode was not successful for the following reason: " + status);
-          }
-        });
+ 		var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        var coords = new google.maps.LatLng(latitude, longitude);
+ 	  	var mapOptions = {
+             zoom: 17,
+             center: coords,
+             mapTypeControl: true,
+             mapTypeId: google.maps.MapTypeId.ROADMAP};
+     
+     		 map = new google.maps.Map(
+             document.getElementById('map-canvas'), mapOptions
+             );
+             //place the initial marker
+             var marker = new google.maps.Marker({
+             position: coords,
+             map: map,
+             title: "Current location!"
+             });
+             
+             var infowindow = new google.maps.InfoWindow({
+            	    content: ''
+            	  });
+            
+             bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
+         	
+            	
+          	 //var bounds = new google.maps.LatLngBounds();
+          	 bounds.extend(coords);
+          	 //var count=0;
+      		
+          	 
+          	var geocoder = new google.maps.Geocoder();
+            var lat = '';
+            var lng = '';
+            for(u=0;u<uniloc.length;u++)
+            {	
+            geocoder.geocode( { 'address': ''+uniloc[u]+', india'}, function(results, status) {
+              if (status == google.maps.GeocoderStatus.OK) {
+                 lat = results[0].geometry.location.lat();
+                 lng = results[0].geometry.location.lng();
+                 //alert('Latitude: ' + lat + ' Logitude: ' + lng); 
+           		 var position = new google.maps.LatLng(lat, lng);
+           		 bounds.extend(position);
+           		 var marker = new google.maps.Marker({
+            		 map: map,
+            		 icon: {
+                			url: 'http://maps.google.com/mapfiles/kml/pal4/icon47.png',
+            				size:new google.maps.Size(71, 71),
+            				origin:new google.maps.Point(0, 0),
+            				anchor:new google.maps.Point(17, 34),
+            				scaledSize:new google.maps.Size(37, 37)
+            		 },
+            		 title: "Star",
+            		 position: position
+          		 });
+         		 var spiderwindow = new google.maps.InfoWindow({
+             	    content: ''
+             	 });
+          		 bindSpiderWindow(marker, map, spiderwindow, "<b>Spider graph</b>");        
+              }
+              else {
+                alert("Geocode was not successful for the following reason: " + status);
+              }
+            });
+            } 
+            
+            //var bounds = new google.maps.LatLngBounds();
+        	  bounds.extend(coords);
+        	  var count=0;
+    		  for(var i = 0; i < markers1.length; i++ ) {
+                // Create a marker for each place.
+              if(markers1[i][0]!=0)
+			    {
+              	
+			    	count=1;
+			    	if(markers2[i][0]=="garbage" || markers2[i][0]=="Garbage")			    		
+			    	{
+                		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                		var marker = new google.maps.Marker({
+			        		map: map,
+			        		icon: {
+			            			url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+			        				size:new google.maps.Size(71, 71),
+			        				origin:new google.maps.Point(0, 0),
+			        				anchor:new google.maps.Point(17, 34),
+			        				scaledSize:new google.maps.Size(37, 37)
+			        		},
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr></table>");  
+			    	}
+			    	else if(markers2[i][0]=="noise" || markers2[i][0]=="Noise")
+			    	{
+                		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                		var marker = new google.maps.Marker({
+			        		map: map,
+			        		icon: {
+			            			url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+			        				size:new google.maps.Size(71, 71),
+			        				origin:new google.maps.Point(0, 0),
+			        				anchor:new google.maps.Point(17, 34),
+			        				scaledSize:new google.maps.Size(37, 37)
+			        		},
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr></table>");  
+			    	}
+			    	else if(markers2[i][0]=="queues" || markers2[i][0]=="Queues")
+			    	{
+                		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                		var marker = new google.maps.Marker({
+			        		map: map,
+			        		icon: {
+			            			url: 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png',
+			        				size:new google.maps.Size(71, 71),
+			        				origin:new google.maps.Point(0, 0),
+			        				anchor:new google.maps.Point(17, 34),
+			        				scaledSize:new google.maps.Size(37, 37)
+			        		},
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr></table>");  
+			    	}
+			    	else if(markers2[i][0]=="spitting" || markers2[i][0]=="Spitting")
+			    	{
+                		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                		var marker = new google.maps.Marker({
+			        		map: map,
+			        		icon: {
+			            			url: 'http://maps.google.com/mapfiles/ms/icons/pink-dot.png',
+			        				size:new google.maps.Size(71, 71),
+			        				origin:new google.maps.Point(0, 0),
+			        				anchor:new google.maps.Point(17, 34),
+			        				scaledSize:new google.maps.Size(37, 37)
+			        		},
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr></table>");  
+			    	}
+			    	else if(markers2[i][0]=="traffic" || markers2[i][0]=="Traffic")
+			    	{
+                		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                		var marker = new google.maps.Marker({
+			        		map: map,
+			        		icon: {
+			            			url: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png',
+			        				size:new google.maps.Size(71, 71),
+			        				origin:new google.maps.Point(0, 0),
+			        				anchor:new google.maps.Point(17, 34),
+			        				scaledSize:new google.maps.Size(37, 37)
+			        		},
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr></table>");  
+			    	}
+			    	else
+			    	{
+                		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                		var marker = new google.maps.Marker({
+			        		map: map,
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr></table>");  
+			    	}
+			    }
+              
+    	    }
+    		  
+    		var clientHeight = document.getElementById('map-canvas').clientHeight;
+    		var clientWidth = document.getElementById('map-canvas').clientWidth;
+    
+    		var mapDim = {
+    			    height: clientHeight,
+    			    width: clientWidth
+    			}
+
+    		var reszoom=15;
+    		 // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+    	    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+    	   
+	      	    {
+	      	    	reszoom=getBoundsZoomLevel(bounds, mapDim)-1;
+	      	        if(reszoom > 15)
+	      	    		reszoom=15;
+	      	    }
+	      	    this.setZoom(reszoom);
+    	        google.maps.event.removeListener(boundsListener);
+    	    });
+    		
+    		{
+	      		map.fitBounds(bounds); 
+	       	    google.maps.event.addListener(map, 'bounds_changed', function() {
+				     var bounds = map.getBounds();
+				     //map.setBounds(bounds);
+			    });
+    		}
+    		
+         	 var geocoder = new google.maps.Geocoder();
+           var latLng = new google.maps.LatLng(latitude, longitude);
+           geocoder.geocode( { 'latLng': latLng}, function(results, status) {
+           	if (status == google.maps.GeocoderStatus.OK) {
+         			 if (results[0]) {
+          			document.getElementById('pac-input').value=results[0].formatted_address;
+          		}
+        			else{
+      	  			document.getElementById('pac-input').value="Geocode was unsucessfull in detecting your current location";
+             		}
+        		}
+    	  	});  	
+      	
+          initialize(latitude, longitude);
+
+   
  	}
-    */ 
+ 	
+ 	
+ 	function showSpider(position)
+ 	{
+ 	
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            var coords = new google.maps.LatLng(latitude, longitude);
+     	  	var mapOptions = {
+                 zoom: 17,
+                 center: coords,
+                 mapTypeControl: true,
+                 mapTypeId: google.maps.MapTypeId.ROADMAP};
+         
+         		 map = new google.maps.Map(
+                 document.getElementById('map-canvas'), mapOptions
+                 );
+                 //place the initial marker
+                 var marker = new google.maps.Marker({
+                 position: coords,
+                 map: map,
+                 title: "Current location!"
+                 });
+                 
+                 var infowindow = new google.maps.InfoWindow({
+                	    content: ''
+                	  });
+                
+                 bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
+             	
+                	
+              	 bounds.extend(coords);
+              	 //var count=0;
+          		
+              	 
+              	var geocoder = new google.maps.Geocoder();
+                var lat = '';
+                var lng = '';
+                for(u=0;u<uniloc.length;u++)
+                {	
+                geocoder.geocode( { 'address': ''+uniloc[u]+', india'}, function(results, status) {
+                  if (status == google.maps.GeocoderStatus.OK) {
+                     lat = results[0].geometry.location.lat();
+                     lng = results[0].geometry.location.lng();
+                     //alert('Latitude: ' + lat + ' Logitude: ' + lng); 
+               		 var position = new google.maps.LatLng(lat, lng);
+               		 bounds.extend(position);
+               		 var marker = new google.maps.Marker({
+                		 map: map,
+                		 icon: {
+                    			url: 'http://maps.google.com/mapfiles/kml/pal4/icon47.png',
+                				size:new google.maps.Size(71, 71),
+                				origin:new google.maps.Point(0, 0),
+                				anchor:new google.maps.Point(17, 34),
+                				scaledSize:new google.maps.Size(37, 37)
+                		 },
+                		 title: "Star",
+                		 position: position
+              		 });
+             		 var spiderwindow = new google.maps.InfoWindow({
+                 	    content: ''
+                 	 });
+              		 bindSpiderWindow(marker, map, spiderwindow, "<b>Spider graph</b>");        
+                  }
+                  else {
+                    alert("Geocode was not successful for the following reason: " + status);
+                  }
+                });
+                } 
+          		var clientHeight = document.getElementById('map-canvas').clientHeight;
+          		var clientWidth = document.getElementById('map-canvas').clientWidth;
+          	
+          		var mapDim = {
+          			    height: clientHeight,
+          			    width: clientWidth
+          		}
+          		 // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+          		var reszoom=15;
+         		 // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+         	    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+       
+   	      	    {
+   	      	    	reszoom=getBoundsZoomLevel(bounds, mapDim)-1;
+   	      	        if(reszoom > 15)
+   	      	    		reszoom=15;
+   	      	    }
+   	      	    this.setZoom(reszoom);
+         	        google.maps.event.removeListener(boundsListener);
+         	    });
+         		
+         		{
+   	      		map.fitBounds(bounds); 
+   	       	    google.maps.event.addListener(map, 'bounds_changed', function() {
+   				     var bounds = map.getBounds();
+   				     //map.setBounds(bounds);
+   			    });
+         		}
+         		
+               	 var geocoder = new google.maps.Geocoder();
+                 var latLng = new google.maps.LatLng(latitude, longitude);
+                 geocoder.geocode( { 'latLng': latLng}, function(results, status) {
+                 	if (status == google.maps.GeocoderStatus.OK) {
+               			 if (results[0]) {
+                			document.getElementById('pac-input').value=results[0].formatted_address;
+                		}
+              			else{
+            	  			document.getElementById('pac-input').value="Geocode was unsucessfull in detecting your current location";
+                   		}
+              		}
+          	  	});  	
+ 
+                initialize(latitude, longitude);	       	
+        
+ 	}
+
+ 	
     function showCurrentLocation(position)
     {
         var latitude = position.coords.latitude;
@@ -258,39 +580,7 @@
       		  
       		var clientHeight = document.getElementById('map-canvas').clientHeight;
       		var clientWidth = document.getElementById('map-canvas').clientWidth;
-      		
-      		
-      		function getBoundsZoomLevel(bounds, mapDim) {
-      		    var WORLD_DIM = { height: 256, width: 256 };
-      		    var ZOOM_MAX = 21;
-
-      		    function latRad(lat) {
-      		        var sin = Math.sin(lat * Math.PI / 180);
-      		        var radX2 = Math.log((1 + sin) / (1 - sin)) / 2;
-      		        return Math.max(Math.min(radX2, Math.PI), -Math.PI) / 2;
-      		    }
-
-      		    function zoom(mapPx, worldPx, fraction) {
-      		        return Math.floor(Math.log(mapPx / worldPx / fraction) / Math.LN2);
-      		    }
-
-      		    var ne = bounds.getNorthEast();
-      		    var sw = bounds.getSouthWest();
-
-      		    var latFraction = (latRad(ne.lat()) - latRad(sw.lat())) / Math.PI;
-
-      		    var lngDiff = ne.lng() - sw.lng();
-      		    var lngFraction = ((lngDiff < 0) ? (lngDiff + 360) : lngDiff) / 360;
-
-      		    var latZoom = zoom(mapDim.height, WORLD_DIM.height, latFraction);
-      		    var lngZoom = zoom(mapDim.width, WORLD_DIM.width, lngFraction);
-
-      		    return Math.min(latZoom, lngZoom, ZOOM_MAX);
-      		}
-      		
-      		
-      		
-      		
+      
       		var mapDim = {
       			    height: clientHeight,
       			    width: clientWidth
@@ -309,15 +599,12 @@
       	        google.maps.event.removeListener(boundsListener);
       	    });
       		
-      		
-      		if(flag==1 && count==1)
       		{
 	      		map.fitBounds(bounds); 
 	       	    google.maps.event.addListener(map, 'bounds_changed', function() {
 				     var bounds = map.getBounds();
-				     map.setBounds(bounds);
+				     //map.setBounds(bounds);
 			    });
-	       	    flag=0;
       		}
       		
            	 var geocoder = new google.maps.Geocoder();
@@ -406,54 +693,160 @@ function bindInfoWindow(marker, map, infowindow, html) {
 
 } 
 
+function bindSpiderWindow(marker, map, spiderwindow, html) { 
+	google.maps.event.addListener(marker, 'click', function() { 
+		spiderwindow.setContent(html); 
+		spiderwindow.open(map, marker); 
+	}); 
+	
+} 
+
+
+function getBoundsZoomLevel(bounds, mapDim) {
+	    var WORLD_DIM = { height: 256, width: 256 };
+	    var ZOOM_MAX = 21;
+
+	    function latRad(lat) {
+	        var sin = Math.sin(lat * Math.PI / 180);
+	        var radX2 = Math.log((1 + sin) / (1 - sin)) / 2;
+	        return Math.max(Math.min(radX2, Math.PI), -Math.PI) / 2;
+	    }
+
+	    function zoom(mapPx, worldPx, fraction) {
+	        return Math.floor(Math.log(mapPx / worldPx / fraction) / Math.LN2);
+	    }
+
+	    var ne = bounds.getNorthEast();
+	    var sw = bounds.getSouthWest();
+
+	    var latFraction = (latRad(ne.lat()) - latRad(sw.lat())) / Math.PI;
+
+	    var lngDiff = ne.lng() - sw.lng();
+	    var lngFraction = ((lngDiff < 0) ? (lngDiff + 360) : lngDiff) / 360;
+
+	    var latZoom = zoom(mapDim.height, WORLD_DIM.height, latFraction);
+	    var lngZoom = zoom(mapDim.width, WORLD_DIM.width, lngFraction);
+
+	    return Math.min(latZoom, lngZoom, ZOOM_MAX);
+	}
+
+
+
 function filterCat()
 {
-	var selectedValues = $('#multipleSelect').val();
-	
-	//if(selectedValues!=null)
-		flag=1;
-	
-	var category=selectedValues;
-    var url = "FilterCategory";
-	
-	var filterCatData=new Object();
-	
-	if(category!=null)
-	{	
-		var cat="";
-		
-		for(var m=0;m<category.length;m++)
-		{
-			cat=cat+category[m]+" ";
-		}
-		//alert(cat);
-		filterCatData["category"]=cat;
+	var test = $("select option:selected").length;
+	if ( test == 0)
+	{
+	   alert("Please select atleast one option to filter.");
 	}
 	else
-		filterCatData["category"]="";
-	xmlhttp.onreadystatechange=function() {
-	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-				//alert(xmlhttp.responseText);
-				var json = JSON.parse(xmlhttp.responseText);
-				alert("Showing "+json.no+" incidents for Category: "+json.category+"");
-				markers1=json.arr1;
- 				markers2=json.arr2;
- 				if (navigator.geolocation)
- 			    {
- 			        navigator.geolocation.getCurrentPosition(showCurrentLocation);
- 			    }
+		{	
+		var starflag=0;
+		var selectedValues = $('#multipleSelect').val();
+		
+		if(selectedValues!=null)
+			flag=1;
+		else
+			selectedValues="Spider";
+		
+		var category=selectedValues;
+	    var url=null;
+	    
+		var filterCatData=new Object();
+		
+		if(category!=null)
+		{	
+			var cat="";
+			
+			for(var m=0;m<category.length;m++)
+			{
+				cat=cat+category[m]+" ";
+			}
+			if(category[0]=="Spider")
+				starflag=1;
+			//alert(cat);
+			filterCatData["category"]=cat;
+		}
+		else
+			filterCatData["category"]="";
+		
+		if(selectedValues!="Spider")
+		{	
+			if(starflag==0)
+			{	
+					url = "FilterCategory";
+					xmlhttp.onreadystatechange=function() {
+				    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+							//alert(xmlhttp.responseText);
+							var json = JSON.parse(xmlhttp.responseText);
+							alert("Showing "+json.no+" incidents for Category: "+json.category+"");
+							markers1=json.arr1;
+			 				markers2=json.arr2;
+			 				if (navigator.geolocation)
+			 			    {
+			 			        navigator.geolocation.getCurrentPosition(showCurrentLocation);
+			 			    }			
+					}
+				}
+					xmlhttp.open("POST", url, true);
+					xmlhttp.responseType ="JSON";
+					xmlhttp.send(JSON.stringify(filterCatData));
+				
+			}	
+			else
+			{
+				url = "FilterCategory";
+				xmlhttp.onreadystatechange=function() {
+			    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+						//alert(xmlhttp.responseText);
+						var json = JSON.parse(xmlhttp.responseText);
+						alert("Showing "+json.no+" incidents for Category: "+json.category+" with Spider Graphs based on the locations.");
+						markers1=json.arr1;
+		 				markers2=json.arr2;
+		 				uniloc=json.uniloc;
+		 				if (navigator.geolocation)
+		 			    {
+		 			        navigator.geolocation.getCurrentPosition(showSpiderCurrentLocation);
+		 			    }
+		 				/*if (navigator.geolocation)
+		 			    {
+		 			        navigator.geolocation.getCurrentPosition(showSpider);
+		 			    }*/
+					}
+				}
+		
+				xmlhttp.open("POST", url, true);
+				xmlhttp.responseType ="JSON";
+				xmlhttp.send(JSON.stringify(filterCatData));
+				
+			}
+					
+		}
+		else
+		{	
+				url = "FilterCategory";
+				xmlhttp.onreadystatechange=function() {
+			    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+						//alert(xmlhttp.responseText);
+						var json = JSON.parse(xmlhttp.responseText);
+						uniloc=json.uniloc;
+		 				alert("Showing Spider Graphs based on the locations.");
+						if (navigator.geolocation)
+		 		 	    {
+		 		 	        navigator.geolocation.getCurrentPosition(showSpider);
+		 		 	    }	
+				}
+			}		
+			xmlhttp.open("POST", url, true);
+			xmlhttp.responseType ="JSON";
+			xmlhttp.send(JSON.stringify(filterCatData));
 		}
 	}
-			
-	xmlhttp.open("POST", url, true);
-	xmlhttp.responseType ="JSON";
-	xmlhttp.send(JSON.stringify(filterCatData));
 }
 
 //google.maps.event.addDomListener(window, 'load', initialize);
 
 </script>
-
 
 </head>
 <body>
@@ -495,9 +888,9 @@ function filterCat()
 <div class="container">
 	<div id="map-canvas" ></div>
 	<div style="margin-top:-531px;position:relative;">
-		&nbsp;&nbsp;
+		&nbsp;
 		<select id="multipleSelect" style="position:relative;" name="multipleSelect" multiple="multiple">
-			<option value="Garbage">Garbage</option><option value="Noise">Noise</option><option value="Queues">Queues</option><option value="Spitting">Spitting</option><option value="Traffic">Traffic</option>
+			<option value="Spider" selected>Spider Chart</option><option value="Garbage">Garbage</option><option value="Noise">Noise</option><option value="Queues">Queues</option><option value="Spitting">Spitting</option><option value="Traffic">Traffic</option>
 		</select>
 		<input style="position:relative;" type="button" id="filtercategory" class="btn btn-default" onclick="filterCat();" value="Filter">	
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

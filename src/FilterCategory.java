@@ -137,6 +137,32 @@ public class FilterCategory extends HttpServlet {
 				}
 			}	
 		}
+		
+		rs.close();
+		
+		int counter=0;
+		query = "select distinct incident_locality from incident";
+		rs=dbconn.getResult(query, con);
+		
+		while(rs.next())
+		{
+			counter++;
+		}
+		rs.close();
+		
+		query = "select distinct incident_locality from incident where incident_locality!='Unknown'";
+		rs=dbconn.getResult(query, con);
+		
+		String uniloc[]=new String[counter];
+		counter=0;
+		
+		while(rs.next())
+		{
+			uniloc[counter]=rs.getString("incident_locality");
+			counter++;
+		}
+		
+		
 		if(con!=null)
 			con.close();
 		
@@ -156,12 +182,15 @@ public class FilterCategory extends HttpServlet {
 		}
 		//System.out.println(no);
 		
+		
+		
 		JSONObject ResponseObj=new JSONObject();
 		try {
 			ResponseObj.put("arr1",arr1);	
 			ResponseObj.put("arr2",arr2);	
 			ResponseObj.put("category",category);	
-			ResponseObj.put("no",no);			
+			ResponseObj.put("no",no);		
+			ResponseObj.put("uniloc",uniloc);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
