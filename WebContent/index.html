@@ -13,6 +13,8 @@
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi?.js"></script>
+
 <script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
 <link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css"/>
 <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
@@ -50,10 +52,9 @@
         font-family: Roboto;
         font-size: 15px;
         font-weight: 300;
-        margin-left: 10px;
         padding: 0 11px 0 13px;
         text-overflow: ellipsis;
-      	width: 280px;
+      	width: 235px;
       }
       
       #pac-input:focus {
@@ -64,21 +65,23 @@
 
 <script>
     
-   // flag=0;
-   	var bounds = new google.maps.LatLngBounds(null);
-    var pos;
+   flag=0;
+   	var myloc,res=null;
     xmlhttp=new XMLHttpRequest();
  	var url = "FilterCategory";
 
  	var onloadData=new Object();
  	onloadData["category"]="";
+ 	onloadData["location"]="";
  	
  	xmlhttp.onreadystatechange=function() {
  	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
  	    		var json = JSON.parse(xmlhttp.responseText);
  				uniloc=json.uniloc;
- 				console.log(uniloc);
- 				//flag=1;//for starting with zoom arround the incidents
+ 				//console.log(uniloc);
+ 				loc=json.obj;
+ 				//console.log(loc);
+ 		
  				if (navigator.geolocation)
 	 		    {
 	 			        navigator.geolocation.getCurrentPosition(showSpider);
@@ -321,7 +324,8 @@
    
  	}
  	
- 	
+ 	var bounds = new google.maps.LatLngBounds();
+    
  	function showSpider(position)
  	{
  	
@@ -367,6 +371,7 @@
                      //alert('Latitude: ' + lat + ' Logitude: ' + lng); 
                		 var position = new google.maps.LatLng(lat, lng);
                		 bounds.extend(position);
+               		 //pos=position;
                		 var marker = new google.maps.Marker({
                 		 map: map,
                 		 icon: {
@@ -383,12 +388,19 @@
                  	    content: ''
                  	 });
               		 bindSpiderWindow(marker, map, spiderwindow, "<b>Spider graph</b>");        
+                  
+                  
+               		/* google.maps.event.addListener(marker, 'click', function() {
+               	      drawChart(this);
+               	    });*/
                   }
                   else {
                     alert("Geocode was not successful for the following reason: " + status);
                   }
                 });
                 } 
+                
+                //bounds.extend(pos);
           		var clientHeight = document.getElementById('map-canvas').clientHeight;
           		var clientWidth = document.getElementById('map-canvas').clientWidth;
           	
@@ -423,20 +435,87 @@
                  geocoder.geocode( { 'latLng': latLng}, function(results, status) {
                  	if (status == google.maps.GeocoderStatus.OK) {
                			 if (results[0]) {
-                			document.getElementById('pac-input').value=results[0].formatted_address;
+               				for (i = 0; i < results[0].address_components.length; i++) {
+    		                    	if (results[0].address_components[i].types[0] == 'postal_code')
+    		                    	{
+    		                    		//alert("Zip Code: " + results[0].address_components[j].short_name);
+    		                    		res=results[0].address_components[i].short_name;
+    		                    		break;
+    		                    	}
+    		                	}
+               				document.getElementById('pac-input').value=results[0].formatted_address;
                 		}
               			else{
             	  			document.getElementById('pac-input').value="Geocode was unsucessfull in detecting your current location";
                    		}
               		}
+                 	if(flag==0)
+                 	{	
+                 		flag=1;
+                 		addCurrentLoc(res);
+                 	}
+                 	//alert(res);
           	  	});  	
- 
                 initialize(latitude, longitude);	       	
         
  	}
-
  	
-    function showCurrentLocation(position)
+ function addCurrentLoc(res)
+ {
+	 myloc=res;
+
+	 $('#multipleSelectLoc')
+     .append($("<option selected></option>")
+     .attr("value",myloc)
+     .text(myloc)); 
+
+		$.each(loc, function(key, value) {   
+		     $('#multipleSelectLoc')
+		         .append($("<option></option>")
+		         .attr("value",key)
+		         .text(value)); 
+		});
+		
+		$(document).ready(function() {
+	 	    $('#multipleSelectLoc').multiselect({
+	 	        buttonWidth: '200px',
+	 	        dropRight: true
+	 	    });
+	 	});
+		
+		filterCat();
+ }
+
+ /*	function drawChart(marker) {
+
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Topping');
+        data.addColumn('number', 'Slices');
+        data.addRows([
+          ['Mushrooms', 3],
+          ['Onions', 1],
+          ['Olives', 1],
+          ['Zucchini', 1],
+          ['Pepperoni', 2]
+        ]);
+
+        // Set chart options
+        var options = {'title':'Pizza sold @ '+
+                               marker.getPosition().toString(),
+                       'width':400,
+                       'height':150};
+                       
+        var node        = document.createElement('div'),
+            infoWindow  = new google.maps.InfoWindow(),
+            chart       = new google.visualization.PieChart(node);
+            
+            chart.draw(data, options);
+            infoWindow.setContent(node);
+            infoWindow.open(marker.getMap(),marker);
+      }
+
+   */ function showCurrentLocation(position)
     {
         var latitude = position.coords.latitude;
         var longitude = position.coords.longitude;
@@ -624,7 +703,7 @@
     }	       	
     
 function initialize(lat, lng) {
-
+//alert("initialize");
   var markers = [];
   
   var input = (
@@ -734,15 +813,17 @@ function getBoundsZoomLevel(bounds, mapDim) {
 
 function filterCat()
 {
-	var test = $("select option:selected").length;
-	if ( test == 0)
+	var test = $("#multipleSelect option:selected").length;
+	var testLoc = $("#multipleSelectLoc option:selected").length;
+	if ( !(test > 0 && testLoc > 0))
 	{
-	   alert("Please select atleast one option to filter.");
+	   alert("Please select atleast one location and one category to filter.");
 	}
 	else
 		{	
 		var starflag=0;
 		var selectedValues = $('#multipleSelect').val();
+		var selectedValuesLoc = $('#multipleSelectLoc').val();
 		
 		if(selectedValues!=null)
 			flag=1;
@@ -750,25 +831,31 @@ function filterCat()
 			selectedValues="Spider";
 		
 		var category=selectedValues;
+		var location=selectedValuesLoc;
 	    var url=null;
 	    
 		var filterCatData=new Object();
 		
-		if(category!=null)
-		{	
-			var cat="";
+		var cat="";
+		var loc="";
 			
-			for(var m=0;m<category.length;m++)
-			{
-				cat=cat+category[m]+" ";
-			}
-			if(category[0]=="Spider")
-				starflag=1;
-			//alert(cat);
-			filterCatData["category"]=cat;
+		for(var m=0;m<category.length;m++)
+		{
+			cat=cat+category[m]+" ";
 		}
-		else
-			filterCatData["category"]="";
+		
+		for(var m=0;m<location.length;m++)
+		{
+			loc=loc+location[m]+" ";
+		}
+		
+		console.log(loc);
+		
+		if(category[0]=="Spider")
+			starflag=1;
+			
+		filterCatData["category"]=cat;
+		filterCatData["location"]=loc;
 		
 		if(selectedValues!="Spider")
 		{	
@@ -808,11 +895,7 @@ function filterCat()
 		 			    {
 		 			        navigator.geolocation.getCurrentPosition(showSpiderCurrentLocation);
 		 			    }
-		 				/*if (navigator.geolocation)
-		 			    {
-		 			        navigator.geolocation.getCurrentPosition(showSpider);
-		 			    }*/
-					}
+		 			}
 				}
 		
 				xmlhttp.open("POST", url, true);
@@ -843,6 +926,9 @@ function filterCat()
 		}
 	}
 }
+
+
+//google.load('visualization', '1.0', {'packages':['corechart']});
 
 //google.maps.event.addDomListener(window, 'load', initialize);
 
@@ -887,14 +973,14 @@ function filterCat()
 </div>
 <div class="container">
 	<div id="map-canvas" ></div>
-	<div style="margin-top:-531px;position:relative;">
-		&nbsp;
+	<div style="max-width: 895px;margin-top:-531px;margin-left:120px;position:relative;">
+		<select id="multipleSelectLoc" style="position:relative;" name="multipleSelectLoc" multiple="multiple">
+		</select>	
 		<select id="multipleSelect" style="position:relative;" name="multipleSelect" multiple="multiple">
 			<option value="Spider" selected>Spider Chart</option><option value="Garbage">Garbage</option><option value="Noise">Noise</option><option value="Queues">Queues</option><option value="Spitting">Spitting</option><option value="Traffic">Traffic</option>
 		</select>
 		<input style="position:relative;" type="button" id="filtercategory" class="btn btn-default" onclick="filterCat();" value="Filter">	
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<input style="position:relative;" id="pac-input" class="controls" type="text" placeholder="Search Locations">
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="position:relative;" id="pac-input" class="controls" type="text" placeholder="Search Locations">
 	</div>
 </div>
 <div class="container" style="position:relative;margin-top:500px;">

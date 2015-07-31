@@ -17,6 +17,7 @@ public class FilterCategoryReq extends HttpServlet {
     }
 
 	private String category;
+	private String location;
 
 	public String getCategory() {
 		// TODO Auto-generated method stub
@@ -27,5 +28,14 @@ public class FilterCategoryReq extends HttpServlet {
 	{
 	    this.category = category;
 	}
-	 	
+	
+	public String getLocation() {
+		// TODO Auto-generated method stub
+		return location;
+	}
+
+	public void setLocation(String location)
+	{
+	    this.location = location;
+	}	
 }

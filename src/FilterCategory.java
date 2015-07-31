@@ -65,12 +65,14 @@ public class FilterCategory extends HttpServlet {
 		try{
 			
 		String category=filtercatreq.getCategory();
-		//System.out.println(category);
+		String location=filtercatreq.getLocation();
+		String unilocation=location;
+		//System.out.println(location);
 		dbconn=new DataBaseConn();
 		con = dbconn.setConnection ();
 		//System.out.println("connected");
 		stmt=(Statement) con.createStatement();
-		int i=0,flag=0;
+		int i=0,flag=0,flagpart=0;
 		String query=null;
 		query = "select * from incident";
 		if(!category.equals(""))
@@ -81,7 +83,7 @@ public class FilterCategory extends HttpServlet {
 			{
 				if(flag==0)
 				{	
-					query = query+" where incident_category='"+parts[i]+"'";
+					query = query+" where (incident_category='"+parts[i]+"'";
 					flag=1;
 				}
 				else
@@ -90,6 +92,29 @@ public class FilterCategory extends HttpServlet {
 		}
 		else
 			query = "select * from incident";
+		
+		if(flag==1)
+			query=query+")";
+		
+		if(!location.equals(""))
+		{	
+			location=location.substring(0,location.length()-1);
+			String[] partsloc = location.split(" ");
+			for(i=0;i<partsloc.length;i++)
+			{
+				if(flagpart==0)
+				{	
+					query = query+" AND (incident_locality='"+partsloc[i]+"'";
+					flagpart=1;
+				}
+				else
+					query=query+" OR incident_locality='"+partsloc[i]+"'";
+			}	
+		}
+		if(flagpart==1)
+			query=query+")";
+		
+		//System.out.println(query);
 		
 		rs=dbconn.getResult(query, con);
 		int count=0;
@@ -141,7 +166,27 @@ public class FilterCategory extends HttpServlet {
 		rs.close();
 		
 		int counter=0;
-		query = "select distinct incident_locality from incident";
+		
+		query = "select distinct incident_locality from incident where incident_locality!='Unknown'";
+		
+		int uniflagpart=0;
+		
+		if(!unilocation.equals(""))
+		{	
+			unilocation=unilocation.substring(0,unilocation.length()-1);
+			String[] partsuniloc = unilocation.split(" ");
+			for(i=0;i<partsuniloc.length;i++)
+			{
+				if(uniflagpart==0)
+				{	
+					query ="select distinct incident_locality from incident where incident_locality='"+partsuniloc[i]+"'";
+					uniflagpart=1;
+				}
+				else
+					query=query+" OR incident_locality='"+partsuniloc[i]+"'";
+			}	
+		}
+		
 		rs=dbconn.getResult(query, con);
 		
 		while(rs.next())
@@ -150,15 +195,18 @@ public class FilterCategory extends HttpServlet {
 		}
 		rs.close();
 		
-		query = "select distinct incident_locality from incident where incident_locality!='Unknown'";
 		rs=dbconn.getResult(query, con);
+		//System.out.println(query);
 		
 		String uniloc[]=new String[counter];
 		counter=0;
 		
+		JSONObject obj = new JSONObject();
+		
 		while(rs.next())
 		{
 			uniloc[counter]=rs.getString("incident_locality");
+			obj.put(uniloc[counter], uniloc[counter]);
 			counter++;
 		}
 		
@@ -191,7 +239,9 @@ public class FilterCategory extends HttpServlet {
 			ResponseObj.put("category",category);	
 			ResponseObj.put("no",no);		
 			ResponseObj.put("uniloc",uniloc);
-		} catch (JSONException e) {
+			ResponseObj.put("obj",obj);	
+		} 
+		catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -212,6 +262,7 @@ public class FilterCategory extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
+
 		ObjectMapper objectmapper = new ObjectMapper();
 		FilterCategoryReq filtercatreq = objectmapper.readValue(request.getInputStream(), FilterCategoryReq.class);
 		response.setContentType("application/json; charset=UTF-8");
@@ -219,12 +270,14 @@ public class FilterCategory extends HttpServlet {
 		try{
 			
 		String category=filtercatreq.getCategory();
-		//System.out.println(category);
+		String location=filtercatreq.getLocation();
+		String unilocation=location;
+		//System.out.println(location);
 		dbconn=new DataBaseConn();
 		con = dbconn.setConnection ();
 		//System.out.println("connected");
 		stmt=(Statement) con.createStatement();
-		int i=0,flag=0;
+		int i=0,flag=0,flagpart=0;
 		String query=null;
 		query = "select * from incident";
 		if(!category.equals(""))
@@ -235,7 +288,7 @@ public class FilterCategory extends HttpServlet {
 			{
 				if(flag==0)
 				{	
-					query = query+" where incident_category='"+parts[i]+"'";
+					query = query+" where (incident_category='"+parts[i]+"'";
 					flag=1;
 				}
 				else
@@ -244,6 +297,29 @@ public class FilterCategory extends HttpServlet {
 		}
 		else
 			query = "select * from incident";
+		
+		if(flag==1)
+			query=query+")";
+		
+		if(!location.equals(""))
+		{	
+			location=location.substring(0,location.length()-1);
+			String[] partsloc = location.split(" ");
+			for(i=0;i<partsloc.length;i++)
+			{
+				if(flagpart==0)
+				{	
+					query = query+" AND (incident_locality='"+partsloc[i]+"'";
+					flagpart=1;
+				}
+				else
+					query=query+" OR incident_locality='"+partsloc[i]+"'";
+			}	
+		}
+		if(flagpart==1)
+			query=query+")";
+		
+		//System.out.println(query);
 		
 		rs=dbconn.getResult(query, con);
 		int count=0;
@@ -291,6 +367,55 @@ public class FilterCategory extends HttpServlet {
 				}
 			}	
 		}
+		
+		rs.close();
+		
+		int counter=0;
+		
+		query = "select distinct incident_locality from incident where incident_locality!='Unknown'";
+		
+		int uniflagpart=0;
+		
+		if(!unilocation.equals(""))
+		{	
+			unilocation=unilocation.substring(0,unilocation.length()-1);
+			String[] partsuniloc = unilocation.split(" ");
+			for(i=0;i<partsuniloc.length;i++)
+			{
+				if(uniflagpart==0)
+				{	
+					query ="select distinct incident_locality from incident where incident_locality='"+partsuniloc[i]+"'";
+					uniflagpart=1;
+				}
+				else
+					query=query+" OR incident_locality='"+partsuniloc[i]+"'";
+			}	
+		}
+		
+		rs=dbconn.getResult(query, con);
+		
+		while(rs.next())
+		{
+			counter++;
+		}
+		rs.close();
+		
+		rs=dbconn.getResult(query, con);
+		//System.out.println(query);
+		
+		String uniloc[]=new String[counter];
+		counter=0;
+		
+		JSONObject obj = new JSONObject();
+		
+		while(rs.next())
+		{
+			uniloc[counter]=rs.getString("incident_locality");
+			obj.put(uniloc[counter], uniloc[counter]);
+			counter++;
+		}
+		
+		
 		if(con!=null)
 			con.close();
 		
@@ -310,13 +435,18 @@ public class FilterCategory extends HttpServlet {
 		}
 		//System.out.println(no);
 		
+		
+		
 		JSONObject ResponseObj=new JSONObject();
 		try {
 			ResponseObj.put("arr1",arr1);	
 			ResponseObj.put("arr2",arr2);	
 			ResponseObj.put("category",category);	
-			ResponseObj.put("no",no);			
-		} catch (JSONException e) {
+			ResponseObj.put("no",no);		
+			ResponseObj.put("uniloc",uniloc);
+			ResponseObj.put("obj",obj);	
+		} 
+		catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -330,7 +460,6 @@ public class FilterCategory extends HttpServlet {
 		{
 			e.printStackTrace();
 		}
-		
 	}	
 
 }
