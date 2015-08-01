@@ -18,7 +18,7 @@
 <script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
 <link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css"/>
 <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
-
+<!-- 
 <script type="text/javascript">
     $(document).ready(function() {
         $('#multipleSelect').multiselect({
@@ -26,7 +26,7 @@
             dropRight: true
         });
     });
-</script>
+</script>-->
 <style>
 	  
       #map-canvas {
@@ -54,7 +54,7 @@
         font-weight: 300;
         padding: 0 11px 0 13px;
         text-overflow: ellipsis;
-      	width: 235px;
+      	width: 225px;
       }
       
       #pac-input:focus {
@@ -80,7 +80,8 @@
  				uniloc=json.uniloc;
  				//console.log(uniloc);
  				loc=json.obj;
- 				//console.log(loc);
+ 				catobj=json.catobj;
+ 				//console.log(catloc);
  		
  				if (navigator.geolocation)
 	 		    {
@@ -460,6 +461,7 @@
         
  	}
  	
+ var x=0;	
  function addCurrentLoc(res)
  {
 	 myloc=res;
@@ -478,6 +480,25 @@
 		
 		$(document).ready(function() {
 	 	    $('#multipleSelectLoc').multiselect({
+	 	        buttonWidth: '200px',
+	 	        dropRight: true
+	 	    });
+	 	});
+		
+		$('#multipleSelect')
+	     .append($("<option selected></option>")
+	     .attr("value","Spider")
+	     .text("Spider Chart")); 
+
+		$.each(catobj, function(key, value) {   
+		     $('#multipleSelect')
+		         .append($("<option></option>")
+		         .attr("value",key)
+		         .text(value)); 
+		});
+		
+		$(document).ready(function() {
+	 	    $('#multipleSelect').multiselect({
 	 	        buttonWidth: '200px',
 	 	        dropRight: true
 	 	    });
@@ -849,7 +870,7 @@ function filterCat()
 			loc=loc+location[m]+" ";
 		}
 		
-		console.log(loc);
+		//console.log(loc);
 		
 		if(category[0]=="Spider")
 			starflag=1;
@@ -913,7 +934,11 @@ function filterCat()
 						//alert(xmlhttp.responseText);
 						var json = JSON.parse(xmlhttp.responseText);
 						uniloc=json.uniloc;
-		 				alert("Showing Spider Graphs based on the locations.");
+		 				if(x==1)
+							alert("Showing Spider Graphs based on the selected locations.");
+		 				else
+		 					//alert("Showing Spider Graph of your current location.");
+		 				x=1;
 						if (navigator.geolocation)
 		 		 	    {
 		 		 	        navigator.geolocation.getCurrentPosition(showSpider);
@@ -977,8 +1002,8 @@ function filterCat()
 		<select id="multipleSelectLoc" style="position:relative;" name="multipleSelectLoc" multiple="multiple">
 		</select>	
 		<select id="multipleSelect" style="position:relative;" name="multipleSelect" multiple="multiple">
-			<option value="Spider" selected>Spider Chart</option><option value="Garbage">Garbage</option><option value="Noise">Noise</option><option value="Queues">Queues</option><option value="Spitting">Spitting</option><option value="Traffic">Traffic</option>
-		</select>
+			<!--<option value="Spider" selected>Spider Chart</option><option value="Garbage">Garbage</option><option value="Noise">Noise</option><option value="Queues">Queues</option><option value="Spitting">Spitting</option><option value="Traffic">Traffic</option>
+		--></select>
 		<input style="position:relative;" type="button" id="filtercategory" class="btn btn-default" onclick="filterCat();" value="Filter">	
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="position:relative;" id="pac-input" class="controls" type="text" placeholder="Search Locations">
 	</div>

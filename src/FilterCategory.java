@@ -209,6 +209,18 @@ public class FilterCategory extends HttpServlet {
 			obj.put(uniloc[counter], uniloc[counter]);
 			counter++;
 		}
+		rs.close();
+		
+		query="select distinct incident_category from incident";
+		
+		rs=dbconn.getResult(query, con);
+		JSONObject catobj = new JSONObject();
+		while(rs.next())
+		{
+			catobj.put(rs.getString("incident_category"), rs.getString("incident_category"));
+		}
+		rs.close();
+		
 		
 		
 		if(con!=null)
@@ -228,7 +240,7 @@ public class FilterCategory extends HttpServlet {
 			if(arr1[i][0]!=0)
 				no++;
 		}
-		//System.out.println(no);
+		//System.out.println(catobj);
 		
 		
 		
@@ -240,6 +252,7 @@ public class FilterCategory extends HttpServlet {
 			ResponseObj.put("no",no);		
 			ResponseObj.put("uniloc",uniloc);
 			ResponseObj.put("obj",obj);	
+			ResponseObj.put("catobj",catobj);	
 		} 
 		catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -414,6 +427,18 @@ public class FilterCategory extends HttpServlet {
 			obj.put(uniloc[counter], uniloc[counter]);
 			counter++;
 		}
+		rs.close();
+		
+		query="select distinct incident_category from incident";
+		
+		rs=dbconn.getResult(query, con);
+		JSONObject catobj = new JSONObject();
+		while(rs.next())
+		{
+			catobj.put(rs.getString("incident_category"), rs.getString("incident_category"));
+		}
+		rs.close();
+		
 		
 		
 		if(con!=null)
@@ -433,7 +458,7 @@ public class FilterCategory extends HttpServlet {
 			if(arr1[i][0]!=0)
 				no++;
 		}
-		//System.out.println(no);
+		//System.out.println(catobj);
 		
 		
 		
@@ -445,6 +470,7 @@ public class FilterCategory extends HttpServlet {
 			ResponseObj.put("no",no);		
 			ResponseObj.put("uniloc",uniloc);
 			ResponseObj.put("obj",obj);	
+			ResponseObj.put("catobj",catobj);	
 		} 
 		catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -460,6 +486,7 @@ public class FilterCategory extends HttpServlet {
 		{
 			e.printStackTrace();
 		}
+		
 	}	
 
 }
