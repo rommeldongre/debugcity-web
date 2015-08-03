@@ -67,11 +67,11 @@ public class FilterCategory extends HttpServlet {
 		String category=filtercatreq.getCategory();
 		String location=filtercatreq.getLocation();
 		String unilocation=location;
-		//System.out.println(location);
+		
 		dbconn=new DataBaseConn();
 		con = dbconn.setConnection ();
-		//System.out.println("connected");
 		stmt=(Statement) con.createStatement();
+		
 		int i=0,flag=0,flagpart=0;
 		String query=null;
 		query = "select * from incident";
@@ -113,8 +113,6 @@ public class FilterCategory extends HttpServlet {
 		}
 		if(flagpart==1)
 			query=query+")";
-		
-		//System.out.println(query);
 		
 		rs=dbconn.getResult(query, con);
 		int count=0;
@@ -196,7 +194,6 @@ public class FilterCategory extends HttpServlet {
 		rs.close();
 		
 		rs=dbconn.getResult(query, con);
-		//System.out.println(query);
 		
 		String uniloc[]=new String[counter];
 		counter=0;
@@ -221,7 +218,44 @@ public class FilterCategory extends HttpServlet {
 		}
 		rs.close();
 		
+		JSONObject spiallloc = new JSONObject();
 		
+		for(i=0;i<uniloc.length;i++)
+		{
+			JSONObject spiuniloc = new JSONObject();
+			spiuniloc.put("garbage", 0);
+			spiuniloc.put("noise", 0);
+			spiuniloc.put("queues", 0);
+			spiuniloc.put("spitting", 0);
+			spiuniloc.put("traffic", 0);
+			query = "select incident_category, count(*) as count from incident where incident_locality='"+ uniloc[i] +"' group by incident_category";
+			rs=dbconn.getResult(query, con);
+			
+			while(rs.next())
+			{
+				if(rs.getString("incident_category").equalsIgnoreCase("garbage"))
+				{
+					spiuniloc.put("garbage", rs.getInt("count"));
+				}
+				else if(rs.getString("incident_category").equalsIgnoreCase("noise"))
+				{
+					spiuniloc.put("noise", rs.getInt("count"));
+				}
+				else if(rs.getString("incident_category").equalsIgnoreCase("queues"))
+				{
+					spiuniloc.put("queues", rs.getInt("count"));
+				}
+				else if(rs.getString("incident_category").equalsIgnoreCase("spitting"))
+				{
+					spiuniloc.put("spitting", rs.getInt("count"));
+				}
+				else 
+				{	
+					spiuniloc.put("traffic", rs.getInt("count"));
+				}
+			}
+			spiallloc.put(uniloc[i], spiuniloc);
+		}
 		
 		if(con!=null)
 			con.close();
@@ -240,9 +274,6 @@ public class FilterCategory extends HttpServlet {
 			if(arr1[i][0]!=0)
 				no++;
 		}
-		//System.out.println(catobj);
-		
-		
 		
 		JSONObject ResponseObj=new JSONObject();
 		try {
@@ -253,6 +284,7 @@ public class FilterCategory extends HttpServlet {
 			ResponseObj.put("uniloc",uniloc);
 			ResponseObj.put("obj",obj);	
 			ResponseObj.put("catobj",catobj);	
+			ResponseObj.put("spiallloc",spiallloc);	
 		} 
 		catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -285,11 +317,11 @@ public class FilterCategory extends HttpServlet {
 		String category=filtercatreq.getCategory();
 		String location=filtercatreq.getLocation();
 		String unilocation=location;
-		//System.out.println(location);
+		
 		dbconn=new DataBaseConn();
 		con = dbconn.setConnection ();
-		//System.out.println("connected");
 		stmt=(Statement) con.createStatement();
+		
 		int i=0,flag=0,flagpart=0;
 		String query=null;
 		query = "select * from incident";
@@ -331,8 +363,6 @@ public class FilterCategory extends HttpServlet {
 		}
 		if(flagpart==1)
 			query=query+")";
-		
-		//System.out.println(query);
 		
 		rs=dbconn.getResult(query, con);
 		int count=0;
@@ -414,7 +444,6 @@ public class FilterCategory extends HttpServlet {
 		rs.close();
 		
 		rs=dbconn.getResult(query, con);
-		//System.out.println(query);
 		
 		String uniloc[]=new String[counter];
 		counter=0;
@@ -439,7 +468,44 @@ public class FilterCategory extends HttpServlet {
 		}
 		rs.close();
 		
+		JSONObject spiallloc = new JSONObject();
 		
+		for(i=0;i<uniloc.length;i++)
+		{
+			JSONObject spiuniloc = new JSONObject();
+			spiuniloc.put("garbage", 0);
+			spiuniloc.put("noise", 0);
+			spiuniloc.put("queues", 0);
+			spiuniloc.put("spitting", 0);
+			spiuniloc.put("traffic", 0);
+			query = "select incident_category, count(*) as count from incident where incident_locality='"+ uniloc[i] +"' group by incident_category";
+			rs=dbconn.getResult(query, con);
+			
+			while(rs.next())
+			{
+				if(rs.getString("incident_category").equalsIgnoreCase("garbage"))
+				{
+					spiuniloc.put("garbage", rs.getInt("count"));
+				}
+				else if(rs.getString("incident_category").equalsIgnoreCase("noise"))
+				{
+					spiuniloc.put("noise", rs.getInt("count"));
+				}
+				else if(rs.getString("incident_category").equalsIgnoreCase("queues"))
+				{
+					spiuniloc.put("queues", rs.getInt("count"));
+				}
+				else if(rs.getString("incident_category").equalsIgnoreCase("spitting"))
+				{
+					spiuniloc.put("spitting", rs.getInt("count"));
+				}
+				else 
+				{	
+					spiuniloc.put("traffic", rs.getInt("count"));
+				}
+			}
+			spiallloc.put(uniloc[i], spiuniloc);
+		}
 		
 		if(con!=null)
 			con.close();
@@ -458,9 +524,6 @@ public class FilterCategory extends HttpServlet {
 			if(arr1[i][0]!=0)
 				no++;
 		}
-		//System.out.println(catobj);
-		
-		
 		
 		JSONObject ResponseObj=new JSONObject();
 		try {
@@ -471,6 +534,7 @@ public class FilterCategory extends HttpServlet {
 			ResponseObj.put("uniloc",uniloc);
 			ResponseObj.put("obj",obj);	
 			ResponseObj.put("catobj",catobj);	
+			ResponseObj.put("spiallloc",spiallloc);	
 		} 
 		catch (JSONException e) {
 			// TODO Auto-generated catch block

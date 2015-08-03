@@ -14,7 +14,6 @@
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi?.js"></script>
-
 <script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
 <link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css"/>
 <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
@@ -65,8 +64,9 @@
 
 <script>
     
-   flag=0;
-   	var myloc,res=null;
+    flag=0;
+    var uniloc;
+   	var myloc,res=null,spiloc;
     xmlhttp=new XMLHttpRequest();
  	var url = "FilterCategory";
 
@@ -128,36 +128,67 @@
           	 bounds.extend(coords);
           	 //var count=0;
       		
-          	 
-          	var geocoder = new google.maps.Geocoder();
-            var lat = '';
-            var lng = '';
-            for(u=0;u<uniloc.length;u++)
-            {	
-            geocoder.geocode( { 'address': ''+uniloc[u]+', india'}, function(results, status) {
-              if (status == google.maps.GeocoderStatus.OK) {
-                 lat = results[0].geometry.location.lat();
-                 lng = results[0].geometry.location.lng();
-                 //alert('Latitude: ' + lat + ' Logitude: ' + lng); 
-           		 var position = new google.maps.LatLng(lat, lng);
-           		 bounds.extend(position);
-           		 var marker = new google.maps.Marker({
-            		 map: map,
-            		 icon: {
-                			url: 'http://maps.google.com/mapfiles/kml/pal4/icon47.png',
-            				size:new google.maps.Size(71, 71),
-            				origin:new google.maps.Point(0, 0),
-            				anchor:new google.maps.Point(17, 34),
-            				scaledSize:new google.maps.Size(37, 37)
-            		 },
-            		 title: "Star",
-            		 position: position
-          		 });
-         		 var spiderwindow = new google.maps.InfoWindow({
-             	    content: ''
-             	 });
-          		 bindSpiderWindow(marker, map, spiderwindow, "<b>Spider graph</b>");        
-              }
+          	
+              	var geocoder = new google.maps.Geocoder();
+                var lat = '';
+                var lng = '';
+                for(u=0;u<uniloc.length;u++)
+                {
+                	 var postal=null;
+                     geocoder.geocode( { 'address': ''+uniloc[u]+', india'}, function(results, status) {
+                     if (status == google.maps.GeocoderStatus.OK) {
+                     lat = results[0].geometry.location.lat();
+                     lng = results[0].geometry.location.lng();
+                     for (var p = 0; p < results[0].address_components.length; p++) {
+		                    if (results[0].address_components[p].types[0] == 'postal_code')
+		                    {
+		                    	//alert("Zip Code: " + results[0].address_components[p].short_name);
+		                    	postal=results[0].address_components[p].short_name;
+		                    	break;
+		                    }
+		                }
+               		 var position = new google.maps.LatLng(lat, lng);
+               		 bounds.extend(position);
+               		 var marker = new google.maps.Marker({
+                		 map: map,
+                		 icon: {
+                    			url: 'http://maps.google.com/mapfiles/kml/pal4/icon47.png',
+                				size:new google.maps.Size(71, 71),
+                				origin:new google.maps.Point(0, 0),
+                				anchor:new google.maps.Point(17, 34),
+                				scaledSize:new google.maps.Size(37, 37)
+                		 },
+                		 title: "Get Incidents Graph",
+                		 position: position
+              		 });
+           		  //alert(postal);
+               	  var data = new google.visualization.DataTable();
+                  data.addColumn('string', 'Topping');
+                  data.addColumn('number', 'Incidents');
+                  data.addRows([
+                    ['Garbage', spiallloc[postal].garbage],
+                    ['Queues', spiallloc[postal].queues],
+                    ['Noise', spiallloc[postal].noise],
+                    ['Spitting', spiallloc[postal].spitting],
+                    ['Traffic', spiallloc[postal].traffic]
+                  ]);
+ 
+                  var options = {'title':'Incidents @ Location: '+
+                                         postal,
+                                 'width':600,
+                                 'height':150};
+                                 
+                      var node    = document.createElement('div'),
+                      infoWindow  = new google.maps.InfoWindow(),
+                      chart       = new google.visualization.ColumnChart(node);
+                      
+                      chart.draw(data, options);
+ 
+                      google.maps.event.addListener(marker, 'click', function() {
+                          infoWindow.setContent(node);
+                          infoWindow.open(marker.getMap(),marker);
+               	    });
+ }
               else {
                 alert("Geocode was not successful for the following reason: " + status);
               }
@@ -357,25 +388,28 @@
                 	  });
                 
                  bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
-             	
-                	
               	 bounds.extend(coords);
-              	 //var count=0;
-          		
               	 
               	var geocoder = new google.maps.Geocoder();
                 var lat = '';
                 var lng = '';
                 for(u=0;u<uniloc.length;u++)
-                {	
-                geocoder.geocode( { 'address': ''+uniloc[u]+', india'}, function(results, status) {
-                  if (status == google.maps.GeocoderStatus.OK) {
+                {
+                	 var postal=null;
+                     geocoder.geocode( { 'address': ''+uniloc[u]+', india'}, function(results, status) {
+                     if (status == google.maps.GeocoderStatus.OK) {
                      lat = results[0].geometry.location.lat();
                      lng = results[0].geometry.location.lng();
-                     //alert('Latitude: ' + lat + ' Logitude: ' + lng); 
+                     for (var p = 0; p < results[0].address_components.length; p++) {
+		                    if (results[0].address_components[p].types[0] == 'postal_code')
+		                    {
+		                    	//alert("Zip Code: " + results[0].address_components[p].short_name);
+		                    	postal=results[0].address_components[p].short_name;
+		                    	break;
+		                    }
+		                }
                		 var position = new google.maps.LatLng(lat, lng);
                		 bounds.extend(position);
-               		 //pos=position;
                		 var marker = new google.maps.Marker({
                 		 map: map,
                 		 icon: {
@@ -385,27 +419,44 @@
                 				anchor:new google.maps.Point(17, 34),
                 				scaledSize:new google.maps.Size(37, 37)
                 		 },
-                		 title: "Star",
+                		 title: "Get Incidents Graph",
                 		 position: position
               		 });
-             		 var spiderwindow = new google.maps.InfoWindow({
-                 	    content: ''
-                 	 });
-              		 bindSpiderWindow(marker, map, spiderwindow, "<b>Spider graph</b>");        
-                  
-                  
-               		/* google.maps.event.addListener(marker, 'click', function() {
-               	      drawChart(this);
-               	    });*/
+           		  //alert(postal);
+               	  var data = new google.visualization.DataTable();
+                  data.addColumn('string', 'Topping');
+                  data.addColumn('number', 'Incidents');
+                  data.addRows([
+                    ['Garbage', spiallloc[postal].garbage],
+                    ['Queues', spiallloc[postal].queues],
+                    ['Noise', spiallloc[postal].noise],
+                    ['Spitting', spiallloc[postal].spitting],
+                    ['Traffic', spiallloc[postal].traffic]
+                  ]);
+ 
+                  var options = {'title':'Incidents @ Location: '+
+                                         postal,
+                                 'width':600,
+                                 'height':150};
+                                 
+                      var node    = document.createElement('div'),
+                      infoWindow  = new google.maps.InfoWindow(),
+                      chart       = new google.visualization.ColumnChart(node);
+                      
+                      chart.draw(data, options);
+ 
+                      google.maps.event.addListener(marker, 'click', function() {
+                          infoWindow.setContent(node);
+                          infoWindow.open(marker.getMap(),marker);
+               	    });
                   }
                   else {
                     alert("Geocode was not successful for the following reason: " + status);
                   }
                 });
                 } 
-                
-                //bounds.extend(pos);
-          		var clientHeight = document.getElementById('map-canvas').clientHeight;
+
+                var clientHeight = document.getElementById('map-canvas').clientHeight;
           		var clientWidth = document.getElementById('map-canvas').clientWidth;
           	
           		var mapDim = {
@@ -459,8 +510,7 @@
                  		flag=1;
                  		addCurrentLoc(res);
                  	}
-                 	//alert(res);
-          	  	});  	
+                });  	
                 initialize(latitude, longitude);	       	
         
  	}
@@ -470,9 +520,6 @@
  {
 	 myloc=res;
 
-	 //console.log(myloc);
-	 //console.log(loc);
-	 
 	 $('#multipleSelectLoc')
      .append($("<option selected></option>")
      .attr("value",myloc)
@@ -517,36 +564,36 @@
 		filterCat();
  }
 
- /*	function drawChart(marker) {
+/* 	function drawChart(marker) {
 
         // Create the data table.
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Topping');
-        data.addColumn('number', 'Slices');
+        data.addColumn('number', 'Incidents');
         data.addRows([
-          ['Mushrooms', 3],
-          ['Onions', 1],
-          ['Olives', 1],
-          ['Zucchini', 1],
-          ['Pepperoni', 2]
+          ['Garbage', spiallloc[spiloc].garbage],
+          ['Queues', spiallloc[spiloc].queues],
+          ['Noise', spiallloc[spiloc].noise],
+          ['Spitting', spiallloc[spiloc].spitting],
+          ['Traffic', spiallloc[spiloc].traffic]
         ]);
 
         // Set chart options
-        var options = {'title':'Pizza sold @ '+
-                               marker.getPosition().toString(),
-                       'width':400,
+        var options = {'title':'Incidents @ Location: '+
+                               spiloc,
+                       'width':600,
                        'height':150};
                        
         var node        = document.createElement('div'),
             infoWindow  = new google.maps.InfoWindow(),
-            chart       = new google.visualization.PieChart(node);
+            chart       = new google.visualization.ColumnChart(node);
             
             chart.draw(data, options);
             infoWindow.setContent(node);
             infoWindow.open(marker.getMap(),marker);
       }
-
-   */ function showCurrentLocation(position)
+*/
+  function showCurrentLocation(position)
     {
         var latitude = position.coords.latitude;
         var longitude = position.coords.longitude;
@@ -880,8 +927,6 @@ function filterCat()
 			loc=loc+location[m]+" ";
 		}
 		
-		//console.log(loc);
-		
 		if(category[0]=="Spider")
 			starflag=1;
 			
@@ -944,7 +989,9 @@ function filterCat()
 						//alert(xmlhttp.responseText);
 						var json = JSON.parse(xmlhttp.responseText);
 						uniloc=json.uniloc;
-		 				if(x==1)
+		 				spiallloc=json.spiallloc;
+		 				console.log(spiallloc);
+						if(x==1)
 							alert("Showing Spider Graphs based on the selected locations.");
 		 				else
 		 					//alert("Showing Spider Graph of your current location.");
@@ -963,7 +1010,7 @@ function filterCat()
 }
 
 
-//google.load('visualization', '1.0', {'packages':['corechart']});
+google.load('visualization', '1.0', {'packages':['corechart']});
 
 //google.maps.event.addDomListener(window, 'load', initialize);
 
