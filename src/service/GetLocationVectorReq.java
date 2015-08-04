@@ -28,6 +28,5 @@ public class GetLocationVectorReq extends HttpServlet {
 	public void setLocation(String location)
 	{
 	    this.location = location;
-	}
-	
+	}	
 }

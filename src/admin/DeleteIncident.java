@@ -43,6 +43,27 @@ public class DeleteIncident extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		String incident_id=request.getParameter("incident_id"); 
+		try 
+		{ 
+			dbconn=new DataBaseConn();
+			con = dbconn.setConnection ();	 
+			String sql = "delete from incident where incident_id=?"; 
+			PreparedStatement prep= con.prepareStatement(sql);
+			prep.setString(1, incident_id);
+			prep.executeUpdate(); 
+			prep.close(); 
+			RequestDispatcher rd=request.getRequestDispatcher("../adminjsp/admin.jsp?msg=Deleted Successfully !");
+			rd.forward(request, response);
+	        if(con!=null)
+		       	con.close();
+		}  
+	    catch(Exception e)
+		{
+			RequestDispatcher rd=request.getRequestDispatcher("../adminjsp/Error.jsp?");
+			rd.forward(request, response);
+		}
+
 	}
 
 	/**

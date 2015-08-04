@@ -28,6 +28,5 @@ public class GetLocationsReq extends HttpServlet {
 	public void setToken(String token)
 	{
 	    this.token = token;
-	}
-	 	
+	}	
 }

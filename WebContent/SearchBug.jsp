@@ -42,8 +42,6 @@ function SearchBug()
 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 				//alert(xmlhttp.responseText);
 				var json = JSON.parse(xmlhttp.responseText);
-				
-
 				document.getElementById("returncode").value=json.returnCode;
 				
 				if(json.returnCode==0)

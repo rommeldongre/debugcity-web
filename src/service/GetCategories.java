@@ -45,8 +45,7 @@ public class GetCategories extends HttpServlet {
 	
 		response.setContentType("application/json; charset=UTF-8");
 		
-		String vector = ""; 
-			
+		String vector = ""; 	
 		try
 		{
 				dbconn=new DataBaseConn();

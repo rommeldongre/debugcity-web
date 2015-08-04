@@ -31,6 +31,7 @@ function validateUser()
 	String uname="root";
 	String psword="root"; 
  	Connection con=null;
+ 	
  	Class.forName("com.mysql.jdbc.Driver"); 
 	con = DriverManager.getConnection (connectionparams, uname, psword); 
 	String sql = "select * from users";

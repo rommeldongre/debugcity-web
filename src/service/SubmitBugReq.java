@@ -26,8 +26,6 @@ public class SubmitBugReq extends HttpServlet {
 	private String submitter;
 	private String owner;
 	private String state;
-	//private String datecreated;
-	//private String dateclosed;
 	private String severity;
 	private String notes;
 	private String votes;

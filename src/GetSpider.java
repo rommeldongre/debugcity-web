@@ -45,7 +45,7 @@ public class GetSpider extends HttpServlet {
 	
 		response.setContentType("application/json; charset=UTF-8");
 		try
-			{
+		{
 				
 					JSONObject ideal = new JSONObject();
 					JSONObject unknown = new JSONObject();

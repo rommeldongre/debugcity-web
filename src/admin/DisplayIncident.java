@@ -61,8 +61,8 @@ public class DisplayIncident extends HttpServlet {
 		//out.println("hi");
 		// TODO Auto-generated method stub
 		@SuppressWarnings("rawtypes")
-	
 		List lst=new ArrayList();
+		
 		try 
 		{ 
 				dbconn=new DataBaseConn();

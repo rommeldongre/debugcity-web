@@ -40,6 +40,34 @@ public class UpdateUsers extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		try
+		{
+				String user_id=request.getParameter("user_id"); 
+				String user_full_name=request.getParameter("user_full_name"); 
+				String user_mobile=request.getParameter("user_mobile"); 
+				String user_location=request.getParameter("user_location"); 
+				String user_auth=request.getParameter("user_auth"); 
+				dbconn=new DataBaseConn();
+				con = dbconn.setConnection ();	 
+				String sql = "update users set user_full_name=?, user_mobile=?, user_location=?, user_auth=? where user_id=?" ; 
+				PreparedStatement prep= con.prepareStatement(sql); 
+				prep.setString(1, user_full_name);
+				prep.setString(2, user_mobile);
+				prep.setString(3, user_location);
+				prep.setString(4, user_auth);
+				prep.setString(5, user_id);
+				prep.executeUpdate(); 
+				prep.close();
+				RequestDispatcher rd=request.getRequestDispatcher("../adminjsp/admin.jsp?msg=Updated Successfully !");
+				rd.forward(request, response);
+				if(con!=null)
+					con.close();
+	     }
+		 catch(Exception e)
+		 {
+				RequestDispatcher rd=request.getRequestDispatcher("../adminjsp/Error.jsp?");
+				rd.forward(request, response);
+ 		 }
 	}
 
 	/**

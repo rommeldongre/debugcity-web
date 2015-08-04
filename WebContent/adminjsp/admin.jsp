@@ -13,6 +13,7 @@
 <body>
 <%
  String msg=request.getParameter("msg");
+ 
  if(msg!=null)
  	out.println(msg);
  %>

@@ -57,6 +57,7 @@ public class DisplayCategory extends HttpServlet {
 		PrintWriter out=response.getWriter();	
 		@SuppressWarnings("rawtypes")
 		List lst=new ArrayList(); 
+		
 		try
 		{ 
 				dbconn=new DataBaseConn();

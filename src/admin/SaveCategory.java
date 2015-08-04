@@ -39,6 +39,34 @@ public class SaveCategory extends HttpServlet
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+
+		String cat_name=request.getParameter("cat_name"); 
+		String cat_desc=request.getParameter("cat_desc");
+		String cat_parent=request.getParameter("cat_parent");
+		String cat_child=request.getParameter("cat_child");
+		try 
+		{ 
+				dbconn=new DataBaseConn();
+				con = dbconn.setConnection ();	 
+				String sql = "insert into category values (?,?,?,?)"; 
+				PreparedStatement prep= con.prepareStatement(sql); 
+				prep.setString(1, cat_name); 
+				prep.setString(2, cat_desc);
+				prep.setString(3, cat_parent);
+				prep.setString(4, cat_child);
+				prep.executeUpdate(); 
+				prep.close(); 
+				RequestDispatcher rd=request.getRequestDispatcher("../adminjsp/admin.jsp?msg=Inserted Successfully !");
+				rd.forward(request, response);
+			    if(con!=null)
+			    	con.close();
+		 }
+		 catch(Exception e)
+		 {
+		   	    RequestDispatcher rd=request.getRequestDispatcher("../adminjsp/Error.jsp?");
+			    rd.forward(request, response);
+		}
+
 	}
 
 	/**

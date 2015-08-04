@@ -14,6 +14,6 @@
 		<li>Connection can't be made at this time. </li>
 		<li>You have entered wrong type of data.</li>
 		<li>Check the address for human typing error.</li>
-	</ul>
+	</ul><br>
 </body>
 </html>

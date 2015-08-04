@@ -52,7 +52,6 @@ public class SubmitBug extends HttpServlet {
 		response.setContentType("application/json; charset=UTF-8");
 		
 			int bugId = 0; 
-
 			try
 			{
 				

@@ -47,11 +47,9 @@ public class GetLocations extends HttpServlet {
 		ObjectMapper objectmapper = new ObjectMapper();
 		GetLocationsReq getlocreq = objectmapper.readValue(request.getInputStream(), GetLocationsReq.class);
 		response.setContentType("application/json; charset=UTF-8");
-		
-			//int bugId = 0; 
 
-			try
-			{
+		try
+		{
 				
 					int token=Integer.parseInt(getlocreq.getToken());
 					int max=0;

@@ -26,7 +26,6 @@ function getLocations()
 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 				//alert(xmlhttp.responseText);
 				var json = JSON.parse(xmlhttp.responseText);
-				
 
 				document.getElementById("count").value=json.count;
 				if(json.count!=0)

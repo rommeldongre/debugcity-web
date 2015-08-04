@@ -14,7 +14,6 @@
 			if(rs.next())
 			{   %>
 			    <font color=red>
-			   
 			    <input type="hidden" id="actual" name="actual" value="taken">
 			     User_id already taken
 			    </font>

@@ -46,9 +46,6 @@ public class GetLocationVector extends HttpServlet {
 		ObjectMapper objectmapper = new ObjectMapper();
 		GetLocationVectorReq getlocvecreq = objectmapper.readValue(request.getInputStream(), GetLocationVectorReq.class);
 		response.setContentType("application/json; charset=UTF-8");
-		
-			//String vector = ""; 
-
 			try
 			{
 				

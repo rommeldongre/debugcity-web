@@ -20,8 +20,7 @@ function getCategories()
 				if(json.count!=0)
 					document.getElementById("categories").value=json.categories;
 				else
-					document.getElementById("categories").value="";
-				
+					document.getElementById("categories").value="";	
 				document.getElementById("returncode").value=json.returnCode;
 				
 				if(json.returnCode!=0)

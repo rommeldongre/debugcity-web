@@ -10,7 +10,6 @@
 function getLocationVector()
 {
 	var location=document.getElementById("location").value;
-	
 	xmlhttp=new XMLHttpRequest();
 	var url = "service/GetLocationVector";
 	

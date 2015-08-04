@@ -22,7 +22,6 @@
  		document.saveusers.user_id.focus();
  		return false;
  	}
- 	
 
  	return true;
  	

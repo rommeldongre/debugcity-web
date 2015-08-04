@@ -10,7 +10,6 @@
 	<h2>DebugCity v1</h2>
 	<dl>
 		<dt><b>:::Service APIs:::</b></dt>
-		
 		<dd><br><a href="SearchBug.jsp">SearchBug</a></dd>
 		<dd><a href="SubmitBug.jsp">SubmitBug</a></dd>
 		<dd><a href="getLocations.jsp">getLocations</a></dd>

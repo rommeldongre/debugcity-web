@@ -40,6 +40,36 @@ private static final long serialVersionUID = 1L;
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		String user_id=request.getParameter("user_id"); 
+		String user_full_name=request.getParameter("user_full_name");
+		String user_mobile=request.getParameter("user_mobile");
+		String user_location=request.getParameter("user_location");
+		String user_auth=request.getParameter("user_auth");
+		{
+			try
+			{ 
+				dbconn=new DataBaseConn();
+				con = dbconn.setConnection ();	 
+				String sql = "insert into users values (?,?,?,?,?)"; 
+				PreparedStatement prep= con.prepareStatement(sql); 
+				prep.setString(1, user_id); 
+				prep.setString(2, user_full_name);
+				prep.setString(3, user_mobile);
+				prep.setString(4, user_location);
+				prep.setString(5, user_auth);
+				prep.executeUpdate(); 
+				prep.close(); 
+				RequestDispatcher rd=request.getRequestDispatcher("../adminjsp/admin.jsp?msg=Inserted Successfully !");
+				rd.forward(request, response);
+				if(con!=null)
+					con.close();
+			}
+			catch(Exception e)
+			{
+				RequestDispatcher rd=request.getRequestDispatcher("../adminjsp/Error.jsp?");
+				rd.forward(request, response);
+			}
+		}	
 	}
 
 	/**

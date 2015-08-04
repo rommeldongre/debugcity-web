@@ -20,6 +20,7 @@ import com.mysql.jdbc.Statement;
 /**
  * Servlet implementation class FilterCategory
  */
+
 @WebServlet("/FilterCategory")
 public class FilterCategory extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -62,7 +63,8 @@ public class FilterCategory extends HttpServlet {
 		FilterCategoryReq filtercatreq = objectmapper.readValue(request.getInputStream(), FilterCategoryReq.class);
 		response.setContentType("application/json; charset=UTF-8");
 		
-		try{
+		try
+		{
 			
 		String category=filtercatreq.getCategory();
 		String location=filtercatreq.getLocation();

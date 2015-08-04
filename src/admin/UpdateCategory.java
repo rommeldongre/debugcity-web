@@ -41,6 +41,32 @@ public class UpdateCategory extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		try
+		{
+			String cat_name=request.getParameter("cat_name"); 
+				String cat_desc=request.getParameter("cat_desc"); 
+				String cat_parent=request.getParameter("cat_parent"); 
+				String cat_child=request.getParameter("cat_child"); 
+				dbconn=new DataBaseConn();
+				con = dbconn.setConnection ();	 
+				String sql = "update category set cat_desc=?, cat_parent=?, cat_child=? where cat_name=?" ; 
+				PreparedStatement prep= con.prepareStatement(sql); 
+				prep.setString(1, cat_desc);
+				prep.setString(2, cat_parent);
+				prep.setString(3, cat_child);
+				prep.setString(4, cat_name);
+				prep.executeUpdate(); 
+				prep.close();
+				RequestDispatcher rd=request.getRequestDispatcher("../adminjsp/admin.jsp?msg=Updated Successfully !");
+				rd.forward(request, response);
+				if(con!=null)
+					con.close();
+			}
+			catch(Exception e)
+			{
+				RequestDispatcher rd=request.getRequestDispatcher("../adminjsp/Error.jsp?");
+				rd.forward(request, response);
+			}	
 	}
 
 	/**

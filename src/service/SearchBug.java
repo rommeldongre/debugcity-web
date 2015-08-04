@@ -48,7 +48,6 @@ public class SearchBug extends HttpServlet {
 		SearchBugReq searchbugreq = objectmapper.readValue(request.getInputStream(), SearchBugReq.class);
 		response.setContentType("application/json; charset=UTF-8");
 		
-
 			try
 			{
 					int token=Integer.parseInt(searchbugreq.getToken());

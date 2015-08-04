@@ -48,7 +48,8 @@ public class DisplayUsers extends HttpServlet {
 			
 		response.setContentType("text/html");
 		PrintWriter out=response.getWriter();
-		List lst=new ArrayList(); 
+		List lst=new ArrayList();
+		
 		try
 		{ 
 				dbconn=new DataBaseConn();

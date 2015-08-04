@@ -20,7 +20,6 @@ function validateCategory()
 		document.savecategory.cat_name.focus();
 		return false;
 	}
-	
 
 	return true;
 	

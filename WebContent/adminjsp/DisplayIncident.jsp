@@ -22,8 +22,7 @@ window.onload = function () {
 	canvasCtx = document.getElementById("panel").getContext("2d");
 	document.getElementById("pic").onchange = function(event) {
 		
-		flag=1;
-		
+		flag=1;		
 		this.imageFile = event.target.files[0];
 		
 		var reader = new FileReader();

@@ -17,6 +17,7 @@ public class FilterCategoryReq extends HttpServlet {
     }
 
 	private String category;
+	
 	private String location;
 
 	public String getCategory() {

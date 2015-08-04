@@ -41,6 +41,27 @@ public class DeleteCategory extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		String cat_name=request.getParameter("cat_name"); 
+		 
+		 try
+		 { 
+				dbconn=new DataBaseConn();
+				con = dbconn.setConnection (); String sql = "delete from category where cat_name=?"; 
+				PreparedStatement prep= con.prepareStatement(sql); 
+				prep.setString(1, cat_name);
+				prep.executeUpdate(); 
+				prep.close(); 
+				RequestDispatcher rd=request.getRequestDispatcher("../adminjsp/admin.jsp?msg=Deleted Successfully !");
+				rd.forward(request, response);
+		        if(con!=null)
+		           con.close();
+		 }
+		 catch(Exception e)
+		 {
+				RequestDispatcher rd=request.getRequestDispatcher("../adminjsp/Error.jsp?");
+				rd.forward(request, response);
+		  }
+
 	}
 
 	/**
@@ -49,6 +70,7 @@ public class DeleteCategory extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 				 String cat_name=request.getParameter("cat_name"); 
+				 
 				 try
 				 { 
 						dbconn=new DataBaseConn();

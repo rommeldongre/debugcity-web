@@ -38,6 +38,27 @@ public class DeleteUsers extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		String user_id=request.getParameter("user_id"); 
+		 try 
+		 { 
+			 dbconn=new DataBaseConn();
+			 con = dbconn.setConnection ();	 
+    		 String sql = "delete from users where user_id=?"; 
+			 PreparedStatement prep= con.prepareStatement(sql); 
+	    	 prep.setString(1, user_id);
+	 		 prep.executeUpdate(); 
+		     prep.close(); 
+			 RequestDispatcher rd=request.getRequestDispatcher("../adminjsp/admin.jsp?msg=Deleted Successfully !");
+			 rd.forward(request, response);
+			 if(con!=null)
+				 con.close();
+	      }
+		  catch(Exception e)
+		  {
+				RequestDispatcher rd=request.getRequestDispatcher("../adminjsp/Error.jsp?");
+				rd.forward(request, response);
+		  }	
+
 	}
 
 	/**

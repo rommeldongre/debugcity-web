@@ -24,6 +24,7 @@ function validateIncident()
 <body>
 <%
  	String incident_id= request.getParameter("val");
+	
 	String connectionparams ="jdbc:mysql://localhost:3306/debugcity";
 	String uname="root";
 	String psword="root"; 
