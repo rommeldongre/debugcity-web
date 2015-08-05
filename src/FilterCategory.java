@@ -258,7 +258,79 @@ public class FilterCategory extends HttpServlet {
 			}
 			spiallloc.put(uniloc[i], spiuniloc);
 		}
+
+		rs.close();
 		
+		query = "select incident_locality, count(*) as count from incident where incident_category='garbage' group by incident_locality ORDER BY count DESC";
+		rs=dbconn.getResult(query, con);
+		
+		int[][] topscore=new int[5][3];
+		String[][] toploc=new String[5][3];
+		int c=0;
+		while(rs.next())
+		{
+			if(c==3)
+				break;
+			toploc[0][c]=rs.getString("incident_locality");
+			topscore[0][c]=rs.getInt("count");
+			c++;
+		}
+
+		rs.close();
+		
+		query = "select incident_locality, count(*) as count from incident where incident_category='queues' group by incident_locality ORDER BY count DESC";
+		rs=dbconn.getResult(query, con);
+		c=0;
+		while(rs.next())
+		{
+			if(c==3)
+				break;
+			toploc[1][c]=rs.getString("incident_locality");
+			topscore[1][c]=rs.getInt("count");
+			c++;
+		}
+
+		rs.close();
+		
+		query = "select incident_locality, count(*) as count from incident where incident_category='noise' group by incident_locality ORDER BY count DESC";
+		rs=dbconn.getResult(query, con);
+		c=0;
+		while(rs.next())
+		{
+			if(c==3)
+				break;
+			toploc[2][c]=rs.getString("incident_locality");
+			topscore[2][c]=rs.getInt("count");
+			c++;
+		}
+
+		rs.close();
+		
+		query = "select incident_locality, count(*) as count from incident where incident_category='spitting' group by incident_locality ORDER BY count DESC";
+		rs=dbconn.getResult(query, con);
+		c=0;
+		while(rs.next())
+		{
+			if(c==3)
+				break;
+			toploc[3][c]=rs.getString("incident_locality");
+			topscore[3][c]=rs.getInt("count");
+			c++;
+		}
+
+		rs.close();
+		
+		query = "select incident_locality, count(*) as count from incident where incident_category='traffic' group by incident_locality ORDER BY count DESC";
+		rs=dbconn.getResult(query, con);
+		c=0;
+		while(rs.next())
+		{
+			if(c==3)
+				break;
+			toploc[4][c]=rs.getString("incident_locality");
+			topscore[4][c]=rs.getInt("count");
+			c++;
+		}
 		if(con!=null)
 			con.close();
 		
@@ -287,6 +359,8 @@ public class FilterCategory extends HttpServlet {
 			ResponseObj.put("obj",obj);	
 			ResponseObj.put("catobj",catobj);	
 			ResponseObj.put("spiallloc",spiallloc);	
+			ResponseObj.put("toploc",toploc);	
+			ResponseObj.put("topscore",topscore);	
 		} 
 		catch (JSONException e) {
 			// TODO Auto-generated catch block

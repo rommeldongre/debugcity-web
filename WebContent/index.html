@@ -18,11 +18,25 @@
 <link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css"/>
 <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
 <style>
+	  html, body {
+  		height: 100%;
+	  }
+		
+	  #wrap {
+	    min-height: 100%;
+	  }
+	
+	  .footer {
+		position: relative;
+	    margin-top: 10px; /* negative value of footer height */
+	    clear:both;
+		padding-top:10px;
+		padding-bottom:10px;
+	  }
 	  
       #map-canvas {
-      	height: 540px;
-      	width: 100%;
-        margin: 0;
+      	height: 1030px;
+      	margin: 0;
         padding: 0;
       	position:relative;
       }
@@ -69,7 +83,7 @@ google.maps.event.addDomListener(window, "load", initialize);
     var flag=0;
     var uniloc,postal,loc,catobj;
    	var myloc,res=null,spiloc,bounds;
-   	
+   	var topcat,toploc;
   function afterInitialize()
   {
    	xmlhttp=new XMLHttpRequest();
@@ -85,7 +99,10 @@ google.maps.event.addDomListener(window, "load", initialize);
  				uniloc=json.uniloc;
  				loc=json.obj;
  				catobj=json.catobj;
- 		
+ 				toploc=json.toploc;
+ 				topscore=json.topscore;
+ 				//console.log(toploc);
+ 				//console.log(topscore);
  				if (navigator.geolocation)
 	 		    {
 	 			        navigator.geolocation.getCurrentPosition(showSpider);
@@ -162,22 +179,27 @@ google.maps.event.addDomListener(window, "load", initialize);
               		 });
                	  bounds.extend(position);
                	  map.fitBounds(bounds);
-              	  var data = new google.visualization.DataTable();
-                  data.addColumn('string', 'Topping');
-                  data.addColumn('number', 'Incidents');
-                  data.addRows([
-                    ['Garbage', spiallloc[postal].garbage],
-                    ['Queues', spiallloc[postal].queues],
-                    ['Noise', spiallloc[postal].noise],
-                    ['Spitting', spiallloc[postal].spitting],
-                    ['Traffic', spiallloc[postal].traffic]
-                  ]);
- 
-                  var options = {'title':'Incidents @ Location: '+
-                                         postal,
-                                 'width':600,
-                                 'height':150};
-                                 
+                	 
+                  var data = google.visualization.arrayToDataTable([
+                                                                      ['Month', 'Ideal', 'Actual'],
+                                                                      ['Garbage',  topscore[0][0],	spiallloc[postal].garbage],
+                                                                      ['Queues',  topscore[1][0],		spiallloc[postal].queues],
+                                                                      ['Noise',  topscore[2][0],		spiallloc[postal].noise],
+                                                                      ['Spitting',	topscore[3][0],	spiallloc[postal].spitting],
+                                                                      ['Traffic',  topscore[4][0],	spiallloc[postal].traffic]
+                                                                   ]);
+
+                                                                 var options = {
+                                                                  
+                                                                   title:'Incidents @ Location: '+
+                                                                         postal,
+                                                                   vAxis: {title: 'Incidents'},
+                                                                   hAxis: {title: 'Category'},
+                                                                   seriesType: 'bars',
+                                                                   series: {0: {type: 'line'}},
+                                                                   colors: ['#23d123',	'#faaadb'],
+                                                                   height: 150
+                                                                 };                                
                       var node    = document.createElement('div'),
                       infoWindow  = new google.maps.InfoWindow(),
                       chart       = new google.visualization.ColumnChart(node);
@@ -425,22 +447,29 @@ google.maps.event.addDomListener(window, "load", initialize);
               		 });
                   bounds.extend(position);
                   map.fitBounds(bounds);
-               	  var data = new google.visualization.DataTable();
-                  data.addColumn('string', 'Topping');
-                  data.addColumn('number', 'Incidents');
-                  data.addRows([
-                    ['Garbage', spiallloc[postal].garbage],
-                    ['Queues', spiallloc[postal].queues],
-                    ['Noise', spiallloc[postal].noise],
-                    ['Spitting', spiallloc[postal].spitting],
-                    ['Traffic', spiallloc[postal].traffic]
-                  ]);
- 
-                  var options = {'title':'Incidents @ Location: '+
-                                         postal,
-                                 'width':600,
-                                 'height':150};
-                                 
+               	 
+                  var data = google.visualization.arrayToDataTable([
+                                                                      ['Month', 'Ideal', 'Actual'],
+                                                                      ['Garbage',  topscore[0][0],	spiallloc[postal].garbage],
+                                                                      ['Queues',  topscore[1][0],		spiallloc[postal].queues],
+                                                                      ['Noise',  topscore[2][0],		spiallloc[postal].noise],
+                                                                      ['Spitting',	topscore[3][0],	spiallloc[postal].spitting],
+                                                                      ['Traffic',  topscore[4][0],	spiallloc[postal].traffic]
+                                                                   ]);
+
+                                                                 var options = {
+                                                                  
+                                                                   title:'Incidents @ Location: '+
+                                                                         postal,
+                                                                   vAxis: {title: 'Incidents'},
+                                                                   hAxis: {title: 'Category'},
+                                                                   seriesType: 'bars',
+                                                                   series: {0: {type: 'line'}},
+                                                                   colors: ['#23d123',	'#faaadb'],
+                                                                   height: 150
+                                                                 };
+
+                    
                       var node    = document.createElement('div'),
                       infoWindow  = new google.maps.InfoWindow(),
                       chart       = new google.visualization.ColumnChart(node);
@@ -848,7 +877,59 @@ function getBoundsZoomLevel(bounds, mapDim) {
 	    return Math.min(latZoom, lngZoom, ZOOM_MAX);
 	}
 
+function leaderBoard(tablename,l)
+{
+		    var table = document.getElementById(tablename);
+			var row1 = table.insertRow(0);
+			var row2 = table.insertRow(1);
+			var row3 = table.insertRow(2);
+			var row4 = table.insertRow(3);
+			var cell11 = row1.insertCell(0);
+			var cell12 = row1.insertCell(1);
+			var cell13 = row1.insertCell(2);
+			var cell21 = row2.insertCell(0);
+			var cell22 = row2.insertCell(1);
+			var cell23 = row2.insertCell(2);
+			var cell31 = row3.insertCell(0);
+			var cell32 = row3.insertCell(1);
+		    var cell33 = row3.insertCell(2);
+		    var cell41 = row4.insertCell(0);
+			var cell42 = row4.insertCell(1);
+			var cell43 = row4.insertCell(2);
+		    cell11.innerHTML = "<b>Rank</b>";
+		    cell12.innerHTML = "<b>Location</b>";
+		    cell13.innerHTML = "<b>Score</b>";
+			cell21.innerHTML = 1;
+			if(topscore[l][0]!=0)
+		    	cell22.innerHTML = toploc[l][0];
+			else
+				cell22.innerHTML = "-";
+			if(topscore[l][0]!=0)
+				cell23.innerHTML = topscore[l][0];
+			else
+				cell23.innerHTML = "-";
+			
+			
+			cell31.innerHTML = 2;
+			if(topscore[l][1]!=0)
+		    	cell32.innerHTML = toploc[l][1];
+			else
+				cell32.innerHTML = "-";
+			if(topscore[l][1]!=0)
+				cell33.innerHTML = topscore[l][1];
+			else
+				cell33.innerHTML = "-";
 
+		    cell41.innerHTML = 3;
+		    if(topscore[l][2]!=0)
+		    	cell42.innerHTML = toploc[l][2];
+			else
+				cell42.innerHTML = "-";
+		    if(topscore[l][2]!=0)
+				cell43.innerHTML = topscore[l][2];
+			else
+				cell43.innerHTML = "-";
+}
 
 function filterCat()
 {
@@ -906,6 +987,9 @@ function filterCat()
 							alert("Showing "+json.no+" incidents for Category: "+json.category+"");
 							markers1=json.arr1;
 			 				markers2=json.arr2;
+			 				toploc=json.toploc;
+			 				topscore=json.topscore;
+			 				
 			 				if (navigator.geolocation)
 			 			    {
 			 			        navigator.geolocation.getCurrentPosition(showCurrentLocation);
@@ -928,6 +1012,8 @@ function filterCat()
 		 				markers2=json.arr2;
 		 				uniloc=json.uniloc;
 		 				spiallloc=json.spiallloc;
+		 				toploc=json.toploc;
+		 				topscore=json.topscore;
 		 				if (navigator.geolocation)
 		 			    {
 		 			        navigator.geolocation.getCurrentPosition(showSpiderCurrentLocation);
@@ -953,7 +1039,16 @@ function filterCat()
 						if(x==1)
 							alert("Showing Spider Graphs based on the selected locations.");
 		 				x=1;
-						if (navigator.geolocation)
+		 				toploc=json.toploc;
+		 				topscore=json.topscore;
+		 				
+		 				leaderBoard("gtable",0);
+		 				leaderBoard("qtable",1);
+		 				leaderBoard("ntable",2);
+		 				leaderBoard("stable",3);
+		 				leaderBoard("ttable",4);
+		 				
+		 			    if (navigator.geolocation)
 		 		 	    {
 		 		 	        navigator.geolocation.getCurrentPosition(showSpider);
 		 		 	    }	
@@ -973,7 +1068,7 @@ google.load('visualization', '1.0', {'packages':['corechart']});
 
 </head>
 <body>
-
+<div id="wrap">
 <div class="navbar navbar-inverse navbar-fixed-top">
 	<div class="container">
 		<div class="navbar-header pull-left">
@@ -1006,22 +1101,56 @@ google.load('visualization', '1.0', {'packages':['corechart']});
  		<h1>Together we can fix our City</h1>
   		<p>Report Problems. Take Ownership. Live Better.</p>
   		<p><a class="btn btn-primary btn-lg" href="SubmitBug.jsp" role="button">Submit Bug</a></p>
-	</center> 
+	</center>
+</div>  	
+<div class="container-fluid" style="margin-left:100px;">
+	<select id="multipleSelectLoc" style="position:relative;" name="multipleSelectLoc" multiple="multiple">
+	</select>	
+	<select id="multipleSelect" style="position:relative;" name="multipleSelect" multiple="multiple">
+	<!--<option value="Spider" selected>Spider Chart</option><option value="Garbage">Garbage</option><option value="Noise">Noise</option><option value="Queues">Queues</option><option value="Spitting">Spitting</option><option value="Traffic">Traffic</option>
+	--></select>
+	<input style="position:relative;" type="button" id="filtercategory" class="btn btn-default" onclick="filterCat();" value="Filter">	
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<input style="position:relative;" id="pac-input" class="controls" type="text" placeholder="Search Locations">
+</div>  
+<div class="container-fluid" style="margin-top:10px;">
+	<div class="row">
+    	<div class="col-sm-6 col-md-9 col-lg-9">	
+    		<div  id="map-canvas">
+    		</div>
+    	</div>
+    	<div class="col-sm-6 col-md-3 col-lg-3">
+			<div class="panel panel-info">
+		  		<div class="panel-heading">Garbage</div>
+		  		<table class="table" id="gtable">
+		    	</table>
+			</div>
+			<div class="panel panel-info">
+		  		<div class="panel-heading">Queues</div>
+		  		<table class="table" id="qtable">
+		    	</table>
+			</div>
+			<div class="panel panel-info">
+		  		<div class="panel-heading">Noise</div>
+		  		<table class="table" id="ntable">
+		    	</table>
+			</div>
+			<div class="panel panel-info">
+		  		<div class="panel-heading">Spitting</div>
+		  		<table class="table" id="stable">
+		    	</table>
+			</div>
+			<div class="panel panel-info">
+		  		<div class="panel-heading">Traffic</div>
+		  		<table class="table" id="ttable">
+		    	</table>
+			</div>
+		</div>
+	</div>		
 </div>
-<div class="container">
-	<div id="map-canvas" ></div>
-	<div style="max-width: 895px;margin-top:-531px;margin-left:120px;position:relative;">
-		<select id="multipleSelectLoc" style="position:relative;" name="multipleSelectLoc" multiple="multiple">
-		</select>	
-		<select id="multipleSelect" style="position:relative;" name="multipleSelect" multiple="multiple">
-			<!--<option value="Spider" selected>Spider Chart</option><option value="Garbage">Garbage</option><option value="Noise">Noise</option><option value="Queues">Queues</option><option value="Spitting">Spitting</option><option value="Traffic">Traffic</option>
-		--></select>
-		<input style="position:relative;" type="button" id="filtercategory" class="btn btn-default" onclick="filterCat();" value="Filter">	
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="position:relative;" id="pac-input" class="controls" type="text" placeholder="Search Locations">
-	</div>
 </div>
-<div class="container" style="position:relative;margin-top:500px;">
-	<center><footer><hr><font style="color:grey;"><p>© Grey Labs LLP. All Rights Reserved.</p></font></footer></center>
-</div>
+<footer class="footer" style="background-color: #eee;">
+	<center><font style="color:#11515;"><br><p><b>© Grey Labs LLP. All Rights Reserved.</p></font></center>
+</footer>
 </body>
 </html>
