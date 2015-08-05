@@ -66,6 +66,24 @@ public class VoteIncident extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		ObjectMapper objectmapper = new ObjectMapper();
+		VoteIncidentReq vir= objectmapper.readValue(request.getInputStream(), VoteIncidentReq.class);
+		response.setContentType("application/json; charset=UTF-8");
+		
+		try
+		{
+			
+			String id=vir.getId();
+			
+			dbconn=new DataBaseConn();
+			con = dbconn.setConnection ();
+			query = "UPDATE incident SET incident_votes =  (incident_votes + 1) WHERE incident_id='"+id+"'";
+			stmt=(PreparedStatement) con.prepareStatement(query);
+			stmt.executeUpdate();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
-
 }

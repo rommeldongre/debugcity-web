@@ -5,65 +5,154 @@
 		<script src="js/Chart.js"></script>
 		<meta name = "viewport" content = "initial-scale = 1, user-scalable = no">
 		<style>
-			canvas{
-			}
+				* {
+					    margin: 0;
+					}
+					html, body {
+					    height: 100%;
+					}
+					.wrapper {
+					    min-height: 100%;
+					    height: auto !important;
+					    height: 100%;
+					    margin: 0 auto -55px; /* the bottom margin is the negative value of the footer's height */
+					}
+					.footer, .push {
+					    height: 55px; /* .push must be the same height as .footer */
+						font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    					font-size: 14px;
+					}
 		</style>
 		<script type="text/javascript">
-	xmlhttp=new XMLHttpRequest();
-	var url = "GetSpider";
-	
-	xmlhttp.onreadystatechange=function() {
-	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-				//alert(xmlhttp.responseText);
-				var json = JSON.parse(xmlhttp.responseText);
-				spider=json.spider;
+				var flag=0;
+				var loc,spiallloc,topscore;
+				xmlhttp=new XMLHttpRequest();
+				var url = "GetSpider";
+				
+				xmlhttp.onreadystatechange=function() {
+		    	if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+						//alert(xmlhttp.responseText);
+		    			var json = JSON.parse(xmlhttp.responseText);
+		    			loc=json.obj;
+		    			spiallloc=json.spiallloc;
+						topscore=json.topscore;
+						addLoc();
+					}
+				}
+				
+				xmlhttp.open("POST", url, true);
+				xmlhttp.responseType = 'JSON';
+				xmlhttp.send();
+		</script>
+		<script>
+			function getChart()
+			{
+				var location=$('#multipleSelectLoc').val();
+				var radarChartData = {
+					labels: ["Garbage", "Noise", "Queues", "Spitting", "Traffic"],
+					datasets: [
+					{
+						label: "Ideal",
+						fillColor: "rgba(193,250,157,0.2)",
+						strokeColor: "rgba(193,250,157,1)",
+						pointColor: "rgba(193,250,157,1)",
+						pointStrokeColor: "#fff",
+						pointHighlightFill: "#fff",
+						pointHighlightStroke: "rgba(193,250,157,1)",
+						data: [topscore[0],topscore[1],topscore[2],topscore[3],topscore[4]]
+					},
+					{
+						label: "Actual",
+						fillColor: "rgba(250,170,219,0.2)",
+						strokeColor: "rgba(250,170,219,1)",
+						pointColor: "rgba(250,170,219,1)",
+						pointStrokeColor: "#fff",
+						pointHighlightFill: "#fff",
+						pointHighlightStroke: "rgba(250,170,219,1)",
+						data: [spiallloc[location].garbage,spiallloc[location].queues,spiallloc[location].noise,spiallloc[location].spitting,spiallloc[location].traffic]
+					}]
+				};
+				window.myRadar = new Chart(document.getElementById("canvas").getContext("2d")).Radar(radarChartData, {
+				responsive: true});
+			}	
+		</script>
+
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
+		<link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css"/>
+		<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+		
+		<script>
+			function addLoc()
+		 	{
+				$.each(loc, function(key, value) {   
+				     $('#multipleSelectLoc')
+				     	 .append($("<option></option>")		
+				         .attr("value",key)
+				         .text(value));
+				});
+				
+				$(document).ready(function() {
+			 	    $('#multipleSelectLoc').multiselect({
+			 	        buttonWidth: '200px',
+			 	        dropRight: true
+			 	    });
+			 	});
 				getChart();
-		}
-	}
-			
-	xmlhttp.open("POST", url, true);
-	xmlhttp.responseType = 'JSON';
-	xmlhttp.send();
-</script>
-<script>
-function getChart()
-{
-	var radarChartData = {
-		labels: ["Garbage", "Noise", "Queues", "Spitting", "Traffic"],
-		datasets: [
-			{
-				label: "Ideal",
-				fillColor: "rgba(193,250,157,0.2)",
-				strokeColor: "rgba(193,250,157,1)",
-				pointColor: "rgba(193,250,157,1)",
-				pointStrokeColor: "#fff",
-				pointHighlightFill: "#fff",
-				pointHighlightStroke: "rgba(193,250,157,1)",
-				data: [spider[0].garbage,spider[0].noise,spider[0].queues,spider[0].spitting,spider[0].traffic]
-			},
-			{
-				label: "Unknown",
-				fillColor: "rgba(250,170,219,0.2)",
-				strokeColor: "rgba(250,170,219,1)",
-				pointColor: "rgba(250,170,219,1)",
-				pointStrokeColor: "#fff",
-				pointHighlightFill: "#fff",
-				pointHighlightStroke: "rgba(250,170,219,1)",
-				data: [spider[1].garbage,spider[1].noise,spider[1].queues,spider[1].spitting,spider[1].traffic]
-			}
-		]
-	};
-	window.myRadar = new Chart(document.getElementById("canvas").getContext("2d")).Radar(radarChartData, {
-	responsive: true});
-}	
-	</script>
+		 	}	
+		</script>
 		
 	</head>
-	<body style="background:"><center>
-		<div style="width:30%;margin-top:50px;">
-			<canvas id="canvas" height="450" width="450"></canvas><div style="margin-top:-400px;margin-left:500px;"><div style="width:10px;height:10px;background:rgba(193,250,157,1);"></div><div style="margin-left:15px; margin-top:-15px;">Ideal</div><div style="width:10px;height:10px;background:rgba(250,170,219,1); margin-top:10px;"></div><div style="margin-left:15px; margin-top:-15px;">Unknown</div></div>
+	<body style="background:">
+	<div class="wrapper">
+	<div class="navbar navbar-inverse navbar-fixed-top">
+	<div class="container">
+		<div class="navbar-header pull-left">
+			<a class="navbar-brand" href="index.html"><b>DebugCityV1</b></a>
 		</div>
-</center>
-
+		<div class="navbar-header pull-right">
+			<ul class="nav navbar-nav pull-left">
+				<li><a class="" href="admin.html">Admin&nbsp;</a></li>
+			</ul>
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            	<span class="icon-bar"></span>
+            	<span class="icon-bar"></span>
+            	<span class="icon-bar"></span>
+          	</button>
+         </div>
+         <div class="navbar-collapse collapse">
+         	
+         	<div class="navbar-right">
+         		<ul class="nav navbar-nav">
+         			<li><a href="index.html">Home</a></li> 
+         			<li><a href="SubmitBug.jsp">Submit Bug</a></li> 
+         			<li><a href="DebugCityv1.20150723.apk">Download App</a></li> 
+         		</ul>
+         	</div>
+        </div>
+   </div>
+</div>
+<div class="container-fluid" style="width:75%;">
+	<div class="row" style="position:relative;margin-top:150px;">
+    	<div class="col-sm-6 col-md-4 col-lg-4">
+    		<h2>Spider Graph</h2>	
+			<select id="multipleSelectLoc" style="position:relative;" name="multipleSelectLoc">
+			</select>	
+			<input type="button" class="btn btn-default" onclick="getChart()" value="Get">	
+    	</div>
+    	<div class="col-sm-6 col-md-8 col-lg-8">	
+			<center>
+			<div style="width:65%;">
+				<canvas id="canvas" height="400" width="400"></canvas>
+			</div>
+			</center>
+    	</div>
+    </div>	
+</div>
+</div>
+<div class="footer" style="background-color:#222;">	
+	<center><font style="color:#9d9d9d;"><br>© Grey Labs LLP. All Rights Reserved.</center>	
+</div>
 </body>
 </html>

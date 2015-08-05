@@ -46,93 +46,152 @@ public class GetSpider extends HttpServlet {
 		response.setContentType("application/json; charset=UTF-8");
 		try
 		{
-				
-					JSONObject ideal = new JSONObject();
-					JSONObject unknown = new JSONObject();
-					ideal.put("garbage", "0");
-					ideal.put("noise", "0");
-					ideal.put("queues", "0");
-					ideal.put("spitting", "0");
-					ideal.put("traffic", "0");
-					
-					unknown.put("garbage", "0");
-					unknown.put("noise", "0");
-					unknown.put("queues", "0");
-					unknown.put("spitting", "0");
-					unknown.put("traffic", "0");
-					
 				    dbconn=new DataBaseConn();
 					con = dbconn.setConnection ();
 					stmt=(Statement) con.createStatement();
-					String query = "select incident_category, count(*) as count from incident where incident_locality!='Unknown' group by incident_category";
+					
+					int counter=0;
+					
+					query = "select distinct incident_locality from incident where incident_locality!='unknown'";
+					
 					rs=dbconn.getResult(query, con);
 					
 					while(rs.next())
 					{
-						if(rs.getString("incident_category").equalsIgnoreCase("garbage"))
-						{
-							ideal.put("garbage", rs.getString("count"));
-						}
-						else if(rs.getString("incident_category").equalsIgnoreCase("noise"))
-						{
-							ideal.put("noise", rs.getString("count"));
-						}
-						else if(rs.getString("incident_category").equalsIgnoreCase("queues"))
-						{
-							ideal.put("queues", rs.getString("count"));
-						}
-						else if(rs.getString("incident_category").equalsIgnoreCase("spitting"))
-						{
-							ideal.put("spitting", rs.getString("count"));
-						}
-						else 
-						{	
-							ideal.put("traffic", rs.getString("count"));
-						}
+						counter++;
 					}
 					rs.close();
 					
-					query = "select incident_category, count(*) as count from incident where incident_locality='Unknown' group by incident_category";
 					rs=dbconn.getResult(query, con);
+					
+					String uniloc[]=new String[counter];
+					counter=0;
+					
+					JSONObject obj = new JSONObject();
 					
 					while(rs.next())
 					{
+						uniloc[counter]=rs.getString("incident_locality");
+						obj.put(uniloc[counter], uniloc[counter]);
+						counter++;
+					}
+					rs.close();
+					
+					JSONObject spiallloc = new JSONObject();
+					
+					for(int i=0;i<uniloc.length;i++)
+					{
+						JSONObject spiuniloc = new JSONObject();
+						spiuniloc.put("garbage", 0);
+						spiuniloc.put("noise", 0);
+						spiuniloc.put("queues", 0);
+						spiuniloc.put("spitting", 0);
+						spiuniloc.put("traffic", 0);
+						query = "select incident_category, count(*) as count from incident where incident_locality='"+ uniloc[i] +"' group by incident_category";
+						rs=dbconn.getResult(query, con);
+						
+						while(rs.next())
+						{
+							if(rs.getString("incident_category").equalsIgnoreCase("garbage"))
+							{
+								spiuniloc.put("garbage", rs.getInt("count"));
+							}
+							else if(rs.getString("incident_category").equalsIgnoreCase("noise"))
+							{
+								spiuniloc.put("noise", rs.getInt("count"));
+							}
+							else if(rs.getString("incident_category").equalsIgnoreCase("queues"))
+							{
+								spiuniloc.put("queues", rs.getInt("count"));
+							}
+							else if(rs.getString("incident_category").equalsIgnoreCase("spitting"))
+							{
+								spiuniloc.put("spitting", rs.getInt("count"));
+							}
+							else 
+							{	
+								spiuniloc.put("traffic", rs.getInt("count"));
+							}
+						}
+						spiallloc.put(uniloc[i], spiuniloc);
+					}
 
-						if(rs.getString("incident_category").equalsIgnoreCase("garbage"))
-						{
-							unknown.put("garbage", rs.getString("count"));
-						}
-						else if(rs.getString("incident_category").equalsIgnoreCase("noise"))
-						{
-							unknown.put("noise", rs.getString("count"));
-						}
-						else if(rs.getString("incident_category").equalsIgnoreCase("queues"))
-						{
-							unknown.put("queues", rs.getString("count"));
-						}
-						else if(rs.getString("incident_category").equalsIgnoreCase("spitting"))
-						{
-							unknown.put("spitting", rs.getString("count"));
-						}
-						else 
-						{	
-							unknown.put("traffic", rs.getString("count"));
-						}
-					}
 					rs.close();
+					
+					
+					query = "select incident_locality, count(*) as count from incident where incident_category='garbage' group by incident_locality ORDER BY count DESC";
+					rs=dbconn.getResult(query, con);
+					
+					int[] topscore=new int[5];
+					int c=0;
+					while(rs.next())
+					{
+						if(c==1)
+							break;
+						topscore[0]=rs.getInt("count");
+						c++;
+					}
+
+					rs.close();
+					
+					query = "select count(*) as count from incident where incident_category='queues' group by incident_locality ORDER BY count DESC";
+					rs=dbconn.getResult(query, con);
+					c=0;
+					while(rs.next())
+					{
+						if(c==1)
+							break;
+						topscore[1]=rs.getInt("count");
+						c++;
+					}
+
+					rs.close();
+					
+					query = "select count(*) as count from incident where incident_category='noise' group by incident_locality ORDER BY count DESC";
+					rs=dbconn.getResult(query, con);
+					c=0;
+					while(rs.next())
+					{
+						if(c==1)
+							break;
+						topscore[2]=rs.getInt("count");
+						c++;
+					}
+
+					rs.close();
+					
+					query = "select count(*) as count from incident where incident_category='spitting' group by incident_locality ORDER BY count DESC";
+					rs=dbconn.getResult(query, con);
+					c=0;
+					while(rs.next())
+					{
+						if(c==1)
+							break;
+						topscore[3]=rs.getInt("count");
+						c++;
+					}
+
+					rs.close();
+					
+					query = "select count(*) as count from incident where incident_category='traffic' group by incident_locality ORDER BY count DESC";
+					rs=dbconn.getResult(query, con);
+					c=0;
+					while(rs.next())
+					{
+						if(c==1)
+							break;
+						topscore[4]=rs.getInt("count");
+						c++;
+					}
+
 					
 					if(con!=null)
 						con.close();
 					
-					//System.out.println(ideal);
-					//System.out.println(unknown);
-					
-					JSONArray spider=new JSONArray();
-					spider.put(ideal);
-					spider.put(unknown);
-					//System.out.println(spider);
 					JSONObject ResponseObj=new JSONObject();
-					ResponseObj.put("spider",spider);
+					ResponseObj.put("spiallloc",spiallloc);	
+					ResponseObj.put("obj",obj);	
+					ResponseObj.put("topscore",topscore);	
 					response.setContentType("text/json");				
 					response.setContentType("application/json; charset=UTF-8");
 					PrintWriter printout = response.getWriter();
@@ -149,96 +208,156 @@ public class GetSpider extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+
 		response.setContentType("application/json; charset=UTF-8");
 		try
-			{
-				
-					JSONObject ideal = new JSONObject();
-					JSONObject unknown = new JSONObject();
-					ideal.put("garbage", "0");
-					ideal.put("noise", "0");
-					ideal.put("queues", "0");
-					ideal.put("spitting", "0");
-					ideal.put("traffic", "0");
-					
-					unknown.put("garbage", "0");
-					unknown.put("noise", "0");
-					unknown.put("queues", "0");
-					unknown.put("spitting", "0");
-					unknown.put("traffic", "0");
-					
+		{
 				    dbconn=new DataBaseConn();
 					con = dbconn.setConnection ();
 					stmt=(Statement) con.createStatement();
-					String query = "select incident_category, count(*) as count from incident where incident_locality!='Unknown' group by incident_category";
+					
+					int counter=0;
+					
+					query = "select distinct incident_locality from incident where incident_locality!='unknown'";
+					
 					rs=dbconn.getResult(query, con);
 					
 					while(rs.next())
 					{
-						if(rs.getString("incident_category").equalsIgnoreCase("garbage"))
-						{
-							ideal.put("garbage", rs.getString("count"));
-						}
-						else if(rs.getString("incident_category").equalsIgnoreCase("noise"))
-						{
-							ideal.put("noise", rs.getString("count"));
-						}
-						else if(rs.getString("incident_category").equalsIgnoreCase("queues"))
-						{
-							ideal.put("queues", rs.getString("count"));
-						}
-						else if(rs.getString("incident_category").equalsIgnoreCase("spitting"))
-						{
-							ideal.put("spitting", rs.getString("count"));
-						}
-						else 
-						{	
-							ideal.put("traffic", rs.getString("count"));
-						}
+						counter++;
 					}
 					rs.close();
 					
-					query = "select incident_category, count(*) as count from incident where incident_locality='Unknown' group by incident_category";
 					rs=dbconn.getResult(query, con);
+					
+					String uniloc[]=new String[counter];
+					counter=0;
+					
+					JSONObject obj = new JSONObject();
 					
 					while(rs.next())
 					{
+						uniloc[counter]=rs.getString("incident_locality");
+						obj.put(uniloc[counter], uniloc[counter]);
+						counter++;
+					}
+					rs.close();
+					
+					JSONObject spiallloc = new JSONObject();
+					
+					for(int i=0;i<uniloc.length;i++)
+					{
+						JSONObject spiuniloc = new JSONObject();
+						spiuniloc.put("garbage", 0);
+						spiuniloc.put("noise", 0);
+						spiuniloc.put("queues", 0);
+						spiuniloc.put("spitting", 0);
+						spiuniloc.put("traffic", 0);
+						query = "select incident_category, count(*) as count from incident where incident_locality='"+ uniloc[i] +"' group by incident_category";
+						rs=dbconn.getResult(query, con);
+						
+						while(rs.next())
+						{
+							if(rs.getString("incident_category").equalsIgnoreCase("garbage"))
+							{
+								spiuniloc.put("garbage", rs.getInt("count"));
+							}
+							else if(rs.getString("incident_category").equalsIgnoreCase("noise"))
+							{
+								spiuniloc.put("noise", rs.getInt("count"));
+							}
+							else if(rs.getString("incident_category").equalsIgnoreCase("queues"))
+							{
+								spiuniloc.put("queues", rs.getInt("count"));
+							}
+							else if(rs.getString("incident_category").equalsIgnoreCase("spitting"))
+							{
+								spiuniloc.put("spitting", rs.getInt("count"));
+							}
+							else 
+							{	
+								spiuniloc.put("traffic", rs.getInt("count"));
+							}
+						}
+						spiallloc.put(uniloc[i], spiuniloc);
+					}
 
-						if(rs.getString("incident_category").equalsIgnoreCase("garbage"))
-						{
-							unknown.put("garbage", rs.getString("count"));
-						}
-						else if(rs.getString("incident_category").equalsIgnoreCase("noise"))
-						{
-							unknown.put("noise", rs.getString("count"));
-						}
-						else if(rs.getString("incident_category").equalsIgnoreCase("queues"))
-						{
-							unknown.put("queues", rs.getString("count"));
-						}
-						else if(rs.getString("incident_category").equalsIgnoreCase("spitting"))
-						{
-							unknown.put("spitting", rs.getString("count"));
-						}
-						else 
-						{	
-							unknown.put("traffic", rs.getString("count"));
-						}
-					}
 					rs.close();
+					
+					
+					query = "select incident_locality, count(*) as count from incident where incident_category='garbage' group by incident_locality ORDER BY count DESC";
+					rs=dbconn.getResult(query, con);
+					
+					int[] topscore=new int[5];
+					int c=0;
+					while(rs.next())
+					{
+						if(c==1)
+							break;
+						topscore[0]=rs.getInt("count");
+						c++;
+					}
+
+					rs.close();
+					
+					query = "select count(*) as count from incident where incident_category='queues' group by incident_locality ORDER BY count DESC";
+					rs=dbconn.getResult(query, con);
+					c=0;
+					while(rs.next())
+					{
+						if(c==1)
+							break;
+						topscore[1]=rs.getInt("count");
+						c++;
+					}
+
+					rs.close();
+					
+					query = "select count(*) as count from incident where incident_category='noise' group by incident_locality ORDER BY count DESC";
+					rs=dbconn.getResult(query, con);
+					c=0;
+					while(rs.next())
+					{
+						if(c==1)
+							break;
+						topscore[2]=rs.getInt("count");
+						c++;
+					}
+
+					rs.close();
+					
+					query = "select count(*) as count from incident where incident_category='spitting' group by incident_locality ORDER BY count DESC";
+					rs=dbconn.getResult(query, con);
+					c=0;
+					while(rs.next())
+					{
+						if(c==1)
+							break;
+						topscore[3]=rs.getInt("count");
+						c++;
+					}
+
+					rs.close();
+					
+					query = "select count(*) as count from incident where incident_category='traffic' group by incident_locality ORDER BY count DESC";
+					rs=dbconn.getResult(query, con);
+					c=0;
+					while(rs.next())
+					{
+						if(c==1)
+							break;
+						topscore[4]=rs.getInt("count");
+						c++;
+					}
+
 					
 					if(con!=null)
 						con.close();
 					
-					//System.out.println(ideal);
-					//System.out.println(unknown);
-					
-					JSONArray spider=new JSONArray();
-					spider.put(ideal);
-					spider.put(unknown);
-					//System.out.println(spider);
 					JSONObject ResponseObj=new JSONObject();
-					ResponseObj.put("spider",spider);
+					ResponseObj.put("spiallloc",spiallloc);	
+					ResponseObj.put("obj",obj);	
+					ResponseObj.put("topscore",topscore);	
 					response.setContentType("text/json");				
 					response.setContentType("application/json; charset=UTF-8");
 					PrintWriter printout = response.getWriter();
