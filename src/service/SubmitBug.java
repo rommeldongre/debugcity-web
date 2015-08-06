@@ -59,6 +59,21 @@ public class SubmitBug extends HttpServlet {
 					String lng=subbugreq.getLng();
 					String cat=subbugreq.getCat();
 					
+					dbconn=new DataBaseConn();
+					con = dbconn.setConnection ();
+					stmt=(Statement) con.createStatement();
+					String query = "select * from incident where incident_lat='"+ lat +"' AND incident_long='"+ lng +"' AND incident_category='"+ cat +"'";
+					rs=dbconn.getResult(query, con);
+					int flag=0;
+					while(rs.next())
+					{
+						flag=1;
+						break;
+					}
+					rs.close();
+					
+				if(flag==0)
+				{	
 					String pic=null;
 					if(!subbugreq.getPic().equals(""))
 						pic=subbugreq.getPic();
@@ -119,7 +134,7 @@ public class SubmitBug extends HttpServlet {
 					dbconn=new DataBaseConn();
 					con = dbconn.setConnection ();
 					stmt=(Statement) con.createStatement();
-					String query = "select * from incident";
+					query = "select * from incident";
 					rs=dbconn.getResult(query, con);
 					while(rs.next())
 					{
@@ -128,6 +143,7 @@ public class SubmitBug extends HttpServlet {
 					rs.close();
 					if(con!=null)
 						con.close();
+					
 					JSONObject ResponseObj=new JSONObject();
 					ResponseObj.put("bugId", bugId);
 					ResponseObj.put("returnCode", "0");
@@ -135,7 +151,21 @@ public class SubmitBug extends HttpServlet {
 					response.setContentType("application/json; charset=UTF-8");
 					PrintWriter printout = response.getWriter();
 					printout.print(ResponseObj.toString());
-			}
+				}
+				else
+				{
+					if(con!=null)
+						con.close();
+					
+					JSONObject ResponseObj=new JSONObject();
+					ResponseObj.put("bugId", "bug already exists.");
+					ResponseObj.put("returnCode", "1048");
+					response.setContentType("text/json");				
+					response.setContentType("application/json; charset=UTF-8");
+					PrintWriter printout = response.getWriter();
+					printout.print(ResponseObj.toString());	
+				}
+			}	
 			
 			catch(Exception e)
 			{
@@ -161,8 +191,7 @@ public class SubmitBug extends HttpServlet {
 				PrintWriter printout = response.getWriter();
 				printout.print(ResponseObj.toString());
 		
-			}
-			
+			}		
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -173,7 +202,6 @@ public class SubmitBug extends HttpServlet {
 		response.setContentType("application/json; charset=UTF-8");
 		
 			int bugId = 0; 
-
 			try
 			{
 				
@@ -181,6 +209,21 @@ public class SubmitBug extends HttpServlet {
 					String lng=subbugreq.getLng();
 					String cat=subbugreq.getCat();
 					
+					dbconn=new DataBaseConn();
+					con = dbconn.setConnection ();
+					stmt=(Statement) con.createStatement();
+					String query = "select * from incident where incident_lat='"+ lat +"' AND incident_long='"+ lng +"' AND incident_category='"+ cat +"'";
+					rs=dbconn.getResult(query, con);
+					int flag=0;
+					while(rs.next())
+					{
+						flag=1;
+						break;
+					}
+					rs.close();
+					
+				if(flag==0)
+				{	
 					String pic=null;
 					if(!subbugreq.getPic().equals(""))
 						pic=subbugreq.getPic();
@@ -241,7 +284,7 @@ public class SubmitBug extends HttpServlet {
 					dbconn=new DataBaseConn();
 					con = dbconn.setConnection ();
 					stmt=(Statement) con.createStatement();
-					String query = "select * from incident";
+					query = "select * from incident";
 					rs=dbconn.getResult(query, con);
 					while(rs.next())
 					{
@@ -250,6 +293,7 @@ public class SubmitBug extends HttpServlet {
 					rs.close();
 					if(con!=null)
 						con.close();
+					
 					JSONObject ResponseObj=new JSONObject();
 					ResponseObj.put("bugId", bugId);
 					ResponseObj.put("returnCode", "0");
@@ -257,7 +301,21 @@ public class SubmitBug extends HttpServlet {
 					response.setContentType("application/json; charset=UTF-8");
 					PrintWriter printout = response.getWriter();
 					printout.print(ResponseObj.toString());
-			}
+				}
+				else
+				{
+					if(con!=null)
+						con.close();
+					
+					JSONObject ResponseObj=new JSONObject();
+					ResponseObj.put("bugId", "bug already exists.");
+					ResponseObj.put("returnCode", "1048");
+					response.setContentType("text/json");				
+					response.setContentType("application/json; charset=UTF-8");
+					PrintWriter printout = response.getWriter();
+					printout.print(ResponseObj.toString());	
+				}
+			}	
 			
 			catch(Exception e)
 			{
@@ -284,7 +342,5 @@ public class SubmitBug extends HttpServlet {
 				printout.print(ResponseObj.toString());
 		
 			}
-			
-	}
-
+		}
 }

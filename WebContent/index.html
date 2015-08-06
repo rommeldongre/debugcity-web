@@ -947,6 +947,7 @@ function vote(id)
  	xmlhttp.onreadystatechange=function() {
  	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
  	    		alert("Successfully voted.");
+
  	    }
  	}
  	
@@ -1129,21 +1130,23 @@ google.load('visualization', '1.0', {'packages':['corechart']});
   		<p><a class="btn btn-primary btn-lg" href="SubmitBug.jsp" role="button">Submit Bug</a></p>
 	</center>
 </div>  	
-<div class="container-fluid" style="margin-left:100px;">
-	<select id="multipleSelectLoc" style="position:relative;" name="multipleSelectLoc" multiple="multiple">
-	</select>	
-	<select id="multipleSelect" style="position:relative;" name="multipleSelect" multiple="multiple">
-	<!--<option value="Spider" selected>Spider Chart</option><option value="Garbage">Garbage</option><option value="Noise">Noise</option><option value="Queues">Queues</option><option value="Spitting">Spitting</option><option value="Traffic">Traffic</option>
-	--></select>
-	<input style="position:relative;" type="button" id="filtercategory" class="btn btn-default" onclick="filterCat();" value="Filter">	
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<input style="position:relative;" id="pac-input" class="controls" type="text" placeholder="Search Locations">
-</div>  
 <div class="container-fluid" style="margin-top:10px;">
 	<div class="row">
     	<div class="col-sm-6 col-md-9 col-lg-9">	
     		<div  id="map-canvas">
     		</div>
+    		<div class="container-fluid" style="margin-left:100px;margin-top:-1020px;">
+				<select id="multipleSelectLoc" style="position:relative;" name="multipleSelectLoc" multiple="multiple">
+				</select>	
+				<select id="multipleSelect" style="position:relative;" name="multipleSelect" multiple="multiple">
+				<!--<option value="Spider" selected>Spider Chart</option><option value="Garbage">Garbage</option><option value="Noise">Noise</option><option value="Queues">Queues</option><option value="Spitting">Spitting</option><option value="Traffic">Traffic</option>
+				--></select>
+				<input style="position:relative;" type="button" id="filtercategory" class="btn btn-default" onclick="filterCat();" value="Filter">	
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<input style="position:relative;" id="pac-input" class="controls" type="text" placeholder="Search Locations">
+			</div>
+			<div class="container" style="height:930px;">
+			</div>  	
     	</div>
     	<div class="col-sm-6 col-md-3 col-lg-3">
 			<div class="panel panel-info">
