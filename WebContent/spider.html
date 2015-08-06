@@ -15,7 +15,7 @@
 					    min-height: 100%;
 					    height: auto !important;
 					    height: 100%;
-					    margin: 0 auto -55px; /* the bottom margin is the negative value of the footer's height */
+					    margin: 0 auto -30px; /* the bottom margin is the negative value of the footer's height */
 					}
 					.footer, .push {
 					    height: 55px; /* .push must be the same height as .footer */
@@ -136,15 +136,24 @@
 <div class="container-fluid" style="width:75%;">
 	<div class="row" style="position:relative;margin-top:150px;">
     	<div class="col-sm-6 col-md-4 col-lg-4">
-    		<h2>Spider Graph</h2>	
+    		<h2>Spider Graph</h2><br>
+    		<h4>Select Location</h4>	
 			<select id="multipleSelectLoc" style="position:relative;" name="multipleSelectLoc">
 			</select>	
 			<input type="button" class="btn btn-default" onclick="getChart()" value="Get">	
     	</div>
     	<div class="col-sm-6 col-md-8 col-lg-8">	
 			<center>
-			<div style="width:65%;">
+			<div style="width:55%;">
 				<canvas id="canvas" height="400" width="400"></canvas>
+				<div style="margin-top:-20px;"><table class="table" style="width:30px;border-top:2px solid white;">
+		      	<tr>
+		        <td><div style="background-color:rgba(193,250,157,1); height:15px; width:15px;"></div></td>
+		        <th>Ideal</th>
+		      	<td><div style="background-color:rgba(250,170,219,1); height:15px; width:15px;"></div></td>
+		        <th>Actual</th>
+		       	</tr>
+	    		</table></div>
 			</div>
 			</center>
     	</div>
