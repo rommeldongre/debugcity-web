@@ -936,17 +936,39 @@ function leaderBoard(tablename,l)
 				cell43.innerHTML = "-";
 }
 
+function getIP()
+{
+	if (window.XMLHttpRequest) xmlhttp = new XMLHttpRequest();
+		else xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+
+		xmlhttp.open("GET","http://api.hostip.info/get_html.php",false);
+		xmlhttp.send();
+
+		hostipInfo = xmlhttp.responseText.split("\n");
+
+		for (i=0; hostipInfo.length >= i; i++) {
+			ipAddress = hostipInfo[i].split(":");
+			if ( ipAddress[0] == "IP" ) return ipAddress[1];
+		}
+}
+
 function vote(id)
 {
 	xmlhttp=new XMLHttpRequest();
  	var url = "VoteIncident";
-
+	var user=getIP();
+ 	
  	var voteData=new Object();
  	voteData["id"]=id;
+ 	voteData["user"]=user;
  	
  	xmlhttp.onreadystatechange=function() {
  	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
- 	    		alert("Successfully voted.");
+ 	    		var json = JSON.parse(xmlhttp.responseText);	
+ 	    		if(json.votres==1)
+ 	    			alert("Successfully voted.");
+ 	    		else
+ 	    			alert("Already voted.");
  	    		filterCat();
  	    }
  	}

@@ -17,6 +17,7 @@ public class VoteIncidentReq extends HttpServlet {
     }
 
 	private String id;
+	private String user;
 
 	public String getId() {
 		// TODO Auto-generated method stub
@@ -26,5 +27,15 @@ public class VoteIncidentReq extends HttpServlet {
 	public void setId(String id)
 	{
 	    this.id = id;
+	}
+	
+	public String getUser() {
+		// TODO Auto-generated method stub
+		return user;
+	}
+
+	public void setUser(String user)
+	{
+	    this.user = user;
 	}
 }
