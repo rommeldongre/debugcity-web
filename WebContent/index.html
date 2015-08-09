@@ -966,10 +966,12 @@ function vote(id)
  	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
  	    		var json = JSON.parse(xmlhttp.responseText);	
  	    		if(json.votres==1)
+ 	    		{
  	    			alert("Successfully voted.");
+ 	    			filterCat();
+ 	    		}
  	    		else
  	    			alert("Already voted.");
- 	    		filterCat();
  	    }
  	}
  	
@@ -1138,7 +1140,7 @@ google.load('visualization', '1.0', {'packages':['corechart']});
          	<div class="navbar-right">
          		<ul class="nav navbar-nav">
          			<li><a href="spider.html">Spider Graph</a></li> 
-         			<li><a href="SubmitBug.jsp">Submit Bug</a></li> 
+         			<li><a href="SubmitIncident.jsp">Submit Incident</a></li> 
          			<li><a href="DebugCityv1.20150723.apk">Download App</a></li> 
          		</ul>
          	</div>
