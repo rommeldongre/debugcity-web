@@ -4,10 +4,36 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SubmitIncident</title>
 <script type="text/javascript" src="js/jquery-1.7.min.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
 <script type="text/javascript" src="js/exif.js"></script>
+<script type="text/javascript" src="js/jquery-1.7.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
+<link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css"/>
+	<style>
+				* {
+					    margin: 0;
+					}
+					html, body {
+					    height: 100%;
+					}
+					.wrapper {
+					    min-height: 100%;
+					    height: auto !important;
+					    height: 100%;
+					    margin: 0 auto -30px; /* the bottom margin is the negative value of the footer's height */
+					}
+					.footer, .push {
+					    height: 55px; /* .push must be the same height as .footer */
+						font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    					font-size: 14px;
+					}
+		</style>
+<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
 <script type="text/javascript">
 
 canvasCtx = null;
@@ -164,28 +190,89 @@ function getLocation()
 </script>
 
 </head>
-<body>
-	<h1>Submit Incident</h1>
-	<table>
-		<tr>
-			<td>Cat</td>
-			<td><input type="text" id="cat" name="cat"></td>
-		</tr>
-		<tr>
-			<td>Pic</td>
-			<td><input type="file" id="pic"><canvas id="panel"></canvas></td>
-		</tr>
-		<tr>
-			<td colspan="2"><input type="Button" name="submit" id="submit"
-				onclick="getLocation()" value="Get BugId"></td>
-		</tr>
-	</table>
-	<br/>
-	<input type="text" id="bugId" name="bugId" readonly="readonly">
-
-	<input type="text" id="returnCode" name="returnCode" readonly="readonly">
-
-	<input type="text" id="errorString" name="errorString" >
+<body style="background:">
+	<div class="wrapper">
+	<div class="navbar navbar-inverse navbar-fixed-top">
+	<div class="container">
+		<div class="navbar-header pull-left">
+			<a class="navbar-brand" href="index.html"><b>DebugCityV1</b></a>
+		</div>
+		<div class="navbar-header pull-right">
+			<ul class="nav navbar-nav pull-left">
+				<li><a class="" href="admin.html">Admin&nbsp;</a></li>
+			</ul>
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            	<span class="icon-bar"></span>
+            	<span class="icon-bar"></span>
+            	<span class="icon-bar"></span>
+          	</button>
+         </div>
+         <div class="navbar-collapse collapse">
+         	
+         	<div class="navbar-right">
+         		<ul class="nav navbar-nav">
+         			<li><a href="index.html">Home</a></li> 
+         			<li><a href="spider.html">Spider Graph</a></li> 
+         			<li><a href="DebugCityv1.20150723.apk">Download App</a></li> 
+         		</ul>
+         	</div>
+        </div>
+   </div>
+</div>
+<div class="container" style="margin-top:40px;">
+  <h2>Submit Incident</h2>
+  <form class="form-horizontal" role="form">
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="cat">Cat</label>
+      <div class="col-sm-10">
+        <input input type="text" id="cat" name="cat" class="form-control" placeholder="Enter category">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="pic">Pic</label>
+      <div class="col-sm-10">          
+        <input type="file" class="form-control" type="file" id="pic"><canvas id="panel"></canvas>
+      </div>
+    </div>
+    <div class="form-group">        
+      <div class="col-sm-offset-2 col-sm-10">
+        <div class="checkbox">
+          <label><input type="checkbox"> Share on Facebook</label>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">        
+      <div class="col-sm-offset-2 col-sm-10">
+      		<input class="btn btn-default" type="Button" name="submit" id="submit"
+				onclick="getLocation()" value="Get IncidentId">
+	  </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="bugId">Incident id</label>
+      <div class="col-sm-10">
+        <input input type="text" id="bugId" name="bugId" readonly="readonly" class="form-control" placeholder="Incident id">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="returnCode">Return code</label>
+      <div class="col-sm-10">
+        <input input type="text" id="returnCode" name="returnCode" readonly="readonly" class="form-control" placeholder="Return code">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="errorString">Error string</label>
+      <div class="col-sm-10">
+        <input input type="text" id="errorString" name="errorString" readonly="readonly" class="form-control" placeholder="Error string">
+      </div>
+    </div>
+  </form>
+</div>
+</div>
+<div class="footer" style="background-color:#222;margin-top:20px;">	
+	<center><font style="color:#9d9d9d;"><br>© Grey Labs LLP. All Rights Reserved.</center>	
+</div>
+</body>
+</html>
 
 </body>
 </html>
