@@ -223,15 +223,15 @@ function getLocation()
   <h2>Submit Incident</h2>
   <form class="form-horizontal" role="form">
     <div class="form-group">
-      <label class="control-label col-sm-2" for="cat">Cat</label>
+      <label class="control-label col-sm-2" for="cat">Cat <span style="color:red;font-family:'Glyphicons Halflings';font-weight: normal;font-size: 14px;">*</span></label>
       <div class="col-sm-10">
         <input input type="text" id="cat" name="cat" class="form-control" placeholder="Enter category">
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="pic">Pic</label>
+      <label class="control-label col-sm-2" for="pic">Pic <span style="color:red;font-family:'Glyphicons Halflings';font-weight: normal;font-size: 14px;">*</span></label>
       <div class="col-sm-10">          
-        <input type="file" class="form-control" type="file" id="pic"><canvas id="panel"></canvas>
+        <input type="file" class="form-control" id="pic"><canvas id="panel"></canvas>
       </div>
     </div>
     <div class="form-group">        
@@ -248,19 +248,19 @@ function getLocation()
 	  </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="bugId">Incident id</label>
+      <label class="control-label col-sm-2" for="bugId">Incident id&nbsp;&nbsp;&nbsp;</label>
       <div class="col-sm-10">
         <input input type="text" id="bugId" name="bugId" readonly="readonly" class="form-control" placeholder="Incident id">
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="returnCode">Return code</label>
+      <label class="control-label col-sm-2" for="returnCode">Return code&nbsp;&nbsp;&nbsp;</label>
       <div class="col-sm-10">
         <input input type="text" id="returnCode" name="returnCode" readonly="readonly" class="form-control" placeholder="Return code">
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="errorString">Error string</label>
+      <label class="control-label col-sm-2" for="errorString">Error string&nbsp;&nbsp;&nbsp;</label>
       <div class="col-sm-10">
         <input input type="text" id="errorString" name="errorString" readonly="readonly" class="form-control" placeholder="Error string">
       </div>

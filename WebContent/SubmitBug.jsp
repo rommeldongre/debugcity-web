@@ -236,67 +236,67 @@ function getLocation()
   <h2>Submit Bug</h2>
   <form class="form-horizontal" role="form">
     <div class="form-group">
-      <label class="control-label col-sm-2" for="lat">Lat</label>
+      <label class="control-label col-sm-2" for="lat">Lat <span style="color:red;font-family:'Glyphicons Halflings';font-weight: normal;font-size: 14px;">*</span></label>
       <div class="col-sm-10">
         <input input type="text" id="lat" name="lat" class="form-control" placeholder="Enter latitude">
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="lng">Long</label>
+      <label class="control-label col-sm-2" for="lng">Long <span style="color:red;font-family:'Glyphicons Halflings';font-weight: normal;font-size: 14px;">*</span></label>
       <div class="col-sm-10">
         <input input type="text" id="lng" name="lng" class="form-control" placeholder="Enter longitude">
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="cat">Cat</label>
+      <label class="control-label col-sm-2" for="cat">Cat <span style="color:red;font-family:'Glyphicons Halflings';font-weight: normal;font-size: 14px;">*</span></label>
       <div class="col-sm-10">
         <input input type="text" id="cat" name="cat" class="form-control" placeholder="Enter category">
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="pic">Pic</label>
+      <label class="control-label col-sm-2" for="pic">Pic&nbsp;&nbsp;&nbsp;</label>
       <div class="col-sm-10">          
-        <input type="file" class="form-control" type="file" id="pic"><canvas id="panel"></canvas>
+        <input type="file" class="form-control" id="pic"><canvas id="panel"></canvas>
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="locality">Locality</label>
+      <label class="control-label col-sm-2" for="locality">Locality&nbsp;&nbsp;&nbsp;</label>
       <div class="col-sm-10">
         <input input type="text" id="locality" name="locality" class="form-control" placeholder="Enter locality">
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="submitter">Submitter</label>
+      <label class="control-label col-sm-2" for="submitter">Submitter&nbsp;&nbsp;&nbsp;</label>
       <div class="col-sm-10">
         <input input type="text" id="submitter" name="submitter" class="form-control" placeholder="Enter submitter">
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="owner">Owner</label>
+      <label class="control-label col-sm-2" for="owner">Owner&nbsp;&nbsp;&nbsp;</label>
       <div class="col-sm-10">
         <input input type="text" id="owner" name="owner" class="form-control" placeholder="Enter owner">
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="state">State</label>
+      <label class="control-label col-sm-2" for="state">State&nbsp;&nbsp;&nbsp;</label>
       <div class="col-sm-10">
         <input input type="text" id="state" name="state" class="form-control" placeholder="Enter state">
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="severity">Severity</label>
+      <label class="control-label col-sm-2" for="severity">Severity&nbsp;&nbsp;&nbsp;</label>
       <div class="col-sm-10">
         <input input type="text" id="severity" name="severity" class="form-control" placeholder="Enter severity">
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="notes">Notes</label>
+      <label class="control-label col-sm-2" for="notes">Notes&nbsp;&nbsp;&nbsp;</label>
       <div class="col-sm-10">
         <input input type="text" id="notes" name="notes" class="form-control" placeholder="Enter notes">
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="votes">Votes</label>
+      <label class="control-label col-sm-2" for="votes">Votes&nbsp;&nbsp;&nbsp;</label>
       <div class="col-sm-10">
         <input input type="text" id="votes" name="votes" class="form-control" placeholder="Enter votes">
       </div>
@@ -315,19 +315,19 @@ function getLocation()
 	  </div>
     </div>
 	<div class="form-group">
-      <label class="control-label col-sm-2" for="bugId">Bug id</label>
+      <label class="control-label col-sm-2" for="bugId">Bug id&nbsp;&nbsp;&nbsp;</label>
       <div class="col-sm-10">
         <input input type="text" id="bugId" name="bugId" readonly="readonly" class="form-control" placeholder="Bug id">
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="returnCode">Return code</label>
+      <label class="control-label col-sm-2" for="returnCode">Return code&nbsp;&nbsp;&nbsp;</label>
       <div class="col-sm-10">
         <input input type="text" id="returnCode" name="returnCode" readonly="readonly" class="form-control" placeholder="Return code">
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="errorString">Error string</label>
+      <label class="control-label col-sm-2" for="errorString">Error string&nbsp;&nbsp;&nbsp;</label>
       <div class="col-sm-10">
         <input input type="text" id="errorString" name="errorString" readonly="readonly" class="form-control" placeholder="Error string">
       </div>
