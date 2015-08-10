@@ -16,7 +16,6 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
 /**
  * Servlet implementation class SaveIncident
  */

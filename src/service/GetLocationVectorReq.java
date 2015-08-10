@@ -3,13 +3,15 @@ package service;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
+
 /**
  * Servlet implementation class GetLocationVectorReq
  */
 @WebServlet("/GetLocationVectorReq")
 public class GetLocationVectorReq extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+
+	
     /**
      * @see HttpServlet#HttpServlet()
      */

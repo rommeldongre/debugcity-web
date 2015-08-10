@@ -21,6 +21,7 @@ import com.mysql.jdbc.Statement;
 /**
  * Servlet implementation class DisplayCategory
  */
+
 @WebServlet("/DisplayCategory")
 public class DisplayCategory extends HttpServlet {
 	private static final long serialVersionUID = 1L;

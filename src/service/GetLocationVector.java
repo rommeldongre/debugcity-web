@@ -18,6 +18,7 @@ import util.DataBaseConn;
 
 import com.mysql.jdbc.Statement;
 
+
 @WebServlet("/GetLocationVector")
 public class GetLocationVector extends HttpServlet {
 	private static final long serialVersionUID = 1L;

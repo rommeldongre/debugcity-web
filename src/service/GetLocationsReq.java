@@ -1,11 +1,13 @@
 package service;
 
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
 /**
  * Servlet implementation class GetLocationsReq
  */
+
 @WebServlet("/GetLocationsReq")
 public class GetLocationsReq extends HttpServlet {
 	private static final long serialVersionUID = 1L;

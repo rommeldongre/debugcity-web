@@ -18,7 +18,6 @@ import java.sql.*;
  * Servlet implementation class SaveCategory
  */
 @WebServlet("/SaveCategory")
-
 public class SaveCategory extends HttpServlet 
 {
 	private static final long serialVersionUID = 1L;

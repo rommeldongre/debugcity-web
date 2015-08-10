@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
-
 /**
  * Servlet implementation class DatabaseConnection
  */

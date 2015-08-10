@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import util.DataBaseConn;
 
 import com.mysql.jdbc.Statement;
-
 /**
  * Servlet implementation class UpdateUsers
  */
