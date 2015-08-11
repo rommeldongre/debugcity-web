@@ -19,7 +19,6 @@
 <link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css"/>
 <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
 <style>
-	
 	  html, body {
   		height: 100%;
 	  }
@@ -578,7 +577,7 @@ google.maps.event.addDomListener(window, "load", initialize);
 		$('#multipleSelect')
 	     .append($("<option selected></option>")
 	     .attr("value","Spider")
-	     .text("Spider Chart")); 
+	     .text("Location Graph")); 
 
 		$.each(catobj, function(key, value) {   
 		     $('#multipleSelect')
@@ -1035,7 +1034,12 @@ function filterCat()
 				    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 							//alert(xmlhttp.responseText);
 							var json = JSON.parse(xmlhttp.responseText);
-							alert("Showing "+json.no+" incidents for Category: "+json.category+"");
+							if(json.no=="0")
+								alert("No incident found for Category: "+json.category+".");
+							else if(json.no=="1")
+								alert("Showing "+json.no+" incident for Category: "+json.category+".");
+							else
+								alert("Showing "+json.no+" incidents for Category: "+json.category+".");
 							markers1=json.arr1;
 			 				markers2=json.arr2;
 			 				toploc=json.toploc;
@@ -1058,7 +1062,10 @@ function filterCat()
 				xmlhttp.onreadystatechange=function() {
 			    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 						var json = JSON.parse(xmlhttp.responseText);
-						alert("Showing "+json.no+" incidents for Category: "+json.category+" with Spider Graphs based on the locations.");
+						if(json.no=="1")
+							alert("Showing "+json.no+" incident for Category: "+json.category+" with Location Graphs based on the locations.");
+						else
+							alert("Showing "+json.no+" incidents for Category: "+json.category+" with Location Graphs based on the locations.");
 						markers1=json.arr1;
 		 				markers2=json.arr2;
 		 				uniloc=json.uniloc;
@@ -1088,7 +1095,7 @@ function filterCat()
 						uniloc=json.uniloc;
 		 				spiallloc=json.spiallloc;
 						if(x==1)
-							alert("Showing Spider Graphs based on the selected locations.");
+							alert("Showing Location Graphs based on the selected locations.");
 		 				x=1;
 		 				toploc=json.toploc;
 		 				topscore=json.topscore;

@@ -352,9 +352,11 @@ public class FilterCategory extends HttpServlet {
 		category="";
 		for(i=0;i<parts.length;i++)
 		{
-			category=category+parts[i]+", ";
+			if(!parts[i].equalsIgnoreCase("Spider"))
+				category=category+parts[i]+", ";
 		}
-		category=category.substring(0,category.length()-2);	
+		if(category.length()>=2)
+			category=category.substring(0,category.length()-2);	
 		int no=0;//arr1.length;
 		
 		for(i=0;i<arr1.length;i++)
