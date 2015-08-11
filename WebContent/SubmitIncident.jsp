@@ -15,7 +15,9 @@
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
 <link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css"/>
-	<style>
+<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+	
+<style>
 				* {
 					    margin: 0;
 					}
@@ -33,10 +35,53 @@
 						font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     					font-size: 14px;
 					}
-		</style>
-<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
-<script type="text/javascript">
+</style>
 
+<script type="text/javascript">
+				var catobj;
+				xmlhttp=new XMLHttpRequest();
+				var url = "FilterCategory";
+
+			 	var onloadData=new Object();
+			 	onloadData["category"]="";
+			 	onloadData["location"]="";
+			 	
+				xmlhttp.onreadystatechange=function() {
+		    	if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+						//alert(xmlhttp.responseText);
+		    			var json = JSON.parse(xmlhttp.responseText);
+		    			catobj=json.catobj;
+						addCat();
+					}
+				}
+				
+				xmlhttp.open("POST", url, true);
+				xmlhttp.responseType = 'JSON';
+				xmlhttp.send(JSON.stringify(onloadData));
+</script>
+
+<script>
+			function addCat()
+		 	{
+				$.each(catobj, function(key, value) {   
+				     $('#multipleSelectCat')
+				     	 .append($("<option></option>")		
+				         .attr("value",key)
+				         .text(value));
+				});
+				
+				$(document).ready(function() {
+			 	    $('#multipleSelectCat').multiselect({
+			 	        buttonWidth: '200px',
+			 	        dropRight: true
+			 	    });
+			 	});
+				
+				initialize();
+			}	
+</script>
+
+<script type="text/javascript">
 canvasCtx = null;
 imageFile = null;
 url = null;
@@ -44,7 +89,8 @@ flag=0;
 latitude=null;
 longitude=null;
 
-window.onload = function () {
+function initialize() 
+{
 	canvasCtx = document.getElementById("panel").getContext("2d");
 	document.getElementById("pic").onchange = function(event) {		
 		flag=1;
@@ -64,7 +110,7 @@ window.onload = function () {
 	            longitude = EXIF.getTag(this, "GPSLongitude");
 	        //alert(EXIF.pretty(this));
 	    });
-	}
+}
 
 	drawImage = function(img) {
 		this.canvasCtx.canvas.width = img.width;
@@ -84,7 +130,7 @@ function setURL(url,flag)
 
 function submitBug(loc)
 {
-	var cat=document.getElementById("cat").value;
+	var cat=$('#multipleSelectCat').val();
 	
 	var subBugData=new Object();
 	
@@ -112,20 +158,13 @@ function submitBug(loc)
 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 				//alert(xmlhttp.responseText);
 				var json = JSON.parse(xmlhttp.responseText);
-				if(json.bugId!=null)
-				{	
-					document.getElementById("bugId").value=json.bugId;
-				}
-				else
-					document.getElementById("bugId").value="error";
 				
-				document.getElementById("returnCode").value=json.returnCode;
 				if(json.returnCode!=0)
 				{
-					document.getElementById("errorString").value=json.errorString;		
+				   	$("#myErrorModal").modal();		
 				}
 				else
-					document.getElementById("errorString").value="bug successfully submitted.";
+				   	$("#mySuccessModal").modal();
 		}
 	}
 			
@@ -162,7 +201,7 @@ function getLocation()
 		                for (j = 0; j < results[0].address_components.length; j++) {
 		                    if (results[0].address_components[j].types[0] == 'postal_code')
 		                    {
-		                    	alert("Zip Code: " + results[0].address_components[j].short_name);
+		                    	//alert("Zip Code: " + results[0].address_components[j].short_name);
 		                    	res=results[0].address_components[j].short_name;
 		                    	flag=1;
 		                    	break;
@@ -185,9 +224,22 @@ function getLocation()
 		    });
 	}
 	else
-		alert("Invalid picture.");
+		$("#myInvalidModal").modal();
 }
 
+function CheckValidation()
+{
+
+    var isValidForm = document.forms['subform'].checkValidity();
+    if (isValidForm)
+    {
+    	getLocation();
+    }
+    else
+    {
+    	$("#myValidModal").modal();
+    }
+}
 </script>
 
 </head>
@@ -222,49 +274,33 @@ function getLocation()
 </div>
 <div class="container" style="margin-top:40px;">
   <h2>Submit Incident</h2>
-  <form class="form-horizontal" role="form">
+  <form class="form-horizontal" role="form" name="subform" id="subform">
     <div class="form-group">
       <label class="control-label col-sm-2" for="cat">Cat <span style="color:red;font-family:'Glyphicons Halflings';font-weight: normal;font-size: 14px;">*</span></label>
       <div class="col-sm-10">
-        <input input type="text" id="cat" name="cat" class="form-control" placeholder="Enter category">
-      </div>
+      		<select id="multipleSelectCat" style="position:relative;" name="multipleSelectCat">
+			</select>	
+	  </div>
     </div>
     <div class="form-group">
       <label class="control-label col-sm-2" for="pic">Pic <span style="color:red;font-family:'Glyphicons Halflings';font-weight: normal;font-size: 14px;">*</span></label>
       <div class="col-sm-10">          
-        <input type="file" class="form-control" id="pic"><canvas id="panel"></canvas>
+        <input type="file" class="form-control" id="pic" required="required"><canvas id="panel"></canvas>
       </div>
     </div>
     <div class="form-group">        
       <div class="col-sm-offset-2 col-sm-10">
         <div class="checkbox">
-          <label><input type="checkbox"> Share on Facebook</label>
+          <label><input type="checkbox" checked="checked"> Post to <b>DebugCity</b> facebook page. </label>&nbsp;&nbsp;&nbsp;&nbsp;
+          <label><input type="checkbox"> Post to my facebook page.</label>
         </div>
       </div>
     </div>
     <div class="form-group">        
       <div class="col-sm-offset-2 col-sm-10">
       		<input class="btn btn-default" type="Button" name="submit" id="submit"
-				onclick="getLocation()" value="Get IncidentId">
+				onclick="CheckValidation()" value="Submit">
 	  </div>
-    </div>
-    <div class="form-group">
-      <label class="control-label col-sm-2" for="bugId">Incident id&nbsp;&nbsp;&nbsp;</label>
-      <div class="col-sm-10">
-        <input input type="text" id="bugId" name="bugId" readonly="readonly" class="form-control" placeholder="Incident id">
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="control-label col-sm-2" for="returnCode">Return code&nbsp;&nbsp;&nbsp;</label>
-      <div class="col-sm-10">
-        <input input type="text" id="returnCode" name="returnCode" readonly="readonly" class="form-control" placeholder="Return code">
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="control-label col-sm-2" for="errorString">Error string&nbsp;&nbsp;&nbsp;</label>
-      <div class="col-sm-10">
-        <input input type="text" id="errorString" name="errorString" readonly="readonly" class="form-control" placeholder="Error string">
-      </div>
     </div>
   </form>
 </div>
@@ -272,6 +308,71 @@ function getLocation()
 <div class="footer" style="background-color:#222;margin-top:20px;">	
 	<center><font style="color:#9d9d9d;"><br>© Grey Labs LLP. All Rights Reserved.</center>	
 </div>
+
+<div class="modal fade" id="myInvalidModal" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="background-color:#f0ad4e;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"><font style="color:white;">No location information found. Please contact Support.</font></h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-warning" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="mySuccessModal" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="background-color:#5cb85c;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"><font style="color:white;">Incident successfully submitted.</font></h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="myErrorModal" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="background-color:#5bc0de;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"><font style="color:white;">Incident already exists.</font></h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-info" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="myValidModal" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="background-color:#5bc0de;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"><font style="color:white;">Please choose a picture to submit the incident.</font></h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-info" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
 
