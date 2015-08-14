@@ -63,12 +63,38 @@
 <script>
 			function addCat()
 		 	{
-				$.each(catobj, function(key, value) {   
+				/*$.each(catobj, function(key, value) {   
 				     $('#multipleSelectCat')
 				     	 .append($("<option></option>")		
 				         .attr("value",key)
 				         .text(value));
 				});
+				*/
+				
+				$('#multipleSelectCat')
+		     	 .append($("<option></option>")		
+		         .attr("value","Garbage")
+		         .text("Garbage"));
+				
+				$('#multipleSelectCat')
+		     	 .append($("<option></option>")		
+		         .attr("value","Spitting")
+		         .text("Spitting"));
+				
+				$('#multipleSelectCat')
+		     	 .append($("<option></option>")		
+		         .attr("value","Noise")
+		         .text("Noise"));
+				
+				$('#multipleSelectCat')
+		     	 .append($("<option></option>")		
+		         .attr("value","Queues")
+		         .text("Queues"));
+				
+				$('#multipleSelectCat')
+		     	 .append($("<option></option>")		
+		         .attr("value","Traffic")
+		         .text("Traffic"));
 				
 				$(document).ready(function() {
 			 	    $('#multipleSelectCat').multiselect({
@@ -122,6 +148,58 @@ function initialize()
 	}
 }
 
+
+
+
+function PostImageToFacebook(loc, cat)
+{
+var location=loc;
+var category=cat;
+var authToken="Page_access_token"; //give the page_access_token here	
+var imageData  = pic;
+try{
+    blob = dataURItoBlob(imageData);
+}catch(e){console.log(e);}
+var fd = new FormData();
+fd.append("access_token",authToken);
+fd.append("source", blob);
+fd.append("caption","A concerned citizen identified a "+category+" problem in "+location+". Vote for it on http://www.debugcity.com, if this is an annoyance for you too.");
+try{
+$.ajax({
+    url:"https://graph.facebook.com/938425389552084/photos?access_token=" + authToken,
+    type:"POST",
+    data:fd,
+    processData:false,
+    contentType:false,
+    cache:false,
+    success:function(data){
+        console.log("success " + data);
+    },
+    error:function(shr,status,data){
+        console.log("error " + data + " Status " + shr.status);
+    },
+    
+    /*complete:function(){
+    console.log("Posted to facebook");
+    }*/
+});
+
+}catch(e){console.log(e);}
+}
+
+function dataURItoBlob(dataURI) {
+var byteString = atob(dataURI.split(',')[1]);
+var ab = new ArrayBuffer(byteString.length);
+var ia = new Uint8Array(ab);
+for (var i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+}
+return new Blob([ab], { type: 'image/png' });
+}
+
+
+
+
 function setURL(url,flag)
 {
 	flag=flag;
@@ -164,7 +242,11 @@ function submitBug(loc)
 				   	$("#myErrorModal").modal();		
 				}
 				else
+				{	
 				   	$("#mySuccessModal").modal();
+				   	if(document.getElementById("dbctfb").checked == true)
+				   		PostImageToFacebook(loc, cat);
+				}   	
 		}
 	}
 			
@@ -237,7 +319,6 @@ function CheckValidation()
     }
     else
     {
-    	//$('#modal-7 .modal-body').html(html);
     	$("#myValidModal").modal();
     }
 }
@@ -245,6 +326,24 @@ function CheckValidation()
 
 </head>
 <body style="background:">
+<script src='http://connect.facebook.net/en_US/all.js'></script>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1026803300663664',
+      xfbml      : true,
+      version    : 'v2.4'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
 	<div class="wrapper">
 	<div class="navbar navbar-inverse navbar-fixed-top">
 	<div class="container">
@@ -292,7 +391,7 @@ function CheckValidation()
     <div class="form-group">        
       <div class="col-sm-offset-2 col-sm-10">
         <div class="checkbox">
-          <label><input type="checkbox" checked="checked"> Post to <b>DebugCity</b> facebook page. </label>&nbsp;&nbsp;&nbsp;&nbsp;
+          <label><input type="checkbox" checked="checked" id="dbctfb"> Post to <b>DebugCity</b> facebook page. </label>&nbsp;&nbsp;&nbsp;&nbsp;
           <label><input type="checkbox"> Post to my facebook page.</label>
         </div>
       </div>
@@ -348,7 +447,7 @@ function CheckValidation()
       <div class="modal-content">
         <div class="modal-header" style="background-color:#5bc0de;">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title"><font style="color:white;">Incident already exists.</font></h4>
+          <h4 class="modal-title"><font style="color:white;">Incident already exist or Picture is too large to be handled.</font></h4>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-info" data-dismiss="modal">OK</button>
@@ -373,9 +472,6 @@ function CheckValidation()
     </div>
   </div>
 </div>
-
-</body>
-</html>
 
 </body>
 </html>

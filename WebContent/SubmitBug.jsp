@@ -304,13 +304,6 @@ function getLocation()
     </div>
     <div class="form-group">        
       <div class="col-sm-offset-2 col-sm-10">
-        <div class="checkbox">
-          <label><input type="checkbox"> Share on Facebook</label>
-        </div>
-      </div>
-    </div>
-    <div class="form-group">        
-      <div class="col-sm-offset-2 col-sm-10">
       		<input class="btn btn-default" type="Button" name="submit" id="submit"
 				onclick="getLocation()" value="Get BugId">
 	  </div>
