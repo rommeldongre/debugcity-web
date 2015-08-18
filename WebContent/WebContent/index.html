@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<!-- saved from url=(0043)http://getbootstrap.com/examples/jumbotron/ -->
+
+<html lang="en"><head><script src="./Jumbotron Template for Bootstrap_files/jquery.min.js"></script> <script src="./Jumbotron Template for Bootstrap_files/bootstrap.min.js"></script> <!--//--><script src="./Jumbotron Template for Bootstrap_files/ie10-viewport-bug-workaround.js"></script> 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+<title>DebugCityV1</title> 
+<link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="http://getbootstrap.com/examples/jumbotron/jumbotron.css" rel="stylesheet">
+<script src="./Jumbotron Template for Bootstrap_files/ie-emulation-modes-warning.js"></script> 
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi?.js"></script>
+<script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
+<link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css"/>
+<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+<style>
+	  html, body {
+  		height: 100%;
+	  }
+		
+	  				* {
+					    margin: 0;
+					}
+					html, body {
+					    height: 100%;
+					}
+					.wrapper {
+					    min-height: 100%;
+					    height: auto !important;
+					    height: 100%;
+					    margin: 0 auto -55px; /* the bottom margin is the negative value of the footer's height */
+					}
+					.footer, .push {
+					    height: 55px; /* .push must be the same height as .footer */
+						font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    					font-size: 14px;
+					}  
+      #map-canvas {
+      	height: 1030px;
+      	margin: 0;
+        padding: 0;
+      	position:relative;
+      }
+
+      .controls {
+        border: 1px solid transparent;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        height: 32px;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      #pac-input {
+        background-color: #fff;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+      	width: 211px;
+      }
+      
+      #pac-input:focus {
+        border-color: #4d90fe;
+      }
+</style>
+<script type="text/javascript">
+
+function initialize() {
+    var myOptions = {
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    var map = new google.maps.Map(document.getElementById("map-canvas"),
+            myOptions);
+    afterInitialize();
+}
+google.maps.event.addDomListener(window, "load", initialize);
+
+</script>
+<script>
+    var flag=0;
+    var uniloc,postal,loc,catobj;
+   	var myloc,res=null,spiloc,bounds;
+   	var topcat,toploc;
+  function afterInitialize()
+  {
+   	xmlhttp=new XMLHttpRequest();
+ 	var url = "FilterCategory";
+
+ 	var onloadData=new Object();
+ 	onloadData["category"]="";
+ 	onloadData["location"]="";
+ 	
+ 	xmlhttp.onreadystatechange=function() {
+ 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+ 	    		var json = JSON.parse(xmlhttp.responseText);
+ 				uniloc=json.uniloc;
+ 				loc=json.obj;
+ 				catobj=json.catobj;
+ 				toploc=json.toploc;
+ 				topscore=json.topscore;
+ 				//console.log(toploc);
+ 				//console.log(topscore);
+ 				if (navigator.geolocation)
+	 		    {
+	 			        navigator.geolocation.getCurrentPosition(showSpider);
+	 			}
+ 	    }
+ 	}
+ 	
+ 	
+ 	xmlhttp.open("POST", url, true);
+ 	xmlhttp.responseType ="JSON";
+ 	xmlhttp.send(JSON.stringify(onloadData));	
+ 	
+ }	
+ 	function showSpiderCurrentLocation(position)
+ 	{
+ 		var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        var coords = new google.maps.LatLng(latitude, longitude);
+ 	  	var mapOptions = {
+             zoom: 17,
+             center: coords,
+             mapTypeControl: true,
+             mapTypeId: google.maps.MapTypeId.ROADMAP};
+     
+     		 map = new google.maps.Map(
+             document.getElementById('map-canvas'), mapOptions
+             );
+             //place the initial marker
+             var marker = new google.maps.Marker({
+             position: coords,
+             map: map,
+             title: "Current location!"
+             });
+             
+             var infowindow = new google.maps.InfoWindow({
+            	    content: ''
+            	  });
+            
+             bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
+         	
+            	
+          	 bounds = new google.maps.LatLngBounds();
+          	 bounds.extend(coords);
+          	
+          	 var geocoder = new google.maps.Geocoder();
+                var lat = '';
+                var lng = '';
+                for(u=0;u<uniloc.length;u++)
+                {
+                	 postal=null;
+                     geocoder.geocode( { 'address': ''+uniloc[u]+', india'}, function(results, status) {
+                     if (status == google.maps.GeocoderStatus.OK) {
+                     lat = results[0].geometry.location.lat();
+                     lng = results[0].geometry.location.lng();
+                     for (var p = 0; p < results[0].address_components.length; p++) {
+		                    if (results[0].address_components[p].types[0] == 'postal_code')
+		                    {
+		                    	postal=results[0].address_components[p].short_name;
+		                    	break;
+		                    }
+		                }
+               		 var position = new google.maps.LatLng(lat, lng);
+               		 var marker = new google.maps.Marker({
+                		 map: map,
+                		 icon: {
+                    			url: 'http://maps.google.com/mapfiles/kml/pal4/icon47.png',
+                				size:new google.maps.Size(71, 71),
+                				origin:new google.maps.Point(0, 0),
+                				anchor:new google.maps.Point(17, 34),
+                				scaledSize:new google.maps.Size(37, 37)
+                		 },
+                		 title: "Get Incidents Graph",
+                		 position: position
+              		 });
+               	  bounds.extend(position);
+               	  map.fitBounds(bounds);
+                	 
+                  var data = google.visualization.arrayToDataTable([
+                                                                      ['Month', 'Ideal', 'Actual'],
+                                                                      ['Garbage',  topscore[0][0],	spiallloc[postal].garbage],
+                                                                      ['Queues',  topscore[1][0],		spiallloc[postal].queues],
+                                                                      ['Noise',  topscore[2][0],		spiallloc[postal].noise],
+                                                                      ['Spitting',	topscore[3][0],	spiallloc[postal].spitting],
+                                                                      ['Traffic',  topscore[4][0],	spiallloc[postal].traffic]
+                                                                   ]);
+
+                                                                 var options = {
+                                                                  
+                                                                   title:'Incidents @ Location: '+
+                                                                         postal,
+                                                                   vAxis: {title: 'Incidents'},
+                                                                   hAxis: {title: 'Category'},
+                                                                   seriesType: 'bars',
+                                                                   series: {0: {type: 'line'}},
+                                                                   colors: ['#23d123',	'#faaadb'],
+                                                                   height: 150
+                                                                 };                                
+                      var node    = document.createElement('div'),
+                      infoWindow  = new google.maps.InfoWindow(),
+                      chart       = new google.visualization.ColumnChart(node);
+                      
+                      chart.draw(data, options);
+ 
+                      google.maps.event.addListener(marker, 'click', function() {
+                          infoWindow.setContent(node);
+                          infoWindow.open(marker.getMap(),marker);
+               	    });
+ }
+              else {
+                alert("Geocode was not successful for the following reason: " + status);
+              }
+            });
+            } 
+            
+              bounds.extend(coords);
+        	  var count=0;
+    		  for(var i = 0; i < markers1.length; i++ ) {
+                // Create a marker for each place.
+              if(markers1[i][0]!=0)
+			    {
+              	
+			    	count=1;
+			    	if(markers2[i][0]=="garbage" || markers2[i][0]=="Garbage")			    		
+			    	{
+                		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                		var marker = new google.maps.Marker({
+			        		map: map,
+			        		icon: {
+			            			url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+			        				size:new google.maps.Size(71, 71),
+			        				origin:new google.maps.Point(0, 0),
+			        				anchor:new google.maps.Point(17, 34),
+			        				scaledSize:new google.maps.Size(37, 37)
+			        		},
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr><tr><td><input type='button' value='Vote' onclick='vote("+ markers1[i][0] +")'></td><td></td></tr></table>");  
+			    	}
+			    	else if(markers2[i][0]=="noise" || markers2[i][0]=="Noise")
+			    	{
+                		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                		var marker = new google.maps.Marker({
+			        		map: map,
+			        		icon: {
+			            			url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+			        				size:new google.maps.Size(71, 71),
+			        				origin:new google.maps.Point(0, 0),
+			        				anchor:new google.maps.Point(17, 34),
+			        				scaledSize:new google.maps.Size(37, 37)
+			        		},
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr><tr><td><input type='button' value='Vote' onclick='vote("+ markers1[i][0] +")'></td><td></td></tr></table>");  
+			    	}
+			    	else if(markers2[i][0]=="queues" || markers2[i][0]=="Queues")
+			    	{
+                		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                		var marker = new google.maps.Marker({
+			        		map: map,
+			        		icon: {
+			            			url: 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png',
+			        				size:new google.maps.Size(71, 71),
+			        				origin:new google.maps.Point(0, 0),
+			        				anchor:new google.maps.Point(17, 34),
+			        				scaledSize:new google.maps.Size(37, 37)
+			        		},
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr><tr><td><input type='button' value='Vote' onclick='vote("+ markers1[i][0] +")'></td><td></td></tr></table>");  
+			    	}
+			    	else if(markers2[i][0]=="spitting" || markers2[i][0]=="Spitting")
+			    	{
+                		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                		var marker = new google.maps.Marker({
+			        		map: map,
+			        		icon: {
+			            			url: 'http://maps.google.com/mapfiles/ms/icons/pink-dot.png',
+			        				size:new google.maps.Size(71, 71),
+			        				origin:new google.maps.Point(0, 0),
+			        				anchor:new google.maps.Point(17, 34),
+			        				scaledSize:new google.maps.Size(37, 37)
+			        		},
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr><tr><td><input type='button' value='Vote' onclick='vote("+ markers1[i][0] +")'></td><td></td></tr></table>");  
+			    	}
+			    	else if(markers2[i][0]=="traffic" || markers2[i][0]=="Traffic")
+			    	{
+                		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                		var marker = new google.maps.Marker({
+			        		map: map,
+			        		icon: {
+			            			url: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png',
+			        				size:new google.maps.Size(71, 71),
+			        				origin:new google.maps.Point(0, 0),
+			        				anchor:new google.maps.Point(17, 34),
+			        				scaledSize:new google.maps.Size(37, 37)
+			        		},
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr><tr><td><input type='button' value='Vote' onclick='vote("+ markers1[i][0] +")'></td><td></td></tr></table>");  
+			    	}
+			    	else
+			    	{
+                		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                		var marker = new google.maps.Marker({
+			        		map: map,
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr><tr><td><input type='button' value='Vote' onclick='vote("+ markers1[i][0] +")'></td><td></td></tr></table>");  
+			    	}
+			    }
+              
+    	    }
+    		  
+    		var clientHeight = document.getElementById('map-canvas').clientHeight;
+    		var clientWidth = document.getElementById('map-canvas').clientWidth;
+    
+    		var mapDim = {
+    			    height: clientHeight,
+    			    width: clientWidth
+    			}
+
+      		var reszoom=15;
+      		 // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+      	    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+      	     
+      	    	reszoom=getBoundsZoomLevel(bounds, mapDim)-1;
+	      	        if(reszoom > 15)
+	      	    		reszoom=15;
+	      	    this.setZoom(reszoom);
+      	        google.maps.event.removeListener(boundsListener);
+      	    });
+      		
+      		{
+	      		map.fitBounds(bounds); 
+	       	    google.maps.event.addListener(map, 'bounds_changed', function() {
+				     var bounds = map.getBounds();
+				});
+      		}
+      		
+         	 var geocoder = new google.maps.Geocoder();
+           var latLng = new google.maps.LatLng(latitude, longitude);
+           geocoder.geocode( { 'latLng': latLng}, function(results, status) {
+           	if (status == google.maps.GeocoderStatus.OK) {
+         			 if (results[0]) {
+          			document.getElementById('pac-input').value=results[0].formatted_address;
+          		}
+        			else{
+      	  			document.getElementById('pac-input').value="Geocode was unsucessfull in detecting your current location";
+             		}
+        		}
+    	  	});  	
+      	
+          initialize(latitude, longitude);
+
+   
+ 	}
+ 	
+ 	function showSpider(position)
+ 	{
+ 	
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            
+            var mapOptions = {
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                    };
+           
+            map = new google.maps.Map(
+                    document.getElementById('map-canvas'), mapOptions
+                    );
+                 
+     	if(flag==1)
+        {    	
+            var coords = new google.maps.LatLng(latitude, longitude);
+     	  	var mapOptions = {
+                 zoom: 17,
+                 center: coords,
+                 mapTypeControl: true,
+                 mapTypeId: google.maps.MapTypeId.ROADMAP};
+         
+         		 map = new google.maps.Map(
+                 document.getElementById('map-canvas'), mapOptions
+                 );
+                 //place the initial marker
+                 var marker = new google.maps.Marker({
+                 position: coords,
+                 map: map,
+                 title: "Current location!"
+                 });
+                 
+                 var infowindow = new google.maps.InfoWindow({
+                	    content: ''
+                	  });
+                
+                 bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
+                 bounds = new google.maps.LatLngBounds();
+                 bounds.extend(coords);
+              	 
+              	var geocoder = new google.maps.Geocoder();
+                var lat = '';
+                var lng = '';
+                for(u=0;u<uniloc.length;u++)
+                {
+                	 postal=null;
+                     geocoder.geocode( { 'address': ''+uniloc[u]+', india'}, function(results, status) {
+                     if (status == google.maps.GeocoderStatus.OK) {
+                     lat = results[0].geometry.location.lat();
+                     lng = results[0].geometry.location.lng();
+                     for (var p = 0; p < results[0].address_components.length; p++) {
+		                    if (results[0].address_components[p].types[0] == 'postal_code')
+		                    {
+		                    	postal=results[0].address_components[p].short_name;
+		                    	break;
+		                    }
+		                }
+               		 var position = new google.maps.LatLng(lat, lng);
+               		 var marker = new google.maps.Marker({
+                		 map: map,
+                		 icon: {
+                    			url: 'http://maps.google.com/mapfiles/kml/pal4/icon47.png',
+                				size:new google.maps.Size(71, 71),
+                				origin:new google.maps.Point(0, 0),
+                				anchor:new google.maps.Point(17, 34),
+                				scaledSize:new google.maps.Size(37, 37)
+                		 },
+                		 title: "Get Incidents Graph",
+                		 position: position
+              		 });
+                  bounds.extend(position);
+                  map.fitBounds(bounds);
+               	 
+                  var data = google.visualization.arrayToDataTable([
+                                                                      ['Month', 'Ideal', 'Actual'],
+                                                                      ['Garbage',  topscore[0][0],	spiallloc[postal].garbage],
+                                                                      ['Queues',  topscore[1][0],		spiallloc[postal].queues],
+                                                                      ['Noise',  topscore[2][0],		spiallloc[postal].noise],
+                                                                      ['Spitting',	topscore[3][0],	spiallloc[postal].spitting],
+                                                                      ['Traffic',  topscore[4][0],	spiallloc[postal].traffic]
+                                                                   ]);
+
+                                                                 var options = {
+                                                                  
+                                                                   title:'Incidents @ Location: '+
+                                                                         postal,
+                                                                   vAxis: {title: 'Incidents'},
+                                                                   hAxis: {title: 'Category'},
+                                                                   seriesType: 'bars',
+                                                                   series: {0: {type: 'line'}},
+                                                                   colors: ['#23d123',	'#faaadb'],
+                                                                   height: 150
+                                                                 };
+
+                    
+                      var node    = document.createElement('div'),
+                      infoWindow  = new google.maps.InfoWindow(),
+                      chart       = new google.visualization.ColumnChart(node);
+                      
+                      chart.draw(data, options);
+ 
+                      google.maps.event.addListener(marker, 'click', function() {
+                          infoWindow.setContent(node);
+                          infoWindow.open(marker.getMap(),marker);
+               	    });
+                  }
+                  else {
+                    alert("Geocode was not successful for the following reason: " + status);
+                  }
+                });
+                } 
+
+                var clientHeight = document.getElementById('map-canvas').clientHeight;
+          		var clientWidth = document.getElementById('map-canvas').clientWidth;
+          	
+          		var mapDim = {
+          			    height: clientHeight,
+          			    width: clientWidth
+          		}
+          		 // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+
+          		var reszoom=15;
+          		 // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+          	    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+          	    
+          	    	reszoom=getBoundsZoomLevel(bounds, mapDim)-1;
+    	      	        if(reszoom > 15)
+    	      	    		reszoom=15;
+    	      	    this.setZoom(reszoom);
+          	        google.maps.event.removeListener(boundsListener);
+          	    });
+          		
+          		{
+    	      		map.fitBounds(bounds); 
+    	       	    google.maps.event.addListener(map, 'bounds_changed', function() {
+    				     var bounds = map.getBounds();
+    				});
+          		} 		
+    }
+     			var geocoder = new google.maps.Geocoder();
+                var latLng = new google.maps.LatLng(latitude, longitude);
+                geocoder.geocode( { 'latLng': latLng}, function(results, status) {
+                 	if (status == google.maps.GeocoderStatus.OK) {
+               			 if (results[0]) {
+               				for (i = 0; i < results[0].address_components.length; i++) {
+    		                    	if (results[0].address_components[i].types[0] == 'postal_code')
+    		                    	{
+    		                    		res=results[0].address_components[i].short_name;
+    		                    		break;
+    		                    	}
+    		                	}
+               				document.getElementById('pac-input').value=results[0].formatted_address;
+                		}
+              			else{
+            	  			document.getElementById('pac-input').value="Geocode was unsucessfull in detecting your current location";
+                   		}
+              		}
+                 	if(flag==0)
+                 	{	
+                 		flag=1;
+                 		addCurrentLoc(res);
+                 	}
+                });  	
+                initialize(latitude, longitude);	       	
+        
+ 	}
+ 	
+ var x=0;	
+ function addCurrentLoc(res)
+ {
+	 myloc=res;
+
+	 $('#multipleSelectLoc')
+     .append($("<option selected></option>")
+     .attr("value",myloc)
+     .text(myloc)); 
+
+		$.each(loc, function(key, value) {   
+			if(key!=myloc)
+			{
+		     $('#multipleSelectLoc')
+		         .append($("<option></option>")
+		         .attr("value",key)
+		         .text(value));
+			} 
+		});
+		
+		$(document).ready(function() {
+	 	    $('#multipleSelectLoc').multiselect({
+	 	        buttonWidth: '200px',
+	 	        dropRight: true
+	 	    });
+	 	});
+		
+		$('#multipleSelect')
+	     .append($("<option selected></option>")
+	     .attr("value","Spider")
+	     .text("Location Graph")); 
+
+		$.each(catobj, function(key, value) {   
+		     $('#multipleSelect')
+		         .append($("<option></option>")
+		         .attr("value",key)
+		         .text(value)); 
+		});
+		
+		$(document).ready(function() {
+	 	    $('#multipleSelect').multiselect({
+	 	        buttonWidth: '200px',
+	 	        dropRight: true
+	 	    });
+	 	});
+		
+		filterCat();
+ }
+
+ 
+  function showCurrentLocation(position)
+    {
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        var coords = new google.maps.LatLng(latitude, longitude);
+ 	  	var mapOptions = {
+             zoom: 17,
+             center: coords,
+             mapTypeControl: true,
+             mapTypeId: google.maps.MapTypeId.ROADMAP};
+     
+     		 map = new google.maps.Map(
+             document.getElementById('map-canvas'), mapOptions
+             );
+             //place the initial marker
+             var marker = new google.maps.Marker({
+             position: coords,
+             map: map,
+             title: "Current location!"
+             });
+             
+             var infowindow = new google.maps.InfoWindow({
+            	    content: ''
+            	  });
+            
+             bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
+         	
+            	
+          	  bounds = new google.maps.LatLngBounds();
+          	  bounds.extend(coords);
+          	  var count=0;
+      		  for(var i = 0; i < markers1.length; i++ ) {
+                  // Create a marker for each place.
+                if(markers1[i][0]!=0)
+			    {
+                	
+			    	count=1;
+			    	if(markers2[i][0]=="garbage" || markers2[i][0]=="Garbage")			    		
+			    	{
+                  		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                  		var marker = new google.maps.Marker({
+			        		map: map,
+			        		icon: {
+			            			url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+			        				size:new google.maps.Size(71, 71),
+			        				origin:new google.maps.Point(0, 0),
+			        				anchor:new google.maps.Point(17, 34),
+			        				scaledSize:new google.maps.Size(37, 37)
+			        		},
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                  		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr><tr><td><input type='button' value='Vote' onclick='vote("+ markers1[i][0] +")'></td><td></td></tr></table>");  
+			    	}
+			    	else if(markers2[i][0]=="noise" || markers2[i][0]=="Noise")
+			    	{
+                  		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                  		var marker = new google.maps.Marker({
+			        		map: map,
+			        		icon: {
+			            			url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+			        				size:new google.maps.Size(71, 71),
+			        				origin:new google.maps.Point(0, 0),
+			        				anchor:new google.maps.Point(17, 34),
+			        				scaledSize:new google.maps.Size(37, 37)
+			        		},
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                  		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr><tr><td><input type='button' value='Vote' onclick='vote("+ markers1[i][0] +")'></td><td></td></tr></table>");  
+			    	}
+			    	else if(markers2[i][0]=="queues" || markers2[i][0]=="Queues")
+			    	{
+                  		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                  		var marker = new google.maps.Marker({
+			        		map: map,
+			        		icon: {
+			            			url: 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png',
+			        				size:new google.maps.Size(71, 71),
+			        				origin:new google.maps.Point(0, 0),
+			        				anchor:new google.maps.Point(17, 34),
+			        				scaledSize:new google.maps.Size(37, 37)
+			        		},
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                  		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr><tr><td><input type='button' value='Vote' onclick='vote("+ markers1[i][0] +")'></td><td></td></tr></table>");  
+			    	}
+			    	else if(markers2[i][0]=="spitting" || markers2[i][0]=="Spitting")
+			    	{
+                  		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                  		var marker = new google.maps.Marker({
+			        		map: map,
+			        		icon: {
+			            			url: 'http://maps.google.com/mapfiles/ms/icons/pink-dot.png',
+			        				size:new google.maps.Size(71, 71),
+			        				origin:new google.maps.Point(0, 0),
+			        				anchor:new google.maps.Point(17, 34),
+			        				scaledSize:new google.maps.Size(37, 37)
+			        		},
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                  		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr><tr><td><input type='button' value='Vote' onclick='vote("+ markers1[i][0] +")'></td><td></td></tr></table>");  
+			    	}
+			    	else if(markers2[i][0]=="traffic" || markers2[i][0]=="Traffic")
+			    	{
+                  		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                  		var marker = new google.maps.Marker({
+			        		map: map,
+			        		icon: {
+			            			url: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png',
+			        				size:new google.maps.Size(71, 71),
+			        				origin:new google.maps.Point(0, 0),
+			        				anchor:new google.maps.Point(17, 34),
+			        				scaledSize:new google.maps.Size(37, 37)
+			        		},
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                  		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr><tr><td><input type='button' value='Vote' onclick='vote("+ markers1[i][0] +")'></td><td></td></tr></table>");  
+			    	}
+			    	else
+			    	{
+                  		var position = new google.maps.LatLng(markers1[i][1], markers1[i][2]);
+			     		bounds.extend(position);
+                  		var marker = new google.maps.Marker({
+			        		map: map,
+			        		title: ""+markers1[i][0]+"",
+			        		position: position
+			      		});
+                  		bindInfoWindow(marker, map, infowindow, "<table><tr><th align='right'>id: </th><td>" + markers1[i][0] +"</td><tr><th align='right'>lat: </th><td>"+ markers1[i][1] + "</td></tr><tr><th align='right'>long: </th><td>"+ markers1[i][2] + "</td></tr><tr><th align='right'>category: </th><td>"+ markers2[i][0] + "</td></tr><tr><th align='right'>picture: </th><td><img src="+ markers2[i][1] +" width='80' ></td></tr><tr><th align='right'>locality: </th><td>"+ markers2[i][2] + "</td></tr><tr><th align='right'>submitter: </th><td>"+ markers2[i][3] + "</td></tr><tr><th align='right'>owner: </th><td>"+ markers2[i][4] + "</td></tr><tr><th align='right'>state: </th><td>"+ markers2[i][5] + "</td></tr><tr><th align='right'>date_created: </th><td>"+ markers2[i][6] + "</td></tr><th align='right'>date_closed: </th><td>"+ markers2[i][7] + "</td></tr><tr><th align='right'>severity: </th><td>"+ markers1[i][3] + "</td></tr><tr><th align='right'>notes: </th><td>"+ markers2[i][8] + "</td></tr><tr><th align='right'>votes: </th><td>"+ markers1[i][4] + "</td></tr><tr><td><input type='button' value='Vote' onclick='vote("+ markers1[i][0] +")'></td><td></td></tr></table>");  
+			    	}
+			    }
+                
+      	    }
+      		  
+      		var clientHeight = document.getElementById('map-canvas').clientHeight;
+      		var clientWidth = document.getElementById('map-canvas').clientWidth;
+      
+      		var mapDim = {
+      			    height: clientHeight,
+      			    width: clientWidth
+      			}
+
+      		var reszoom=15;
+      		 // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+      	    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+      	        if(count!=0)
+	      	    {
+	      	    	reszoom=getBoundsZoomLevel(bounds, mapDim)-1;
+	      	        if(reszoom > 15)
+	      	    		reszoom=15;
+	      	    }
+	      	    this.setZoom(reszoom);
+      	        google.maps.event.removeListener(boundsListener);
+      	    });
+      		
+      		{
+	      		map.fitBounds(bounds); 
+	       	    google.maps.event.addListener(map, 'bounds_changed', function() {
+				     var bounds = map.getBounds();
+				     //map.setBounds(bounds);
+			    });
+      		}
+      		
+           	 var geocoder = new google.maps.Geocoder();
+             var latLng = new google.maps.LatLng(latitude, longitude);
+             geocoder.geocode( { 'latLng': latLng}, function(results, status) {
+             	if (status == google.maps.GeocoderStatus.OK) {
+           			 if (results[0]) {
+            			document.getElementById('pac-input').value=results[0].formatted_address;
+            		}
+          			else{
+        	  			document.getElementById('pac-input').value="Geocode was unsucessfull in detecting your current location";
+               		}
+          		}
+      	  	});  	
+        	
+            initialize(latitude, longitude);
+    }	       	
+    
+function initialize(lat, lng) {
+
+  var markers = [];
+  
+  var input = (
+      				document.getElementById('pac-input'));
+  					//map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+					
+  					var searchBox = new google.maps.places.SearchBox((input));
+
+  					google.maps.event.addListener(searchBox, 'places_changed', function() {
+    					var places = searchBox.getPlaces();
+
+					    if (places.length == 0) {
+					      return;
+					    }
+					    for (var i = 0, marker; marker = markers[i]; i++) {
+					      marker.setMap(null);
+					    }
+					
+					    // For each place, get the icon, place name, and location.
+					    markers = [];
+					    var bounds = new google.maps.LatLngBounds();
+					    for (var i = 0, place; place = places[i]; i++) {
+					      
+					      // Create a marker for each place.
+					      bounds.extend(place.geometry.location);
+						    
+					      var marker = new google.maps.Marker({
+					        map: map,
+					        //icon: image,
+					        title: place.name,
+					        position: place.geometry.location
+					      });
+							
+					      
+					      markers.push(marker);
+					
+					      map.fitBounds(bounds);
+							
+					    }
+					
+					   
+				  	    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+			      	        this.setZoom(7);
+			      	        google.maps.event.removeListener(boundsListener);
+			      	    });
+  					});
+  
+ 				 google.maps.event.addListener(map, 'bounds_changed', function() {
+			     var bounds = map.getBounds();
+		  		 
+			     searchBox.setBounds(bounds);
+  		});
+  		
+}
+
+
+function bindInfoWindow(marker, map, infowindow, html) { 
+	google.maps.event.addListener(marker, 'click', function() { 
+		infowindow.setContent(html); 
+		infowindow.open(map, marker); 
+	}); 
+	/*
+	google.maps.event.addListener(marker, 'mouseout', function() {
+		infowindow.close();
+	});
+*/
+} 
+
+function getBoundsZoomLevel(bounds, mapDim) {
+	    var WORLD_DIM = { height: 256, width: 256 };
+	    var ZOOM_MAX = 21;
+
+	    function latRad(lat) {
+	        var sin = Math.sin(lat * Math.PI / 180);
+	        var radX2 = Math.log((1 + sin) / (1 - sin)) / 2;
+	        return Math.max(Math.min(radX2, Math.PI), -Math.PI) / 2;
+	    }
+
+	    function zoom(mapPx, worldPx, fraction) {
+	        return Math.floor(Math.log(mapPx / worldPx / fraction) / Math.LN2);
+	    }
+
+	    var ne = bounds.getNorthEast();
+	    var sw = bounds.getSouthWest();
+
+	    var latFraction = (latRad(ne.lat()) - latRad(sw.lat())) / Math.PI;
+
+	    var lngDiff = ne.lng() - sw.lng();
+	    var lngFraction = ((lngDiff < 0) ? (lngDiff + 360) : lngDiff) / 360;
+
+	    var latZoom = zoom(mapDim.height, WORLD_DIM.height, latFraction);
+	    var lngZoom = zoom(mapDim.width, WORLD_DIM.width, lngFraction);
+
+	    return Math.min(latZoom, lngZoom, ZOOM_MAX);
+	}
+
+var leaderflag=0;
+function leaderBoard(tablename,l)
+{
+		    var table = document.getElementById(tablename);
+			var row1 = table.insertRow(0);
+			var row2 = table.insertRow(1);
+			var row3 = table.insertRow(2);
+			var row4 = table.insertRow(3);
+			var cell11 = row1.insertCell(0);
+			var cell12 = row1.insertCell(1);
+			var cell13 = row1.insertCell(2);
+			var cell21 = row2.insertCell(0);
+			var cell22 = row2.insertCell(1);
+			var cell23 = row2.insertCell(2);
+			var cell31 = row3.insertCell(0);
+			var cell32 = row3.insertCell(1);
+		    var cell33 = row3.insertCell(2);
+		    var cell41 = row4.insertCell(0);
+			var cell42 = row4.insertCell(1);
+			var cell43 = row4.insertCell(2);
+		    cell11.innerHTML = "<b>Rank</b>";
+		    cell12.innerHTML = "<b>Location</b>";
+		    cell13.innerHTML = "<b>Score</b>";
+			cell21.innerHTML = 1;
+			if(topscore[l][0]!=0)
+		    	cell22.innerHTML = toploc[l][0];
+			else
+				cell22.innerHTML = "-";
+			if(topscore[l][0]!=0)
+				cell23.innerHTML = topscore[l][0];
+			else
+				cell23.innerHTML = "-";
+			
+			
+			cell31.innerHTML = 2;
+			if(topscore[l][1]!=0)
+		    	cell32.innerHTML = toploc[l][1];
+			else
+				cell32.innerHTML = "-";
+			if(topscore[l][1]!=0)
+				cell33.innerHTML = topscore[l][1];
+			else
+				cell33.innerHTML = "-";
+
+		    cell41.innerHTML = 3;
+		    if(topscore[l][2]!=0)
+		    	cell42.innerHTML = toploc[l][2];
+			else
+				cell42.innerHTML = "-";
+		    if(topscore[l][2]!=0)
+				cell43.innerHTML = topscore[l][2];
+			else
+				cell43.innerHTML = "-";
+}
+
+function getIP()
+{
+	if (window.XMLHttpRequest) xmlhttp = new XMLHttpRequest();
+		else xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+
+		xmlhttp.open("GET","http://api.hostip.info/get_html.php",false);
+		xmlhttp.send();
+
+		hostipInfo = xmlhttp.responseText.split("\n");
+
+		for (i=0; hostipInfo.length >= i; i++) {
+			ipAddress = hostipInfo[i].split(":");
+			if ( ipAddress[0] == "IP" ) return ipAddress[1];
+		}
+}
+
+function vote(id)
+{
+	xmlhttp=new XMLHttpRequest();
+ 	var url = "VoteIncident";
+	var user=getIP();
+ 	
+ 	var voteData=new Object();
+ 	voteData["id"]=id;
+ 	voteData["user"]=user;
+ 	
+ 	xmlhttp.onreadystatechange=function() {
+ 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+ 	    		var json = JSON.parse(xmlhttp.responseText);	
+ 	    		if(json.votres==1)
+ 	    		{
+ 	    			alert("Successfully voted.");
+ 	    			filterCat();
+ 	    		}
+ 	    		else
+ 	    			alert("Already voted.");
+ 	    }
+ 	}
+ 	
+ 	xmlhttp.open("POST", url, true);
+ 	xmlhttp.responseType ="JSON";
+ 	xmlhttp.send(JSON.stringify(voteData));	
+}
+
+function filterCat()
+{
+	var test = $("#multipleSelect option:selected").length;
+	var testLoc = $("#multipleSelectLoc option:selected").length;
+	if ( !(test > 0 && testLoc > 0))
+	{
+	   alert("Please select atleast one location and one category to filter.");
+	}
+	else
+		{	
+		var starflag=0;
+		var selectedValues = $('#multipleSelect').val();
+		var selectedValuesLoc = $('#multipleSelectLoc').val();
+		
+		if(selectedValues!=null)
+			flag=1;
+		else
+			selectedValues="Spider";
+		
+		var category=selectedValues;
+		var location=selectedValuesLoc;
+	    var url=null;
+	    
+		var filterCatData=new Object();
+		
+		var cat="";
+		var loc="";
+			
+		for(var m=0;m<category.length;m++)
+		{
+			cat=cat+category[m]+" ";
+		}
+		
+		for(var m=0;m<location.length;m++)
+		{
+			loc=loc+location[m]+" ";
+		}
+		
+		if(category[0]=="Spider")
+			starflag=1;
+			
+		filterCatData["category"]=cat;
+		filterCatData["location"]=loc;
+		
+		if(selectedValues!="Spider")
+		{	
+			if(starflag==0)
+			{	
+					url = "FilterCategory";
+					xmlhttp.onreadystatechange=function() {
+				    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+							//alert(xmlhttp.responseText);
+							var json = JSON.parse(xmlhttp.responseText);
+							if(json.no=="0")
+								alert("No incident found for Category: "+json.category+".");
+							else if(json.no=="1")
+								alert("Showing "+json.no+" incident for Category: "+json.category+".");
+							else
+								alert("Showing "+json.no+" incidents for Category: "+json.category+".");
+							markers1=json.arr1;
+			 				markers2=json.arr2;
+			 				toploc=json.toploc;
+			 				topscore=json.topscore;
+			 				
+			 				if (navigator.geolocation)
+			 			    {
+			 			        navigator.geolocation.getCurrentPosition(showCurrentLocation);
+			 			    }			
+					}
+				}
+					xmlhttp.open("POST", url, true);
+					xmlhttp.responseType ="JSON";
+					xmlhttp.send(JSON.stringify(filterCatData));
+				
+			}	
+			else
+			{
+				url = "FilterCategory";
+				xmlhttp.onreadystatechange=function() {
+			    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+						var json = JSON.parse(xmlhttp.responseText);
+						if(json.no=="1")
+							alert("Showing "+json.no+" incident for Category: "+json.category+" with Location Graphs based on the locations.");
+						else
+							alert("Showing "+json.no+" incidents for Category: "+json.category+" with Location Graphs based on the locations.");
+						markers1=json.arr1;
+		 				markers2=json.arr2;
+		 				uniloc=json.uniloc;
+		 				spiallloc=json.spiallloc;
+		 				toploc=json.toploc;
+		 				topscore=json.topscore;
+		 				if (navigator.geolocation)
+		 			    {
+		 			        navigator.geolocation.getCurrentPosition(showSpiderCurrentLocation);
+		 			    }
+		 			}
+				}
+		
+				xmlhttp.open("POST", url, true);
+				xmlhttp.responseType ="JSON";
+				xmlhttp.send(JSON.stringify(filterCatData));
+				
+			}
+					
+		}
+		else
+		{	
+				url = "FilterCategory";
+				xmlhttp.onreadystatechange=function() {
+			    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+						var json = JSON.parse(xmlhttp.responseText);
+						uniloc=json.uniloc;
+		 				spiallloc=json.spiallloc;
+						if(x==1)
+							alert("Showing Location Graphs based on the selected locations.");
+		 				x=1;
+		 				toploc=json.toploc;
+		 				topscore=json.topscore;
+		 				if(leaderflag==0)
+		 				{
+			 				leaderBoard("gtable",0);
+			 				leaderBoard("qtable",1);
+			 				leaderBoard("ntable",2);
+			 				leaderBoard("stable",3);
+			 				leaderBoard("ttable",4);
+		 					leaderflag=1;
+		 				}	
+		 			    if (navigator.geolocation)
+		 		 	    {
+		 		 	        navigator.geolocation.getCurrentPosition(showSpider);
+		 		 	    }	
+				}
+			}		
+			xmlhttp.open("POST", url, true);
+			xmlhttp.responseType ="JSON";
+			xmlhttp.send(JSON.stringify(filterCatData));
+		}
+	}
+}
+
+
+google.load('visualization', '1.0', {'packages':['corechart']});
+
+</script>
+
+</head>
+<body>
+<div id="wrap">
+<div class="navbar navbar-inverse navbar-fixed-top">
+	<div class="container">
+		<div class="navbar-header pull-left">
+			<a class="navbar-brand" href="#"><b>DebugCityV1</b></a>
+		</div>
+		<div class="navbar-header pull-right">
+			<ul class="nav navbar-nav pull-left">
+				<li><a class="" href="admin.html">Admin&nbsp;</a></li>
+			</ul>
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            	<span class="icon-bar"></span>
+            	<span class="icon-bar"></span>
+            	<span class="icon-bar"></span>
+          	</button>
+         </div>
+         <div class="navbar-collapse collapse">
+         	
+         	<div class="navbar-right">
+         		<ul class="nav navbar-nav">
+         			<li><a href="spider.html">Spider Graph</a></li> 
+         			<li><a href="SubmitIncident.jsp">Submit Incident</a></li> 
+         			<li><a href="DebugCityv1.20150723.apk">Download App</a></li> 
+         		</ul>
+         	</div>
+        </div>
+   </div>
+</div>
+<div class="jumbotron">
+	<center>
+ 		<h1>Together we can fix our City</h1>
+  		<p>Report Problems. Take Ownership. Live Better.</p>
+  		<p><a class="btn btn-primary btn-lg" href="SubmitIncident.jsp" role="button">Submit Incident</a></p>
+	</center>
+</div>  	
+<div class="container-fluid" style="margin-top:10px;">
+	<div class="row">
+    	<div class="col-sm-6 col-md-9 col-lg-9">	
+    		<div  id="map-canvas">
+    		</div>
+    		<div class="container-fluid" style="margin-left:100px;margin-top:-1020px;">
+				<select id="multipleSelectLoc" style="position:relative;" name="multipleSelectLoc" multiple="multiple">
+				</select>	
+				<select id="multipleSelect" style="position:relative;" name="multipleSelect" multiple="multiple">
+				<!--<option value="Spider" selected>Spider Chart</option><option value="Garbage">Garbage</option><option value="Noise">Noise</option><option value="Queues">Queues</option><option value="Spitting">Spitting</option><option value="Traffic">Traffic</option>
+				--></select>
+				<input style="position:relative;" type="button" id="filtercategory" class="btn btn-default" onclick="filterCat();" value="Filter">	
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<input style="position:relative;" id="pac-input" class="controls" type="text" placeholder="Search Locations">
+			</div>
+			<div class="container" style="height:930px;">
+			</div>  	
+    	</div>
+    	<div class="col-sm-6 col-md-3 col-lg-3">
+			<div class="panel panel-info">
+		  		<div class="panel-heading">Garbage</div>
+		  		<table class="table" id="gtable">
+		    	</table>
+			</div>
+			<div class="panel panel-info">
+		  		<div class="panel-heading">Queues</div>
+		  		<table class="table" id="qtable">
+		    	</table>
+			</div>
+			<div class="panel panel-info">
+		  		<div class="panel-heading">Noise</div>
+		  		<table class="table" id="ntable">
+		    	</table>
+			</div>
+			<div class="panel panel-info">
+		  		<div class="panel-heading">Spitting</div>
+		  		<table class="table" id="stable">
+		    	</table>
+			</div>
+			<div class="panel panel-info">
+		  		<div class="panel-heading">Traffic</div>
+		  		<table class="table" id="ttable">
+		    	</table>
+			</div>
+		</div>
+	</div>		
+</div>
+</div>
+<div class="footer" style="background-color:#222;">	
+	<center><font style="color:#9d9d9d;"><br>© Grey Labs LLP. All Rights Reserved.</center>	
+</div>
+</body>
+</html>
