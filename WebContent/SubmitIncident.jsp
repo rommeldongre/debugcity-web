@@ -114,6 +114,8 @@ url = null;
 flag=0;
 latitude=null;
 longitude=null;
+loc_post=null;
+cat_post=null;
 
 function initialize() 
 {
@@ -147,58 +149,64 @@ function initialize()
 		setURL(url,flag);
 	}
 }
-
-
-
-
-function PostImageToFacebook(loc, cat)
+  
+function PostImageToFacebook(token)
 {
-var location=loc;
-var category=cat;
-var authToken="Page_access_token"; //give the page_access_token here	
-var imageData  = pic;
-try{
-    blob = dataURItoBlob(imageData);
-}catch(e){console.log(e);}
-var fd = new FormData();
-fd.append("access_token",authToken);
-fd.append("source", blob);
-fd.append("caption","A concerned citizen identified a "+category+" problem in "+location+". Vote for it on http://www.debugcity.com, if this is an annoyance for you too.");
-try{
-$.ajax({
-    url:"https://graph.facebook.com/938425389552084/photos?access_token=" + authToken,
-    type:"POST",
-    data:fd,
-    processData:false,
-    contentType:false,
-    cache:false,
-    success:function(data){
-        console.log("success " + data);
-    },
-    error:function(shr,status,data){
-        console.log("error " + data + " Status " + shr.status);
-    },
-    
-    /*complete:function(){
-    console.log("Posted to facebook");
-    }*/
-});
-
-}catch(e){console.log(e);}
+	var location=loc_post;
+	var category=cat_post;
+	var authToken=token;	
+	var imageData  = pic;
+	
+	try{
+	    	blob = dataURItoBlob(imageData);
+	}
+	catch(e){
+			console.log(e);
+	}
+	
+	var fd = new FormData();
+	fd.append("access_token",authToken);
+	fd.append("source", blob);
+	fd.append("caption","A concerned citizen identified a "+category+" problem in "+location+". Vote for it on http://www.debugcity.com, if this is an annoyance for you too.");
+	
+	try{
+		$.ajax({
+		    url:"https://graph.facebook.com/938425389552084/photos?access_token=" + authToken,
+		    type:"POST",
+		    data:fd,
+		    processData:false,
+		    contentType:false,
+		    cache:false,
+		    success:function(data){
+		        console.log("success " + data);
+		    },
+		    error:function(shr,status,data){
+		        console.log("error " + data + " Status " + shr.status);
+		    },
+		    
+		    //complete:function(){
+		    //console.log("Posted to facebook");
+		    //}
+		});		
+	}
+	catch(e){
+			console.log(e);
+	}
 }
 
-function dataURItoBlob(dataURI) {
-var byteString = atob(dataURI.split(',')[1]);
-var ab = new ArrayBuffer(byteString.length);
-var ia = new Uint8Array(ab);
-for (var i = 0; i < byteString.length; i++) {
-    ia[i] = byteString.charCodeAt(i);
+function dataURItoBlob(dataURI) 
+{
+	var byteString = atob(dataURI.split(',')[1]);
+	var ab = new ArrayBuffer(byteString.length);
+	var ia = new Uint8Array(ab);
+	
+	for (var i = 0; i < byteString.length; i++) 
+	{
+	    ia[i] = byteString.charCodeAt(i);
+	}
+	
+	return new Blob([ab], { type: 'image/png' });
 }
-return new Blob([ab], { type: 'image/png' });
-}
-
-
-
 
 function setURL(url,flag)
 {
@@ -243,9 +251,32 @@ function submitBug(loc)
 				}
 				else
 				{	
-				   	$("#mySuccessModal").modal();
-				   	if(document.getElementById("dbctfb").checked == true)
-				   		PostImageToFacebook(loc, cat);
+					loc_post=loc;
+					cat_post=cat;
+					
+				   	if(document.getElementById("dbctfb1").checked == true && document.getElementById("dbctfb2").checked == true)
+				    {
+				   		var token="CAAOl30X9gXABAOxXk3y4akqUZALkMZBWYTbIavSmz9ouVE6oHbDGhVZBG9XJnptV3yDvk0PgQYARFIvZBlFDGhZBLBq8hefyQ25Ho6L0RKGxgXDjVUcZAA6QZAtZBYZB6OnXoL0XPLDoST5o3bF9agwCZA5JwtqvJ9Rm6wdmFPpVWfDCi4gORzQiS6rZAgINB4sG9IZD";
+				   		PostImageToFacebook(token);
+				   		loginCheck();
+				   		$("#mySuccessModal2").modal();
+					}
+				   	
+				   	else if(document.getElementById("dbctfb1").checked == true && document.getElementById("dbctfb2").checked == false)
+				   	{
+				   		var token="CAAOl30X9gXABAOxXk3y4akqUZALkMZBWYTbIavSmz9ouVE6oHbDGhVZBG9XJnptV3yDvk0PgQYARFIvZBlFDGhZBLBq8hefyQ25Ho6L0RKGxgXDjVUcZAA6QZAtZBYZB6OnXoL0XPLDoST5o3bF9agwCZA5JwtqvJ9Rm6wdmFPpVWfDCi4gORzQiS6rZAgINB4sG9IZD";
+				   		PostImageToFacebook(token);
+				   		$("#mySuccessModal1").modal();
+				   	}
+				   	
+				   	else if(document.getElementById("dbctfb1").checked == false && document.getElementById("dbctfb2").checked == true)
+					{
+				   		loginCheck();
+				   		$("#mySuccessModal2").modal();
+				  	}
+				   
+				   	else
+				   		$("#mySuccessModal1").modal();   	
 				}   	
 		}
 	}
@@ -322,6 +353,62 @@ function CheckValidation()
     	$("#myValidModal").modal();
     }
 }
+
+function loginCheck()
+{
+	FB.getLoginStatus(function(response) {
+	    statusChangeCallback(response);
+	  });
+}
+
+function statusChangeCallback(response) {
+    //console.log('statusChangeCallback');
+    //console.log(response);
+    
+    if (response.status === 'connected') {
+    	//console.log('connected');
+    	FB.login(function(response) {
+    		 if (response.authResponse) {
+    	            //console.log('Access Token: ' + response.authResponse.accessToken);
+    	            PostImageToFacebook(response.authResponse.accessToken);  
+    	     } else {
+    	            console.log('User cancelled login or did not fully authorize.');
+    	        }
+    		 }, {
+    	   scope: 'publish_actions', 
+    	   return_scopes: true
+    	 });
+    } 
+    else if (response.status === 'not_authorized') {
+    	//console.log('Please log into this app.');
+    	FB.login(function(response) {
+    		 if (response.authResponse) {
+    	            //console.log('Access Token: ' + response.authResponse.accessToken);
+    	            PostImageToFacebook(response.authResponse.accessToken);  
+    	     } else {
+    	            console.log('User cancelled login or did not fully authorize.');
+    	        }
+    		 }, {
+    		   scope: 'publish_actions', 
+    		   return_scopes: true
+    		 });
+    } 
+    else {
+      	//console.log('Please log into Facebook.');
+      	FB.login(function(response) {
+      		 if (response.authResponse) {
+                 //console.log('Access Token: ' + response.authResponse.accessToken);
+                 PostImageToFacebook(response.authResponse.accessToken);   
+             } else {
+                 console.log('User cancelled login or did not fully authorize.');
+             }
+      	 }, {
+      	   scope: 'publish_actions', 
+      	   return_scopes: true
+      	 });
+    }
+}
+
 </script>
 
 </head>
@@ -391,8 +478,8 @@ function CheckValidation()
     <div class="form-group">        
       <div class="col-sm-offset-2 col-sm-10">
         <div class="checkbox">
-          <label><input type="checkbox" checked="checked" id="dbctfb"> Post to <b>DebugCity</b> facebook page. </label>&nbsp;&nbsp;&nbsp;&nbsp;
-          <label><input type="checkbox"> Post to my facebook page.</label>
+          <label><input type="checkbox" checked="checked" id="dbctfb1">Post anonymously to DebugCity Facebook page</label>&nbsp;&nbsp;&nbsp;&nbsp;
+          <label><input type="checkbox" id="dbctfb2">Post as yourself to DebugCity Facebook page</label>
         </div>
       </div>
     </div>
@@ -415,8 +502,11 @@ function CheckValidation()
       <div class="modal-content">
         <div class="modal-header" style="background-color:#f0ad4e;">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title"><font style="color:white;">No location information found. Please contact Support.</font></h4>
+          <h4 class="modal-title"><font style="color:white;">No Location information found in image.</font></h4>
         </div>
+        <div class="modal-body">
+        	<p><font style="color:black;">Please email the Image along with Location and Category to <b>frrndlease@greylabs.org</b></font></p>
+     	 </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-warning" data-dismiss="modal">OK</button>
         </div>
@@ -425,7 +515,7 @@ function CheckValidation()
   </div>
 </div>
 
-<div class="modal fade" id="mySuccessModal" role="dialog">
+<div class="modal fade" id="mySuccessModal1" role="dialog">
     <div class="modal-dialog">
       <!-- Modal content-->
       <div class="modal-content">
@@ -433,6 +523,25 @@ function CheckValidation()
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <h4 class="modal-title"><font style="color:white;">Incident successfully submitted.</font></h4>
         </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="mySuccessModal2" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="background-color:#5cb85c;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"><font style="color:white;">Incident successfully submitted.</font></h4>
+        </div>
+        <div class="modal-body">
+        	<p><font style="color:black;">Please also give permissions to post as youself on Debugcity facebook page. </font></p>
+     	 </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
         </div>
