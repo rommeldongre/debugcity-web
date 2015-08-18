@@ -171,7 +171,7 @@ function PostImageToFacebook(token)
 	
 	try{
 		$.ajax({
-		    url:"https://graph.facebook.com/952064434850116/photos?access_token=" + authToken,
+		    url:"https://graph.facebook.com/938425389552084/photos?access_token=" + authToken,
 		    type:"POST",
 		    data:fd,
 		    processData:false,
@@ -256,7 +256,7 @@ function submitBug(loc)
 					
 				   	if(document.getElementById("dbctfb1").checked == true && document.getElementById("dbctfb2").checked == true)
 				    {
-				   		var token="CAAOpW1dnTGsBACagDOGoN6LgeAoCCbFOvUp3YMMA6uZCZAQMuZA8JDaeWou7diLZC5UBZCQl2iuZAXa3mRLL4eAMBVK8ClUZBLwM8uNZBfcuvHJaPbkTtivb14YEBjesydekIF8ZBmb1de9GNZAVHihjlRSlZCrv6Ct9slAMp9qeZCjkpFCZBEQNUAp5y";
+				   		var token="CAAOl30X9gXABAOxXk3y4akqUZALkMZBWYTbIavSmz9ouVE6oHbDGhVZBG9XJnptV3yDvk0PgQYARFIvZBlFDGhZBLBq8hefyQ25Ho6L0RKGxgXDjVUcZAA6QZAtZBYZB6OnXoL0XPLDoST5o3bF9agwCZA5JwtqvJ9Rm6wdmFPpVWfDCi4gORzQiS6rZAgINB4sG9IZD";
 				   		PostImageToFacebook(token);
 				   		loginCheck();
 				   		$("#mySuccessModal2").modal();
@@ -264,7 +264,7 @@ function submitBug(loc)
 				   	
 				   	else if(document.getElementById("dbctfb1").checked == true && document.getElementById("dbctfb2").checked == false)
 				   	{
-				   		var token="CAAOpW1dnTGsBACagDOGoN6LgeAoCCbFOvUp3YMMA6uZCZAQMuZA8JDaeWou7diLZC5UBZCQl2iuZAXa3mRLL4eAMBVK8ClUZBLwM8uNZBfcuvHJaPbkTtivb14YEBjesydekIF8ZBmb1de9GNZAVHihjlRSlZCrv6Ct9slAMp9qeZCjkpFCZBEQNUAp5y";
+				   		var token="CAAOl30X9gXABAOxXk3y4akqUZALkMZBWYTbIavSmz9ouVE6oHbDGhVZBG9XJnptV3yDvk0PgQYARFIvZBlFDGhZBLBq8hefyQ25Ho6L0RKGxgXDjVUcZAA6QZAtZBYZB6OnXoL0XPLDoST5o3bF9agwCZA5JwtqvJ9Rm6wdmFPpVWfDCi4gORzQiS6rZAgINB4sG9IZD";
 				   		PostImageToFacebook(token);
 				   		$("#mySuccessModal1").modal();
 				   	}
@@ -417,7 +417,7 @@ function statusChangeCallback(response) {
 <script>
   window.fbAsyncInit = function() {
     FB.init({
-      appId      : '1030634703637611',
+      appId      : '1026803300663664',
       xfbml      : true,
       version    : 'v2.4'
     });
