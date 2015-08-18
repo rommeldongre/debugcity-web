@@ -27,7 +27,7 @@
 					    margin: 0 auto -30px; /* the bottom margin is the negative value of the footer's height */
 					}
 					.footer, .push {
-					    height: 55px; /* .push must be the same height as .footer */
+					    height: 75px; /* .push must be the same height as .footer */
 						font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     					font-size: 14px;
 					}
@@ -329,7 +329,7 @@ function getLocation()
 </div>
 </div>
 <div class="footer" style="background-color:#222; margin-top:30px;">	
-	<center><font style="color:#9d9d9d;"><br>© Grey Labs LLP. All Rights Reserved.</center>	
+	<center><font style="color:#9d9d9d;"><br>Designed and Developed by Grey Labs in Pune<br>© Grey Labs LLP. All Rights Reserved.</center>	
 </div>
 </body>
 </html>
