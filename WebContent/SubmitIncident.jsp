@@ -254,9 +254,14 @@ function submitBug(loc)
 					loc_post=loc;
 					cat_post=cat;
 					
-				   	if(document.getElementById("dbctfb1").checked == true && document.getElementById("dbctfb2").checked == true)
+					///the page_access_token for publishing on the behalf of page
+					
+					var token=	"CAAOl30X9gXABAMIIe5vWN1vt2u9w3co20O8dqj1aji17TiIcZC6PxmJlpZBZBtGj7Mm9gmHNqAZBVSQ3rt4XlnPQjZA3NhC1pqGGZBmsO0oefr3ldL3T85rfaxOzZAfxjPDPvJicUOXNEzY56FvNn0p9WIR61JZAbfSDJodfdY82rWr9PqOCM8q4TOP81TECNIEZD";
+				   	
+					
+					if(document.getElementById("dbctfb1").checked == true && document.getElementById("dbctfb2").checked == true)
 				    {
-				   		var token="CAAOl30X9gXABAOxXk3y4akqUZALkMZBWYTbIavSmz9ouVE6oHbDGhVZBG9XJnptV3yDvk0PgQYARFIvZBlFDGhZBLBq8hefyQ25Ho6L0RKGxgXDjVUcZAA6QZAtZBYZB6OnXoL0XPLDoST5o3bF9agwCZA5JwtqvJ9Rm6wdmFPpVWfDCi4gORzQiS6rZAgINB4sG9IZD";
+				   		//var token="CAAOl30X9gXABAOxXk3y4akqUZALkMZBWYTbIavSmz9ouVE6oHbDGhVZBG9XJnptV3yDvk0PgQYARFIvZBlFDGhZBLBq8hefyQ25Ho6L0RKGxgXDjVUcZAA6QZAtZBYZB6OnXoL0XPLDoST5o3bF9agwCZA5JwtqvJ9Rm6wdmFPpVWfDCi4gORzQiS6rZAgINB4sG9IZD";
 				   		PostImageToFacebook(token);
 				   		loginCheck();
 				   		$("#mySuccessModal2").modal();
@@ -264,7 +269,7 @@ function submitBug(loc)
 				   	
 				   	else if(document.getElementById("dbctfb1").checked == true && document.getElementById("dbctfb2").checked == false)
 				   	{
-				   		var token="CAAOl30X9gXABAOxXk3y4akqUZALkMZBWYTbIavSmz9ouVE6oHbDGhVZBG9XJnptV3yDvk0PgQYARFIvZBlFDGhZBLBq8hefyQ25Ho6L0RKGxgXDjVUcZAA6QZAtZBYZB6OnXoL0XPLDoST5o3bF9agwCZA5JwtqvJ9Rm6wdmFPpVWfDCi4gORzQiS6rZAgINB4sG9IZD";
+				   		//var token="CAAOl30X9gXABAOxXk3y4akqUZALkMZBWYTbIavSmz9ouVE6oHbDGhVZBG9XJnptV3yDvk0PgQYARFIvZBlFDGhZBLBq8hefyQ25Ho6L0RKGxgXDjVUcZAA6QZAtZBYZB6OnXoL0XPLDoST5o3bF9agwCZA5JwtqvJ9Rm6wdmFPpVWfDCi4gORzQiS6rZAgINB4sG9IZD";
 				   		PostImageToFacebook(token);
 				   		$("#mySuccessModal1").modal();
 				   	}
