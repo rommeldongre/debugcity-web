@@ -331,6 +331,7 @@ function getLocation()
 <div class="footer" style="background-color:#222; margin-top:30px;">	
 	<center><font style="color:#9d9d9d;"><br>Designed and Developed by Grey Labs in Pune<br>© Grey Labs. All Rights Reserved.</center>	
 </div>
+
 </body>
 </html>
 </body>
