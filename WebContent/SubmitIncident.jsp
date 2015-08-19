@@ -136,7 +136,14 @@ function initialize()
 		EXIF.getData(event.target.files[0], function() {
 	        	latitude = EXIF.getTag(this, "GPSLatitude"),
 	            longitude = EXIF.getTag(this, "GPSLongitude");
-	        //alert(EXIF.pretty(this));
+	        	
+	        	var latRef = EXIF.getTag(this, "GPSLatitudeRef") || "N";  
+                var lonRef = EXIF.getTag(this, "GPSLongitudeRef") || "W";  
+		        //alert(EXIF.pretty(this));
+	        	latitude = (latitude[0] + latitude[1]/60 + latitude[2]/3600) * (latRef == "N" ? 1 : -1);  
+	        	longitude = (longitude[0] + longitude[1]/60 + longitude[2]/3600) * (lonRef == "W" ? -1 : 1); 
+	            //console.log(latitude);
+		        //console.log(longitude);
 	    });
 }
 
@@ -221,8 +228,8 @@ function submitBug(loc)
 	var subBugData=new Object();
 	
 	subBugData["cat"]=cat;	
-	subBugData["lat"]=lat;	
-	subBugData["lng"]=lng;	
+	subBugData["lat"]=latitude;	
+	subBugData["lng"]=longitude;	
 	subBugData["locality"]=loc;	
 		
 	if(flag==1)
@@ -244,7 +251,7 @@ function submitBug(loc)
 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 				//alert(xmlhttp.responseText);
 				var json = JSON.parse(xmlhttp.responseText);
-				
+		   		
 				if(json.returnCode!=0)
 				{
 				   	$("#myErrorModal").modal();		
@@ -254,14 +261,10 @@ function submitBug(loc)
 					loc_post=loc;
 					cat_post=cat;
 					
-					///the page_access_token for publishing on the behalf of page
-					
 					var token=	"CAAOl30X9gXABAMIIe5vWN1vt2u9w3co20O8dqj1aji17TiIcZC6PxmJlpZBZBtGj7Mm9gmHNqAZBVSQ3rt4XlnPQjZA3NhC1pqGGZBmsO0oefr3ldL3T85rfaxOzZAfxjPDPvJicUOXNEzY56FvNn0p9WIR61JZAbfSDJodfdY82rWr9PqOCM8q4TOP81TECNIEZD";
 				   	
-					
-					if(document.getElementById("dbctfb1").checked == true && document.getElementById("dbctfb2").checked == true)
+				   	if(document.getElementById("dbctfb1").checked == true && document.getElementById("dbctfb2").checked == true)
 				    {
-				   		//var token="CAAOl30X9gXABAOxXk3y4akqUZALkMZBWYTbIavSmz9ouVE6oHbDGhVZBG9XJnptV3yDvk0PgQYARFIvZBlFDGhZBLBq8hefyQ25Ho6L0RKGxgXDjVUcZAA6QZAtZBYZB6OnXoL0XPLDoST5o3bF9agwCZA5JwtqvJ9Rm6wdmFPpVWfDCi4gORzQiS6rZAgINB4sG9IZD";
 				   		PostImageToFacebook(token);
 				   		loginCheck();
 				   		$("#mySuccessModal2").modal();
@@ -269,7 +272,6 @@ function submitBug(loc)
 				   	
 				   	else if(document.getElementById("dbctfb1").checked == true && document.getElementById("dbctfb2").checked == false)
 				   	{
-				   		//var token="CAAOl30X9gXABAOxXk3y4akqUZALkMZBWYTbIavSmz9ouVE6oHbDGhVZBG9XJnptV3yDvk0PgQYARFIvZBlFDGhZBLBq8hefyQ25Ho6L0RKGxgXDjVUcZAA6QZAtZBYZB6OnXoL0XPLDoST5o3bF9agwCZA5JwtqvJ9Rm6wdmFPpVWfDCi4gORzQiS6rZAgINB4sG9IZD";
 				   		PostImageToFacebook(token);
 				   		$("#mySuccessModal1").modal();
 				   	}
@@ -295,20 +297,7 @@ function getLocation()
 {
 	if(typeof latitude !=="undefined" && typeof longitude !=="undefined")
 	{
-
-		lat=latitude[0];
-		if(latitude[1])
-			lat=lat+"."+Math.round(latitude[1]);
-		if(latitude[2])
-			lat=lat+Math.round(latitude[2]);
-		
-		lng=longitude[0];
-		if(longitude[1])
-			lng=lng+"."+Math.round(longitude[1]);
-		if(longitude[2])
-			lng=lng+Math.round(longitude[2]);
-		
-		var latlng = new google.maps.LatLng(lat, lng);
+		var latlng = new google.maps.LatLng(latitude, longitude);
 		
 		geocoder = new google.maps.Geocoder();
 		var flag=0;
