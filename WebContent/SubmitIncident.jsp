@@ -40,12 +40,8 @@
 <script type="text/javascript">
 				var catobj;
 				xmlhttp=new XMLHttpRequest();
-				var url = "FilterCategory";
+				var url = "service/GetCategories";
 
-			 	var onloadData=new Object();
-			 	onloadData["category"]="";
-			 	onloadData["location"]="";
-			 	
 				xmlhttp.onreadystatechange=function() {
 		    	if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 						//alert(xmlhttp.responseText);
@@ -57,45 +53,19 @@
 				
 				xmlhttp.open("POST", url, true);
 				xmlhttp.responseType = 'JSON';
-				xmlhttp.send(JSON.stringify(onloadData));
+				xmlhttp.send();
 </script>
 
 <script>
 			function addCat()
 		 	{
-				/*$.each(catobj, function(key, value) {   
+				$.each(catobj, function(key, value) {   
 				     $('#multipleSelectCat')
 				     	 .append($("<option></option>")		
 				         .attr("value",key)
 				         .text(value));
 				});
-				*/
-				
-				$('#multipleSelectCat')
-		     	 .append($("<option></option>")		
-		         .attr("value","Garbage")
-		         .text("Garbage"));
-				
-				$('#multipleSelectCat')
-		     	 .append($("<option></option>")		
-		         .attr("value","Spitting")
-		         .text("Spitting"));
-				
-				$('#multipleSelectCat')
-		     	 .append($("<option></option>")		
-		         .attr("value","Noise")
-		         .text("Noise"));
-				
-				$('#multipleSelectCat')
-		     	 .append($("<option></option>")		
-		         .attr("value","Queues")
-		         .text("Queues"));
-				
-				$('#multipleSelectCat')
-		     	 .append($("<option></option>")		
-		         .attr("value","Traffic")
-		         .text("Traffic"));
-				
+								
 				$(document).ready(function() {
 			 	    $('#multipleSelectCat').multiselect({
 			 	        buttonWidth: '200px',
@@ -114,8 +84,10 @@ url = null;
 flag=0;
 latitude=null;
 longitude=null;
+loc=null;
 loc_post=null;
 cat_post=null;
+flag_loc=0;
 
 function initialize() 
 {
@@ -140,9 +112,12 @@ function initialize()
 	        	var latRef = EXIF.getTag(this, "GPSLatitudeRef") || "N";  
                 var lonRef = EXIF.getTag(this, "GPSLongitudeRef") || "W";  
 		        //alert(EXIF.pretty(this));
-	        	latitude = (latitude[0] + latitude[1]/60 + latitude[2]/3600) * (latRef == "N" ? 1 : -1);  
-	        	longitude = (longitude[0] + longitude[1]/60 + longitude[2]/3600) * (lonRef == "W" ? -1 : 1); 
-	            //console.log(latitude);
+	        	if(typeof latitude !=="undefined" && typeof longitude !=="undefined")
+				{
+		        	latitude = (latitude[0] + latitude[1]/60 + latitude[2]/3600) * (latRef == "N" ? 1 : -1);  
+	        		longitude = (longitude[0] + longitude[1]/60 + longitude[2]/3600) * (lonRef == "W" ? -1 : 1); 
+				}
+	        	//console.log(latitude);
 		        //console.log(longitude);
 	    });
 }
@@ -178,7 +153,7 @@ function PostImageToFacebook(token)
 	
 	try{
 		$.ajax({
-		    url:"https://graph.facebook.com/938425389552084/photos?access_token=" + authToken,
+		    url:"https://graph.facebook.com/952064434850116/photos?access_token=" + authToken,
 		    type:"POST",
 		    data:fd,
 		    processData:false,
@@ -221,7 +196,7 @@ function setURL(url,flag)
 	pic= url;
 }
 
-function submitBug(loc)
+function submitBug(location)
 {
 	var cat=$('#multipleSelectCat').val();
 	
@@ -230,7 +205,7 @@ function submitBug(loc)
 	subBugData["cat"]=cat;	
 	subBugData["lat"]=latitude;	
 	subBugData["lng"]=longitude;	
-	subBugData["locality"]=loc;	
+	subBugData["locality"]=location;	
 		
 	if(flag==1)
 		subBugData["pic"]=pic;
@@ -260,9 +235,8 @@ function submitBug(loc)
 				{	
 					loc_post=loc;
 					cat_post=cat;
-					
-					var token=	"CAAOl30X9gXABAMIIe5vWN1vt2u9w3co20O8dqj1aji17TiIcZC6PxmJlpZBZBtGj7Mm9gmHNqAZBVSQ3rt4XlnPQjZA3NhC1pqGGZBmsO0oefr3ldL3T85rfaxOzZAfxjPDPvJicUOXNEzY56FvNn0p9WIR61JZAbfSDJodfdY82rWr9PqOCM8q4TOP81TECNIEZD";
-				   	
+					var token= "CAAOpW1dnTGsBAL5s7sZCziJ9pbnJvW95a89Yijw2ZC3fRHPkYCgnjHAQKrDvw2uB6HMTYJzzyrZAfuc9kw8ORdr6AZAfrsk5nSxP2ZByuZC08jAZBZAe9ksKN9ht18fYZCXBMNfanZCKeSVCCaDMemhZAZCUmx9zhO2ejfOmSjXCy6NBQiFWewTCWGRf";
+
 				   	if(document.getElementById("dbctfb1").checked == true && document.getElementById("dbctfb2").checked == true)
 				    {
 				   		PostImageToFacebook(token);
@@ -319,27 +293,59 @@ function getLocation()
 		                	submitBug(res);
 		               	}
 		                else
-			            {
-		                	var loc="Unknown";
-			          		submitBug(loc);
-			            }
+			          		getCoordinates(loc);
 		            }
-		        } else {
-		            var loc="Unknown";
-		          	submitBug(loc);
-		        }
+		        } else
+		        	  getCoordinates(loc);
 		    });
 	}
 	else
-		$("#myInvalidModal").modal();
+		getCoordinates(loc);
+}
+
+function getCoordinates(loc)
+{
+	var geocoder = new google.maps.Geocoder();
+    latitude = '';
+    longitude = '';
+    
+    geocoder.geocode( { 'address': ''+loc+', india'}, function(results, status) 
+    		{
+    			if (status == google.maps.GeocoderStatus.OK) 
+    			{
+    				if (results[0]) 
+    				{
+    					latitude = results[0].geometry.location.lat();
+             			longitude = results[0].geometry.location.lng();	
+             			//for (var p = 0; p < results[0].address_components.length; p++) {
+		                  //  if (results[0].address_components[p].types[0] == 'postal_code')
+		                    {
+		                    	flag_loc=1;	
+		                        redirect(loc);
+		                    }
+		             	//}
+               		}
+    			}	
+    		});
+}
+
+function redirect(loc)
+{
+	if(flag_loc==1)
+   	{
+		flag_loc=0;
+		submitBug(loc);
+   	}
+	else	
+	    $("#invalidDetailModal").modal();
 }
 
 function CheckValidation()
 {
-
     var isValidForm = document.forms['subform'].checkValidity();
     if (isValidForm)
     {
+    	loc=document.getElementById("locality").value;
     	getLocation();
     }
     else
@@ -403,15 +409,22 @@ function statusChangeCallback(response) {
     }
 }
 
+function isNumber(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+}
 </script>
 
 </head>
 <body style="background:">
-<script src='http://connect.facebook.net/en_US/all.js'></script>
 <script>
   window.fbAsyncInit = function() {
     FB.init({
-      appId      : '1026803300663664',
+      appId      : '1030634703637611',
       xfbml      : true,
       version    : 'v2.4'
     });
@@ -457,14 +470,20 @@ function statusChangeCallback(response) {
   <h2>Submit Incident</h2>
   <form class="form-horizontal" role="form" name="subform" id="subform">
     <div class="form-group">
-      <label class="control-label col-sm-2" for="cat">Cat <span style="color:red;font-family:'Glyphicons Halflings';font-weight: normal;font-size: 14px;">*</span></label>
+      <label class="control-label col-sm-2" for="cat">Cat <span style="color:red; font-weight: normal;font-size: 14px;">*</span></label>
       <div class="col-sm-10">
       		<select id="multipleSelectCat" style="position:relative;" name="multipleSelectCat">
 			</select>	
 	  </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="pic">Pic <span style="color:red;font-family:'Glyphicons Halflings';font-weight: normal;font-size: 14px;">*</span></label>
+      <label class="control-label col-sm-2" for="locality">Location <span style="color:red; font-weight: normal;font-size: 14px;">*</span></label>
+      <div class="col-sm-10">
+        <input input type="text" id="locality" onkeypress="return isNumber(event)" name="locality" required="required" class="form-control" placeholder="Enter pin-code or zip-code of the locality">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="pic">Pic <span style="color:red; font-weight: normal;font-size: 14px;">*</span></label>
       <div class="col-sm-10">          
         <input type="file" class="form-control" id="pic" required="required"><canvas id="panel"></canvas>
       </div>
@@ -534,7 +553,7 @@ function statusChangeCallback(response) {
           <h4 class="modal-title"><font style="color:white;">Incident successfully submitted.</font></h4>
         </div>
         <div class="modal-body">
-        	<p><font style="color:black;">Please also give permissions to post as youself on Debugcity facebook page. </font></p>
+        	<p><font style="color:black;">Please also give permissions to post as youself on Debugcity facebook page if it asks. </font></p>
      	 </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
@@ -560,13 +579,29 @@ function statusChangeCallback(response) {
   </div>
 </div>
 
+<div class="modal fade" id="invalidDetailModal" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="background-color:#f0ad4e;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"><font style="color:white;">Please provide correct details.</font></h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-info" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="myValidModal" role="dialog">
     <div class="modal-dialog">
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header" style="background-color:#5bc0de;">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title"><font style="color:white;">Please choose a picture to submit the incident.</font></h4>
+          <h4 class="modal-title"><font style="color:white;">Please complete all the fields to submit the incident.</font></h4>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-info" data-dismiss="modal">OK</button>

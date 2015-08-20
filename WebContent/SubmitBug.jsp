@@ -237,19 +237,19 @@ function getLocation()
   <h2>Submit Bug</h2>
   <form class="form-horizontal" role="form">
     <div class="form-group">
-      <label class="control-label col-sm-2" for="lat">Lat <span style="color:red;font-family:'Glyphicons Halflings';font-weight: normal;font-size: 14px;">*</span></label>
+      <label class="control-label col-sm-2" for="lat">Lat <span style="color:red; font-weight: normal;font-size: 14px;">*</span></label>
       <div class="col-sm-10">
         <input input type="text" id="lat" name="lat" class="form-control" placeholder="Enter latitude">
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="lng">Long <span style="color:red;font-family:'Glyphicons Halflings';font-weight: normal;font-size: 14px;">*</span></label>
+      <label class="control-label col-sm-2" for="lng">Long <span style="color:red; font-weight: normal;font-size: 14px;">*</span></label>
       <div class="col-sm-10">
         <input input type="text" id="lng" name="lng" class="form-control" placeholder="Enter longitude">
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="cat">Cat <span style="color:red;font-family:'Glyphicons Halflings';font-weight: normal;font-size: 14px;">*</span></label>
+      <label class="control-label col-sm-2" for="cat">Cat <span style="color:red; font-weight: normal;font-size: 14px;">*</span></label>
       <div class="col-sm-10">
         <input input type="text" id="cat" name="cat" class="form-control" placeholder="Enter category">
       </div>
@@ -331,7 +331,6 @@ function getLocation()
 <div class="footer" style="background-color:#222; margin-top:30px;">	
 	<center><font style="color:#9d9d9d;"><br>Designed and Developed by Grey Labs in Pune<br>© Grey Labs. All Rights Reserved.</center>	
 </div>
-
 </body>
 </html>
 </body>

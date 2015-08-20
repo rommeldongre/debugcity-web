@@ -59,8 +59,11 @@ public class GetCategories extends HttpServlet {
 				int count=0;
 				String category=null;
 				
+				JSONObject catobj=new JSONObject();
+				
 				while(rs.next())
 				{
+					catobj.put(rs.getString("cat_name"), rs.getString("cat_name"));
 					category=rs.getString("cat_name");
 					count++;
 					vector=vector+category+", ";
@@ -74,6 +77,7 @@ public class GetCategories extends HttpServlet {
 					con.close();
 	
 				JSONObject ResponseObj=new JSONObject();
+				ResponseObj.put("catobj", catobj);
 				ResponseObj.put("count", count);
 				ResponseObj.put("categories", vector);
 				ResponseObj.put("returnCode", 0);
