@@ -87,7 +87,6 @@ longitude=null;
 loc=null;
 loc_post=null;
 cat_post=null;
-flag_loc=0;
 
 function initialize() 
 {
@@ -123,10 +122,10 @@ function initialize()
 }
 
 	drawImage = function(img) {
-		this.canvasCtx.canvas.width = img.width;
-		this.canvasCtx.canvas.height = img.height;
-		this.canvasCtx.drawImage(img,0,0);
-		url = canvasCtx.canvas.toDataURL("image/png");
+		this.canvasCtx.canvas.width = 300//img.width;
+		this.canvasCtx.canvas.height = 300//img.height;
+		this.canvasCtx.drawImage(img,0,0,300,300);
+		url = canvasCtx.canvas.toDataURL("image/png",0.7);
 		flag=1;
 		setURL(url,flag);
 	}
@@ -229,14 +228,14 @@ function submitBug(location)
 		   		
 				if(json.returnCode!=0)
 				{
-				   	$("#myErrorModal").modal();		
+				   	$("#bugExist").modal();		
 				}
 				else
 				{	
 					loc_post=loc;
 					cat_post=cat;
 					var token=	"CAAOl30X9gXABAMIIe5vWN1vt2u9w3co20O8dqj1aji17TiIcZC6PxmJlpZBZBtGj7Mm9gmHNqAZBVSQ3rt4XlnPQjZA3NhC1pqGGZBmsO0oefr3ldL3T85rfaxOzZAfxjPDPvJicUOXNEzY56FvNn0p9WIR61JZAbfSDJodfdY82rWr9PqOCM8q4TOP81TECNIEZD";
-				   	
+					 
 				   	if(document.getElementById("dbctfb1").checked == true && document.getElementById("dbctfb2").checked == true)
 				    {
 				   		PostImageToFacebook(token);
@@ -290,6 +289,7 @@ function getLocation()
 		                }
 		                if(flag==1)
 		                {
+		                	flag=0;
 		                	submitBug(res);
 		               	}
 		                else
@@ -300,7 +300,12 @@ function getLocation()
 		    });
 	}
 	else
-		getCoordinates(loc);
+	{
+		if(loc!="")
+			getCoordinates(loc);
+		else
+			alert("Please enter location also, location information is absent in the image.");
+	}
 }
 
 function getCoordinates(loc)
@@ -320,24 +325,19 @@ function getCoordinates(loc)
              			//for (var p = 0; p < results[0].address_components.length; p++) {
 		                  //  if (results[0].address_components[p].types[0] == 'postal_code')
 		                    {
-		                    	flag_loc=1;	
 		                        redirect(loc);
 		                    }
 		             	//}
                		}
-    			}	
+    			}
+    			else
+    				alert("Please enter correct location.");
     		});
 }
 
 function redirect(loc)
 {
-	if(flag_loc==1)
-   	{
-		flag_loc=0;
 		submitBug(loc);
-   	}
-	else	
-	    $("#invalidDetailModal").modal();
 }
 
 function CheckValidation()
@@ -350,7 +350,7 @@ function CheckValidation()
     }
     else
     {
-    	$("#myValidModal").modal();
+    	alert("Please choose an image to submit the incident.");
     }
 }
 
@@ -477,15 +477,15 @@ function isNumber(evt) {
 	  </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="locality">Location <span style="color:red; font-weight: normal;font-size: 14px;">*</span></label>
+      <label class="control-label col-sm-2" for="locality">Location </label>
       <div class="col-sm-10">
-        <input input type="text" id="locality" onkeypress="return isNumber(event)" name="locality" required="required" class="form-control" placeholder="Enter pin-code or zip-code of the locality">
+        <input input type="text" id="locality" onkeypress="return isNumber(event)" name="locality" class="form-control" placeholder="Enter pin-code or zip-code of the locality">
       </div>
     </div>
     <div class="form-group">
       <label class="control-label col-sm-2" for="pic">Pic <span style="color:red; font-weight: normal;font-size: 14px;">*</span></label>
       <div class="col-sm-10">          
-        <input type="file" class="form-control" id="pic" required="required"><canvas id="panel"></canvas>
+        <input type="file" class="form-control" id="pic" required="required"><br><canvas id="panel"></canvas>
       </div>
     </div>
     <div class="form-group">        
@@ -507,25 +507,6 @@ function isNumber(evt) {
 </div>
 <div class="footer" style="background-color:#222;margin-top:20px;">	
 	<center><font style="color:#9d9d9d;"><br>Designed and Developed by Grey Labs in Pune<br>© Grey Labs. All Rights Reserved.</center>	
-</div>
-
-<div class="modal fade" id="myInvalidModal" role="dialog">
-    <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header" style="background-color:#f0ad4e;">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title"><font style="color:white;">No Location information found in image.</font></h4>
-        </div>
-        <div class="modal-body">
-        	<p><font style="color:black;">Please email the Image along with Location and Category to <b>frrndlease@greylabs.org</b></font></p>
-     	 </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-warning" data-dismiss="modal">OK</button>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
 <div class="modal fade" id="mySuccessModal1" role="dialog">
@@ -553,7 +534,7 @@ function isNumber(evt) {
           <h4 class="modal-title"><font style="color:white;">Incident successfully submitted.</font></h4>
         </div>
         <div class="modal-body">
-        	<p><font style="color:black;">Please also give permissions to post as youself on Debugcity facebook page if it asks. </font></p>
+        	<p><font style="color:black;">Please also give permissions to post as youself on Debugcity facebook page if needed. </font></p>
      	 </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
@@ -563,46 +544,17 @@ function isNumber(evt) {
   </div>
 </div>
 
-<div class="modal fade" id="myErrorModal" role="dialog">
+<div class="modal fade" id="bugExist" role="dialog">
     <div class="modal-dialog">
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header" style="background-color:#5bc0de;">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title"><font style="color:white;">Incident already exist or Picture is too large to be handled.</font></h4>
+          <h4 class="modal-title"><font style="color:white;">Incident already exists.</font></h4>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-info" data-dismiss="modal">OK</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="invalidDetailModal" role="dialog">
-    <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header" style="background-color:#f0ad4e;">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title"><font style="color:white;">Please provide correct details.</font></h4>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-info" data-dismiss="modal">OK</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="myValidModal" role="dialog">
-    <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header" style="background-color:#5bc0de;">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title"><font style="color:white;">Please complete all the fields to submit the incident.</font></h4>
-        </div>
+        <div class="modal-body">
+        	<p><font style="color:black;">To vote for this incident check all the incidents <a href="index.html" style="text-decoration:none;">here</a>. </font></p>
+     	</div>
         <div class="modal-footer">
           <button type="button" class="btn btn-info" data-dismiss="modal">OK</button>
         </div>
