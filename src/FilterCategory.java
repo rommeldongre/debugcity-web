@@ -260,91 +260,57 @@ public class FilterCategory extends HttpServlet {
 
 		rs.close();
 		
-		query = "select incident_locality, count(*) as count from incident where incident_category='garbage' group by incident_locality ORDER BY count DESC";
+		
+		//queries for leader boards
+		
+		query = "select * from category";
+		rs=dbconn.getResult(query, con);
+		int totalcat=0;
+		while(rs.next())
+		{
+			totalcat++;
+		}
+		rs.close();
+		
+		String allcat[] = new String[totalcat];
+		i=0;
+		query = "select * from category";
 		rs=dbconn.getResult(query, con);
 		
-		int[][] topscore=new int[5][3];
-		String[][] toploc=new String[5][3];
+		while(rs.next())
+		{
+			allcat[i]=rs.getString("cat_name");
+			i++;
+		}
+		
+		rs.close();
+		
+		int[][] topscore=new int[totalcat][3];
+		String[][] toploc=new String[totalcat][3];
+		
 		int c=0;
-		while(rs.next())
-		{
-			if(!rs.getString("incident_locality").equalsIgnoreCase("unknown"))
-			{
-				if(c==3)
-					break;
-				toploc[0][c]=rs.getString("incident_locality");
-				topscore[0][c]=rs.getInt("count");
-				c++;
-			}
-		}	
+		
+		for(i=0;i<totalcat;i++)
+		{	
+			query = "select incident_locality, count(*) as count from incident where incident_category='"+allcat[i]+"' group by incident_locality ORDER BY count DESC";
+			rs=dbconn.getResult(query, con);
 			
-		rs.close();
-		
-		query = "select incident_locality, count(*) as count from incident where incident_category='queues' group by incident_locality ORDER BY count DESC";
-		rs=dbconn.getResult(query, con);
-		c=0;
-		while(rs.next())
-		{
-			if(!rs.getString("incident_locality").equalsIgnoreCase("unknown"))
+			c=0;
+			while(rs.next())
 			{
-				if(c==3)
-					break;
-				toploc[1][c]=rs.getString("incident_locality");
-				topscore[1][c]=rs.getInt("count");
-				c++;
+				if(!rs.getString("incident_locality").equalsIgnoreCase("unknown"))
+				{
+					if(c==3)
+						break;
+					toploc[i][c]=rs.getString("incident_locality");
+					topscore[i][c]=rs.getInt("count");
+					c++;
+				}
 			}	
-		}
-
-		rs.close();
-		
-		query = "select incident_locality, count(*) as count from incident where incident_category='noise' group by incident_locality ORDER BY count DESC";
-		rs=dbconn.getResult(query, con);
-		c=0;
-		while(rs.next())
-		{
-			if(!rs.getString("incident_locality").equalsIgnoreCase("unknown"))
-			{
-				if(c==3)
-					break;
-				toploc[2][c]=rs.getString("incident_locality");
-				topscore[2][c]=rs.getInt("count");
-				c++;
-			}
-		}
-
-		rs.close();
-		
-		query = "select incident_locality, count(*) as count from incident where incident_category='spitting' group by incident_locality ORDER BY count DESC";
-		rs=dbconn.getResult(query, con);
-		c=0;
-		while(rs.next())
-		{
-			if(!rs.getString("incident_locality").equalsIgnoreCase("unknown"))
-			{
-				if(c==3)
-					break;
-				toploc[3][c]=rs.getString("incident_locality");
-				topscore[3][c]=rs.getInt("count");
-				c++;
-			}
-		}
-
-		rs.close();
-		
-		query = "select incident_locality, count(*) as count from incident where incident_category='traffic' group by incident_locality ORDER BY count DESC";
-		rs=dbconn.getResult(query, con);
-		c=0;
-		while(rs.next())
-		{
-			if(!rs.getString("incident_locality").equalsIgnoreCase("unknown"))
-			{
-				if(c==3)
-					break;
-				toploc[4][c]=rs.getString("incident_locality");
-				topscore[4][c]=rs.getInt("count");
-				c++;
-			}
-		}
+				
+			rs.close();
+		}	
+				
 		if(con!=null)
 			con.close();
 		
@@ -375,6 +341,7 @@ public class FilterCategory extends HttpServlet {
 			ResponseObj.put("obj",obj);	
 			ResponseObj.put("catobj",catobj);	
 			ResponseObj.put("spiallloc",spiallloc);	
+			ResponseObj.put("allcat",allcat);	
 			ResponseObj.put("toploc",toploc);	
 			ResponseObj.put("topscore",topscore);	
 		} 
@@ -602,91 +569,57 @@ public class FilterCategory extends HttpServlet {
 
 		rs.close();
 		
-		query = "select incident_locality, count(*) as count from incident where incident_category='garbage' group by incident_locality ORDER BY count DESC";
+		
+		//queries for leader boards
+		
+		query = "select * from category";
+		rs=dbconn.getResult(query, con);
+		int totalcat=0;
+		while(rs.next())
+		{
+			totalcat++;
+		}
+		rs.close();
+		
+		String allcat[] = new String[totalcat];
+		i=0;
+		query = "select * from category";
 		rs=dbconn.getResult(query, con);
 		
-		int[][] topscore=new int[5][3];
-		String[][] toploc=new String[5][3];
+		while(rs.next())
+		{
+			allcat[i]=rs.getString("cat_name");
+			i++;
+		}
+		
+		rs.close();
+		
+		int[][] topscore=new int[totalcat][3];
+		String[][] toploc=new String[totalcat][3];
+		
 		int c=0;
-		while(rs.next())
-		{
-			if(!rs.getString("incident_locality").equalsIgnoreCase("unknown"))
-			{
-				if(c==3)
-					break;
-				toploc[0][c]=rs.getString("incident_locality");
-				topscore[0][c]=rs.getInt("count");
-				c++;
-			}
-		}	
+		
+		for(i=0;i<totalcat;i++)
+		{	
+			query = "select incident_locality, count(*) as count from incident where incident_category='"+allcat[i]+"' group by incident_locality ORDER BY count DESC";
+			rs=dbconn.getResult(query, con);
 			
-		rs.close();
-		
-		query = "select incident_locality, count(*) as count from incident where incident_category='queues' group by incident_locality ORDER BY count DESC";
-		rs=dbconn.getResult(query, con);
-		c=0;
-		while(rs.next())
-		{
-			if(!rs.getString("incident_locality").equalsIgnoreCase("unknown"))
+			c=0;
+			while(rs.next())
 			{
-				if(c==3)
-					break;
-				toploc[1][c]=rs.getString("incident_locality");
-				topscore[1][c]=rs.getInt("count");
-				c++;
+				if(!rs.getString("incident_locality").equalsIgnoreCase("unknown"))
+				{
+					if(c==3)
+						break;
+					toploc[i][c]=rs.getString("incident_locality");
+					topscore[i][c]=rs.getInt("count");
+					c++;
+				}
 			}	
-		}
-
-		rs.close();
-		
-		query = "select incident_locality, count(*) as count from incident where incident_category='noise' group by incident_locality ORDER BY count DESC";
-		rs=dbconn.getResult(query, con);
-		c=0;
-		while(rs.next())
-		{
-			if(!rs.getString("incident_locality").equalsIgnoreCase("unknown"))
-			{
-				if(c==3)
-					break;
-				toploc[2][c]=rs.getString("incident_locality");
-				topscore[2][c]=rs.getInt("count");
-				c++;
-			}
-		}
-
-		rs.close();
-		
-		query = "select incident_locality, count(*) as count from incident where incident_category='spitting' group by incident_locality ORDER BY count DESC";
-		rs=dbconn.getResult(query, con);
-		c=0;
-		while(rs.next())
-		{
-			if(!rs.getString("incident_locality").equalsIgnoreCase("unknown"))
-			{
-				if(c==3)
-					break;
-				toploc[3][c]=rs.getString("incident_locality");
-				topscore[3][c]=rs.getInt("count");
-				c++;
-			}
-		}
-
-		rs.close();
-		
-		query = "select incident_locality, count(*) as count from incident where incident_category='traffic' group by incident_locality ORDER BY count DESC";
-		rs=dbconn.getResult(query, con);
-		c=0;
-		while(rs.next())
-		{
-			if(!rs.getString("incident_locality").equalsIgnoreCase("unknown"))
-			{
-				if(c==3)
-					break;
-				toploc[4][c]=rs.getString("incident_locality");
-				topscore[4][c]=rs.getInt("count");
-				c++;
-			}
-		}
+				
+			rs.close();
+		}	
+				
 		if(con!=null)
 			con.close();
 		
@@ -694,9 +627,11 @@ public class FilterCategory extends HttpServlet {
 		category="";
 		for(i=0;i<parts.length;i++)
 		{
-			category=category+parts[i]+", ";
+			if(!parts[i].equalsIgnoreCase("Spider"))
+				category=category+parts[i]+", ";
 		}
-		category=category.substring(0,category.length()-2);	
+		if(category.length()>=2)
+			category=category.substring(0,category.length()-2);	
 		int no=0;//arr1.length;
 		
 		for(i=0;i<arr1.length;i++)
@@ -715,6 +650,7 @@ public class FilterCategory extends HttpServlet {
 			ResponseObj.put("obj",obj);	
 			ResponseObj.put("catobj",catobj);	
 			ResponseObj.put("spiallloc",spiallloc);	
+			ResponseObj.put("allcat",allcat);	
 			ResponseObj.put("toploc",toploc);	
 			ResponseObj.put("topscore",topscore);	
 		} 
@@ -732,6 +668,5 @@ public class FilterCategory extends HttpServlet {
 		{
 			e.printStackTrace();
 		}
-			}	
-
+	}	
 }
