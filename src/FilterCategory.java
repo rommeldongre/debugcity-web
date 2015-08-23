@@ -209,61 +209,7 @@ public class FilterCategory extends HttpServlet {
 		}
 		rs.close();
 		
-		query="select distinct incident_category from incident";
-		
-		rs=dbconn.getResult(query, con);
-		JSONObject catobj = new JSONObject();
-		while(rs.next())
-		{
-			catobj.put(rs.getString("incident_category"), rs.getString("incident_category"));
-		}
-		rs.close();
-		
-		JSONObject spiallloc = new JSONObject();
-		
-		for(i=0;i<uniloc.length;i++)
-		{
-			JSONObject spiuniloc = new JSONObject();
-			spiuniloc.put("garbage", 0);
-			spiuniloc.put("noise", 0);
-			spiuniloc.put("queues", 0);
-			spiuniloc.put("spitting", 0);
-			spiuniloc.put("traffic", 0);
-			query = "select incident_category, count(*) as count from incident where incident_locality='"+ uniloc[i] +"' group by incident_category";
-			rs=dbconn.getResult(query, con);
-			
-			while(rs.next())
-			{
-				if(rs.getString("incident_category").equalsIgnoreCase("garbage"))
-				{
-					spiuniloc.put("garbage", rs.getInt("count"));
-				}
-				else if(rs.getString("incident_category").equalsIgnoreCase("noise"))
-				{
-					spiuniloc.put("noise", rs.getInt("count"));
-				}
-				else if(rs.getString("incident_category").equalsIgnoreCase("queues"))
-				{
-					spiuniloc.put("queues", rs.getInt("count"));
-				}
-				else if(rs.getString("incident_category").equalsIgnoreCase("spitting"))
-				{
-					spiuniloc.put("spitting", rs.getInt("count"));
-				}
-				else 
-				{	
-					spiuniloc.put("traffic", rs.getInt("count"));
-				}
-			}
-			spiallloc.put(uniloc[i], spiuniloc);
-		}
-
-		rs.close();
-		
-		
-		//queries for leader boards
-		
-		query = "select * from category";
+		query="select * from category";
 		rs=dbconn.getResult(query, con);
 		int totalcat=0;
 		while(rs.next())
@@ -272,19 +218,39 @@ public class FilterCategory extends HttpServlet {
 		}
 		rs.close();
 		
-		String allcat[] = new String[totalcat];
-		i=0;
-		query = "select * from category";
 		rs=dbconn.getResult(query, con);
-		
+		String allcat[]=new String[totalcat];
+		i=0;
 		while(rs.next())
 		{
 			allcat[i]=rs.getString("cat_name");
 			i++;
 		}
-		
 		rs.close();
 		
+		JSONObject spiallloc = new JSONObject();
+		
+		for(i=0;i<uniloc.length;i++)
+		{
+			JSONObject spiuniloc = new JSONObject();
+			
+			for(int j=0;j<totalcat;j++)
+			{
+				spiuniloc.put(allcat[j], 0);
+			}
+			
+			query = "select incident_category, count(*) as count from incident where incident_locality='"+ uniloc[i] +"' group by incident_category";
+			rs=dbconn.getResult(query, con);
+			
+			while(rs.next())
+			{
+				spiuniloc.put(rs.getString("incident_category"), rs.getInt("count"));
+			}
+			spiallloc.put(uniloc[i], spiuniloc);
+		}
+
+		rs.close();
+
 		int[][] topscore=new int[totalcat][3];
 		String[][] toploc=new String[totalcat][3];
 		
@@ -339,7 +305,7 @@ public class FilterCategory extends HttpServlet {
 			ResponseObj.put("no",no);		
 			ResponseObj.put("uniloc",uniloc);
 			ResponseObj.put("obj",obj);	
-			ResponseObj.put("catobj",catobj);	
+			//ResponseObj.put("catobj",catobj);	
 			ResponseObj.put("spiallloc",spiallloc);	
 			ResponseObj.put("allcat",allcat);	
 			ResponseObj.put("toploc",toploc);	
@@ -518,61 +484,7 @@ public class FilterCategory extends HttpServlet {
 		}
 		rs.close();
 		
-		query="select distinct incident_category from incident";
-		
-		rs=dbconn.getResult(query, con);
-		JSONObject catobj = new JSONObject();
-		while(rs.next())
-		{
-			catobj.put(rs.getString("incident_category"), rs.getString("incident_category"));
-		}
-		rs.close();
-		
-		JSONObject spiallloc = new JSONObject();
-		
-		for(i=0;i<uniloc.length;i++)
-		{
-			JSONObject spiuniloc = new JSONObject();
-			spiuniloc.put("garbage", 0);
-			spiuniloc.put("noise", 0);
-			spiuniloc.put("queues", 0);
-			spiuniloc.put("spitting", 0);
-			spiuniloc.put("traffic", 0);
-			query = "select incident_category, count(*) as count from incident where incident_locality='"+ uniloc[i] +"' group by incident_category";
-			rs=dbconn.getResult(query, con);
-			
-			while(rs.next())
-			{
-				if(rs.getString("incident_category").equalsIgnoreCase("garbage"))
-				{
-					spiuniloc.put("garbage", rs.getInt("count"));
-				}
-				else if(rs.getString("incident_category").equalsIgnoreCase("noise"))
-				{
-					spiuniloc.put("noise", rs.getInt("count"));
-				}
-				else if(rs.getString("incident_category").equalsIgnoreCase("queues"))
-				{
-					spiuniloc.put("queues", rs.getInt("count"));
-				}
-				else if(rs.getString("incident_category").equalsIgnoreCase("spitting"))
-				{
-					spiuniloc.put("spitting", rs.getInt("count"));
-				}
-				else 
-				{	
-					spiuniloc.put("traffic", rs.getInt("count"));
-				}
-			}
-			spiallloc.put(uniloc[i], spiuniloc);
-		}
-
-		rs.close();
-		
-		
-		//queries for leader boards
-		
-		query = "select * from category";
+		query="select * from category";
 		rs=dbconn.getResult(query, con);
 		int totalcat=0;
 		while(rs.next())
@@ -581,19 +493,39 @@ public class FilterCategory extends HttpServlet {
 		}
 		rs.close();
 		
-		String allcat[] = new String[totalcat];
-		i=0;
-		query = "select * from category";
 		rs=dbconn.getResult(query, con);
-		
+		String allcat[]=new String[totalcat];
+		i=0;
 		while(rs.next())
 		{
 			allcat[i]=rs.getString("cat_name");
 			i++;
 		}
-		
 		rs.close();
 		
+		JSONObject spiallloc = new JSONObject();
+		
+		for(i=0;i<uniloc.length;i++)
+		{
+			JSONObject spiuniloc = new JSONObject();
+			
+			for(int j=0;j<totalcat;j++)
+			{
+				spiuniloc.put(allcat[j], 0);
+			}
+			
+			query = "select incident_category, count(*) as count from incident where incident_locality='"+ uniloc[i] +"' group by incident_category";
+			rs=dbconn.getResult(query, con);
+			
+			while(rs.next())
+			{
+				spiuniloc.put(rs.getString("incident_category"), rs.getInt("count"));
+			}
+			spiallloc.put(uniloc[i], spiuniloc);
+		}
+
+		rs.close();
+
 		int[][] topscore=new int[totalcat][3];
 		String[][] toploc=new String[totalcat][3];
 		
@@ -648,7 +580,7 @@ public class FilterCategory extends HttpServlet {
 			ResponseObj.put("no",no);		
 			ResponseObj.put("uniloc",uniloc);
 			ResponseObj.put("obj",obj);	
-			ResponseObj.put("catobj",catobj);	
+			//ResponseObj.put("catobj",catobj);	
 			ResponseObj.put("spiallloc",spiallloc);	
 			ResponseObj.put("allcat",allcat);	
 			ResponseObj.put("toploc",toploc);	
@@ -667,6 +599,6 @@ public class FilterCategory extends HttpServlet {
 		catch(Exception e)
 		{
 			e.printStackTrace();
-		}
+		}		
 	}	
 }

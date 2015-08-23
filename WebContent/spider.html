@@ -32,11 +32,12 @@
 				
 				xmlhttp.onreadystatechange=function() {
 		    	if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-						//alert(xmlhttp.responseText);
+						
 		    			var json = JSON.parse(xmlhttp.responseText);
 		    			loc=json.obj;
+		    			allcat=json.allcat;
 		    			spiallloc=json.spiallloc;
-						topscore=json.topscore;
+		    			topscore=json.topscore;
 						addLoc();
 					}
 				}
@@ -49,8 +50,15 @@
 			function getChart()
 			{
 				var location=$('#multipleSelectLoc').val();
+				
+				var obj=spiallloc[location];
+				var actualdata = [];
+				for (var i=0;i<allcat.length;i++) {
+				   actualdata.push(obj[allcat[i]]);
+				}
+				
 				var radarChartData = {
-					labels: ["Garbage", "Noise", "Queues", "Spitting", "Traffic"],
+					labels: allcat,
 					datasets: [
 					{
 						label: "Ideal",
@@ -60,7 +68,7 @@
 						pointStrokeColor: "#fff",
 						pointHighlightFill: "#fff",
 						pointHighlightStroke: "rgba(193,250,157,1)",
-						data: [topscore[0],topscore[1],topscore[2],topscore[3],topscore[4]]
+						data: topscore
 					},
 					{
 						label: "Actual",
@@ -70,7 +78,7 @@
 						pointStrokeColor: "#fff",
 						pointHighlightFill: "#fff",
 						pointHighlightStroke: "rgba(250,170,219,1)",
-						data: [spiallloc[location].garbage,spiallloc[location].noise,spiallloc[location].queues,spiallloc[location].spitting,spiallloc[location].traffic]
+						data: actualdata
 					}]
 				};
 				window.myRadar = new Chart(document.getElementById("canvas").getContext("2d")).Radar(radarChartData, {
