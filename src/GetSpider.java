@@ -130,8 +130,8 @@ public class GetSpider extends HttpServlet {
 					}
 
 					rs.close();
-					
-					query = "select count(*) as count from incident where incident_category='queues' group by incident_locality ORDER BY count DESC";
+										
+					query = "select count(*) as count from incident where incident_category='noise' group by incident_locality ORDER BY count DESC";
 					rs=dbconn.getResult(query, con);
 					c=0;
 					while(rs.next())
@@ -144,7 +144,7 @@ public class GetSpider extends HttpServlet {
 
 					rs.close();
 					
-					query = "select count(*) as count from incident where incident_category='noise' group by incident_locality ORDER BY count DESC";
+					query = "select count(*) as count from incident where incident_category='queues' group by incident_locality ORDER BY count DESC";
 					rs=dbconn.getResult(query, con);
 					c=0;
 					while(rs.next())
@@ -156,7 +156,7 @@ public class GetSpider extends HttpServlet {
 					}
 
 					rs.close();
-					
+
 					query = "select count(*) as count from incident where incident_category='spitting' group by incident_locality ORDER BY count DESC";
 					rs=dbconn.getResult(query, con);
 					c=0;
