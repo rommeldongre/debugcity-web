@@ -41,8 +41,7 @@
     					font-size: 14px;
 					}  
       #map-canvas {
-      	height: 1030px;
-      	margin: 0;
+       	margin: 0;
         padding: 0;
       	position:relative;
       }
@@ -1129,6 +1128,10 @@ function filterCat()
 		 						leaderBoard(allcat[l],l);
 			 				}	
 		 					leaderflag=1;
+		 					$('#map-canvas').height(($('#leaderboard').height())-20);
+		 					var margin=$('#leaderboard').height()-30;
+		 					$('#filters').css({ 'margin-top': -margin });
+		 					$('#separator').height((margin-100));
 		 				}	
 		 			    if (navigator.geolocation)
 		 		 	    {
@@ -1190,7 +1193,7 @@ google.load('visualization', '1.0', {'packages':['corechart']});
     	<div class="col-sm-6 col-md-9 col-lg-9">	
     		<div  id="map-canvas">
     		</div>
-    		<div class="container-fluid" style="margin-left:100px;margin-top:-1020px;">
+    		<div id="filters" class="container-fluid" style="margin-left:100px;">
 				<select id="multipleSelectLoc" style="position:relative;" name="multipleSelectLoc" multiple="multiple">
 				</select>	
 				<select id="multipleSelect" style="position:relative;" name="multipleSelect" multiple="multiple">
@@ -1200,7 +1203,7 @@ google.load('visualization', '1.0', {'packages':['corechart']});
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<input style="position:relative;" id="pac-input" class="controls" type="text" placeholder="Search Locations">
 			</div>
-			<div class="container" style="height:930px;">
+			<div id="separator" class="container">
 			</div>  	
     	</div>
     	<div class="col-sm-6 col-md-3 col-lg-3" id="leaderboard">
