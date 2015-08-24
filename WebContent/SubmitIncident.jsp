@@ -62,7 +62,7 @@
 				$.each(catobj, function(key, value) {   
 				     $('#multipleSelectCat')
 				     	 .append($("<option></option>")		
-				         .attr("value",key)
+				         .attr("value",value)
 				         .text(value));
 				});
 								
@@ -256,8 +256,10 @@ function submitBug(location)
 				  	}
 				   
 				   	else
-				   		$("#mySuccessModal1").modal();   	
+				   		$("#mySuccessModal1").modal();
 				}   	
+			   	$("#subform")[0].reset();   
+			   	canvasCtx.clearRect(0, 0, 300, 300);
 		}
 	}
 			
@@ -417,6 +419,7 @@ function isNumber(evt) {
     }
     return true;
 }
+
 </script>
 
 </head>
