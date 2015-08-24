@@ -152,7 +152,7 @@ function PostImageToFacebook(token)
 	
 	try{
 		$.ajax({
-		    url:"https://graph.facebook.com/952064434850116/photos?access_token=" + authToken,
+		    url:"https://graph.facebook.com/938425389552084/photos?access_token=" + authToken,
 		    type:"POST",
 		    data:fd,
 		    processData:false,
@@ -234,8 +234,8 @@ function submitBug(location)
 				{	
 					loc_post=loc;
 					cat_post=cat;
-					var token= "CAAOpW1dnTGsBAL5s7sZCziJ9pbnJvW95a89Yijw2ZC3fRHPkYCgnjHAQKrDvw2uB6HMTYJzzyrZAfuc9kw8ORdr6AZAfrsk5nSxP2ZByuZC08jAZBZAe9ksKN9ht18fYZCXBMNfanZCKeSVCCaDMemhZAZCUmx9zhO2ejfOmSjXCy6NBQiFWewTCWGRf";
-
+					var token=	"CAAOl30X9gXABAMIIe5vWN1vt2u9w3co20O8dqj1aji17TiIcZC6PxmJlpZBZBtGj7Mm9gmHNqAZBVSQ3rt4XlnPQjZA3NhC1pqGGZBmsO0oefr3ldL3T85rfaxOzZAfxjPDPvJicUOXNEzY56FvNn0p9WIR61JZAbfSDJodfdY82rWr9PqOCM8q4TOP81TECNIEZD";
+					+				   	
 				   	if(document.getElementById("dbctfb1").checked == true && document.getElementById("dbctfb2").checked == true)
 				    {
 				   		PostImageToFacebook(token);
@@ -424,7 +424,7 @@ function isNumber(evt) {
 <script>
   window.fbAsyncInit = function() {
     FB.init({
-      appId      : '1030634703637611',
+      appId      : '1026803300663664',
       xfbml      : true,
       version    : 'v2.4'
     });
