@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!-- saved from url=(0043)http://getbootstrap.com/examples/jumbotron/ -->
 
-<html lang="en"><head><script src="./Jumbotron Template for Bootstrap_files/jquery.min.js"></script> <script src="./Jumbotron Template for Bootstrap_files/bootstrap.min.js"></script> <!--//--><script src="./Jumbotron Template for Bootstrap_files/ie10-viewport-bug-workaround.js"></script> 
+<html lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,7 +10,7 @@
 <title>DebugCityV1</title> 
 <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="http://getbootstrap.com/examples/jumbotron/jumbotron.css" rel="stylesheet">
-<script src="./Jumbotron Template for Bootstrap_files/ie-emulation-modes-warning.js"></script> 
+<script src="js/ie-emulation-modes-warning.js"></script> 
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
@@ -69,6 +69,16 @@
       #pac-input:focus {
         border-color: #4d90fe;
       }
+      
+      #getLoc {
+      	width:50px;
+      	background: url("css/gps.png") no-repeat center;
+	  }
+	  
+	  #getLoc:hover {
+      	width:50px;
+      	background: url("css/gps4.png") no-repeat center;
+	  }
 </style>
 <script type="text/javascript">
 
@@ -84,9 +94,9 @@ google.maps.event.addDomListener(window, "load", initialize);
 
 </script>
 <script>
-    var flag=0;
+    var flag=0, first_filter=true, filter_type, geo_flag=0;
     var uniloc, postal, loc,catobj;
-   	var myloc, res=null, spiloc, bounds;
+   	var myloc, res=null, spiloc, bounds, position;
    	var allcat, topcat, toploc;
   
   function afterInitialize()
@@ -103,28 +113,45 @@ google.maps.event.addDomListener(window, "load", initialize);
  	    		var json = JSON.parse(xmlhttp.responseText);
  				uniloc=json.uniloc;
  				loc=json.obj;
- 				allcat=json.allcat;
- 				
- 				if (navigator.geolocation)
+ 				spiallloc=json.spiallloc;
+				allcat=json.allcat;
+				toploc=json.toploc;
+				topscore=json.topscore;
+				
+	 		    addCurrentLoc();
+	 		   
+	 		    for(var l=0; l<allcat.length; l++)
+				{
+					$('<div class="panel panel-info"><div class="panel-heading">'+allcat[l]+'</div><table class="table" id="'+allcat[l]+'"></table></div>').appendTo("#leaderboard");	
+					leaderBoard(allcat[l],l);
+	 			}	
+				$('#map-canvas').height(($('#leaderboard').height())-20);
+				var margin=$('#leaderboard').height()-30;
+				$('#filters').css({ 'margin-top': -margin });
+				$('#separator').height((margin-100));
+
+ 				filterCat();
+ 				//if (navigator.geolocation)
 	 		    {
-	 			        navigator.geolocation.getCurrentPosition(showSpider);
+	 			        //navigator.geolocation.getCurrentPosition(showSpider);
 	 			}
+			}	
+		
  	    }
- 	}
- 	
  	
  	xmlhttp.open("POST", url, true);
  	xmlhttp.responseType ="JSON";
  	xmlhttp.send(JSON.stringify(onloadData));	
  	
  }	
- 	function showSpiderCurrentLocation(position)
+ 	function showStarsLocations(lat, lng)
  	{
- 		var latitude = position.coords.latitude;
-        var longitude = position.coords.longitude;
+ 		var count_flag=0;
+ 		var latitude=lat;
+        var longitude=lng;
         var coords = new google.maps.LatLng(latitude, longitude);
  	  	var mapOptions = {
-             zoom: 17,
+             zoom: 15,
              center: coords,
              mapTypeControl: true,
              mapTypeId: google.maps.MapTypeId.ROADMAP};
@@ -133,18 +160,17 @@ google.maps.event.addDomListener(window, "load", initialize);
              document.getElementById('map-canvas'), mapOptions
              );
              //place the initial marker
-             var marker = new google.maps.Marker({
+             /*var marker = new google.maps.Marker({
              position: coords,
              map: map,
              title: "Current location!"
              });
-             
-             var infowindow = new google.maps.InfoWindow({
+             */
+             infowindow = new google.maps.InfoWindow({
             	    content: ''
             	  });
             
-             bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
-         	
+             //bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
             	
           	 bounds = new google.maps.LatLngBounds();
           	 bounds.extend(coords);
@@ -180,8 +206,11 @@ google.maps.event.addDomListener(window, "load", initialize);
                 		 position: position
               		 });
                	  bounds.extend(position);
-               	  map.fitBounds(bounds);
-                	 
+               	  
+               	  if(count_flag==1)
+               	  	map.fitBounds(bounds);
+                	
+               	count_flag=1;
                	var obj=spiallloc[postal];
 			
 				var totaldata = [];
@@ -370,12 +399,12 @@ google.maps.event.addDomListener(window, "load", initialize);
 				});
       		}
       		
-         	 var geocoder = new google.maps.Geocoder();
+        	 var geocoder = new google.maps.Geocoder();
            var latLng = new google.maps.LatLng(latitude, longitude);
            geocoder.geocode( { 'latLng': latLng}, function(results, status) {
            	if (status == google.maps.GeocoderStatus.OK) {
          			 if (results[0]) {
-          			document.getElementById('pac-input').value=results[0].formatted_address;
+          			//document.getElementById('pac-input').value=results[0].formatted_address;
           		}
         			else{
       	  			document.getElementById('pac-input').value="Geocode was unsucessfull in detecting your current location";
@@ -384,15 +413,15 @@ google.maps.event.addDomListener(window, "load", initialize);
     	  	});  	
       	
           initialize(latitude, longitude);
-
+		
    
  	}
- 	
- 	function showSpider(position)
- 	{
- 	
-            var latitude = position.coords.latitude;
-            var longitude = position.coords.longitude;
+
+ 	function showStars(lat, lng)
+ 	 {
+ 			var count_flag=0;
+ 			var latitude =lat;
+            var longitude =lng;
             
             var mapOptions = {
                     mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -402,11 +431,9 @@ google.maps.event.addDomListener(window, "load", initialize);
                     document.getElementById('map-canvas'), mapOptions
                     );
                  
-     	if(flag==1)
-        {    	
-            var coords = new google.maps.LatLng(latitude, longitude);
+     	    var coords = new google.maps.LatLng(latitude, longitude);
      	  	var mapOptions = {
-                 zoom: 17,
+                 zoom: 15,
                  center: coords,
                  mapTypeControl: true,
                  mapTypeId: google.maps.MapTypeId.ROADMAP};
@@ -415,22 +442,23 @@ google.maps.event.addDomListener(window, "load", initialize);
                  document.getElementById('map-canvas'), mapOptions
                  );
                  //place the initial marker
-                 var marker = new google.maps.Marker({
+               /*  var marker = new google.maps.Marker({
                  position: coords,
                  map: map,
                  title: "Current location!"
                  });
-                 
+                 */
                  var infowindow = new google.maps.InfoWindow({
                 	    content: ''
                 	  });
                 
-                 bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
+                 //bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
+                 
                  bounds = new google.maps.LatLngBounds();
                  bounds.extend(coords);
-              	 
-              	var geocoder = new google.maps.Geocoder();
-                var lat = '';
+                 
+                 var geocoder = new google.maps.Geocoder(); 	 
+              	var lat = '';
                 var lng = '';
                 for(u=0;u<uniloc.length;u++)
                 {
@@ -460,8 +488,11 @@ google.maps.event.addDomListener(window, "load", initialize);
                 		 position: position
               		 });
                   bounds.extend(position);
-                  map.fitBounds(bounds);
-            
+                  
+                  if(count_flag==1)
+                  	map.fitBounds(bounds);
+  					
+                  count_flag =1;
                  	var obj=spiallloc[postal];
         			
     				var totaldata = [];
@@ -521,8 +552,8 @@ google.maps.event.addDomListener(window, "load", initialize);
           		}
           		 // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
 
-          		var reszoom=15;
-          		 // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+          		var reszoom=5;
+          		//  Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
           	    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
           	    
           	    	reszoom=getBoundsZoomLevel(bounds, mapDim)-1;
@@ -538,7 +569,7 @@ google.maps.event.addDomListener(window, "load", initialize);
     				     var bounds = map.getBounds();
     				});
           		} 		
-    }
+    
      			var geocoder = new google.maps.Geocoder();
                 var latLng = new google.maps.LatLng(latitude, longitude);
                 geocoder.geocode( { 'latLng': latLng}, function(results, status) {
@@ -551,39 +582,47 @@ google.maps.event.addDomListener(window, "load", initialize);
     		                    		break;
     		                    	}
     		                	}
-               				document.getElementById('pac-input').value=results[0].formatted_address;
+               				//document.getElementById('pac-input').value=results[0].formatted_address;
                 		}
               			else{
             	  			document.getElementById('pac-input').value="Geocode was unsucessfull in detecting your current location";
                    		}
               		}
-                 	if(flag==0)
-                 	{	
-                 		flag=1;
-                 		addCurrentLoc(res);
-                 	}
+                 	
                 });  	
                 initialize(latitude, longitude);	       	
         
  	}
  	
- var x=0;	
- function addCurrentLoc(res)
+ function addCurrentLoc()
  {
-	 myloc=res;
+	 /*myloc=res;
 
 	 $('#multipleSelectLoc')
      .append($("<option selected></option>")
      .attr("value",myloc)
      .text(myloc)); 
-
+	*/
+		
+		var first_loc_flag=0;
 		$.each(loc, function(key, value) {   
 			if(key!=myloc)
 			{
-		     $('#multipleSelectLoc')
-		         .append($("<option></option>")
-		         .attr("value",key)
-		         .text(value));
+				if(first_loc_flag==0)
+				{	
+			     	$('#multipleSelectLoc')
+			        	.append($("<option selected></option>")
+			         	.attr("value",key)
+			         	.text(value));
+			     	first_loc_flag=1;
+				}
+				else
+				{
+			     	$('#multipleSelectLoc')
+		        	.append($("<option></option>")
+		         	.attr("value",key)
+		         	.text(value));		
+				}
 			} 
 		});
 		
@@ -613,17 +652,17 @@ google.maps.event.addDomListener(window, "load", initialize);
 	 	    });
 	 	});
 		
-		filterCat();
+		//filterCat();
  }
 
  
-  function showCurrentLocation(position)
+  function showLocations(lat, lng)
     {
-        var latitude = position.coords.latitude;
-        var longitude = position.coords.longitude;
+        var latitude= lat;
+        var longitude= lng;
         var coords = new google.maps.LatLng(latitude, longitude);
  	  	var mapOptions = {
-             zoom: 17,
+             zoom: 15,
              center: coords,
              mapTypeControl: true,
              mapTypeId: google.maps.MapTypeId.ROADMAP};
@@ -632,18 +671,17 @@ google.maps.event.addDomListener(window, "load", initialize);
              document.getElementById('map-canvas'), mapOptions
              );
              //place the initial marker
-             var marker = new google.maps.Marker({
+             /*var marker = new google.maps.Marker({
              position: coords,
              map: map,
              title: "Current location!"
              });
-             
+             */
              var infowindow = new google.maps.InfoWindow({
             	    content: ''
             	  });
             
-             bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
-         	
+             //bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
             	
           	  bounds = new google.maps.LatLngBounds();
           	  bounds.extend(coords);
@@ -793,7 +831,7 @@ google.maps.event.addDomListener(window, "load", initialize);
              geocoder.geocode( { 'latLng': latLng}, function(results, status) {
              	if (status == google.maps.GeocoderStatus.OK) {
            			 if (results[0]) {
-            			document.getElementById('pac-input').value=results[0].formatted_address;
+            			//document.getElementById('pac-input').value=results[0].formatted_address;
             		}
           			else{
         	  			document.getElementById('pac-input').value="Geocode was unsucessfull in detecting your current location";
@@ -902,7 +940,6 @@ function getBoundsZoomLevel(bounds, mapDim) {
 	    return Math.min(latZoom, lngZoom, ZOOM_MAX);
 	}
 
-var leaderflag=0;
 function leaderBoard(tablename,l)
 {
 		    var table = document.getElementById(tablename);
@@ -1001,6 +1038,64 @@ function vote(id)
  	xmlhttp.send(JSON.stringify(voteData));	
 }
 
+
+function showFilterPre(filter_type)
+{
+	filter_type=filter_type;
+	   
+	if(geo_flag==0)
+	{
+	   var geocoder = new google.maps.Geocoder(); 	 
+	   var lat = '';
+	   var lng = '';
+	   
+		    geocoder.geocode( { 'address': ''+uniloc[0]+', india'}, function(results, status) {
+	           	if (status == google.maps.GeocoderStatus.OK) {
+	           		lat = results[0].geometry.location.lat();
+	           		lng = results[0].geometry.location.lng();
+	           		if(filter_type=="stars")
+	           			showStars(lat, lng);
+	           		else if(filter_type=="locations")
+	               		showLocations(lat, lng);
+	           		else if(filter_type=="starslocations")
+	                   	showStarsLocations(lat, lng);
+	        }});
+	}
+	else
+	{
+		if (navigator.geolocation)
+	 	{
+	 	        navigator.geolocation.getCurrentPosition(currLatLng);
+	 	}		
+	}
+}
+
+function currLatLng(curr_position)
+{
+	var lat = curr_position.coords.latitude;
+	var lng = curr_position.coords.longitude;
+	if(filter_type=="stars")
+			showStars(lat, lng);
+		else if(filter_type=="locations")
+   			showLocations(lat, lng);
+		else if(filter_type=="starslocations")
+       		showStarsLocations(lat, lng);
+}
+
+function currentLoc()
+{
+	if(geo_flag==0)
+	{	
+		geo_flag=1;
+		filterCat();
+	}
+	else
+	{
+		geo_flag=0;
+		filterCat();
+	}
+}
+
 function filterCat()
 {
 	var test = $("#multipleSelect option:selected").length;
@@ -1062,12 +1157,16 @@ function filterCat()
 								alert("Showing "+json.no+" incidents for Category: "+json.category+".");
 							markers1=json.arr1;
 			 				markers2=json.arr2;
+			 				uniloc=json.uniloc;
+			 				spiallloc=json.spiallloc;
+			 				allcat=json.allcat;
 			 				toploc=json.toploc;
 			 				topscore=json.topscore;
-			 				
-			 				if (navigator.geolocation)
+
+			 				showFilterPre("locations");
+			 				//if (navigator.geolocation)
 			 			    {
-			 			        navigator.geolocation.getCurrentPosition(showCurrentLocation);
+			 			        //navigator.geolocation.getCurrentPosition(showCurrentLocation);
 			 			    }			
 					}
 				}
@@ -1090,11 +1189,14 @@ function filterCat()
 		 				markers2=json.arr2;
 		 				uniloc=json.uniloc;
 		 				spiallloc=json.spiallloc;
+		 				allcat=json.allcat;
 		 				toploc=json.toploc;
 		 				topscore=json.topscore;
-		 				if (navigator.geolocation)
+
+		 				showFilterPre("starslocations");
+		 				//if (navigator.geolocation)
 		 			    {
-		 			        navigator.geolocation.getCurrentPosition(showSpiderCurrentLocation);
+		 			        //navigator.geolocation.getCurrentPosition(showSpiderCurrentLocation);
 		 			    }
 		 			}
 				}
@@ -1114,28 +1216,23 @@ function filterCat()
 						var json = JSON.parse(xmlhttp.responseText);
 						uniloc=json.uniloc;
 		 				spiallloc=json.spiallloc;
-						if(x==1)
-							alert("Showing Location Graphs based on the selected locations.");
-		 				x=1;
+		 				
+		 				if(first_filter==false)
+		 				{
+		 					alert("Showing Location Graphs based on the selected locations.");
+		 				
+		 				}
+		 				else
+		 					first_filter=false;
+		 				
 		 				allcat=json.allcat;
 		 				toploc=json.toploc;
 		 				topscore=json.topscore;
-		 				if(leaderflag==0)
-		 				{
-		 					for(var l=0; l<allcat.length; l++)
-		 					{
-		 						$('<div class="panel panel-info"><div class="panel-heading">'+allcat[l]+'</div><table class="table" id="'+allcat[l]+'"></table></div>').appendTo("#leaderboard");	
-		 						leaderBoard(allcat[l],l);
-			 				}	
-		 					leaderflag=1;
-		 					$('#map-canvas').height(($('#leaderboard').height())-20);
-		 					var margin=$('#leaderboard').height()-30;
-		 					$('#filters').css({ 'margin-top': -margin });
-		 					$('#separator').height((margin-100));
-		 				}	
-		 			    if (navigator.geolocation)
+		 				
+		 				showFilterPre("stars");
+		 				//if (navigator.geolocation)
 		 		 	    {
-		 		 	        navigator.geolocation.getCurrentPosition(showSpider);
+		 		 	        //navigator.geolocation.getCurrentPosition(showSpider);
 		 		 	    }	
 				}
 			}		
@@ -1197,10 +1294,10 @@ google.load('visualization', '1.0', {'packages':['corechart']});
 				<select id="multipleSelectLoc" style="position:relative;" name="multipleSelectLoc" multiple="multiple">
 				</select>	
 				<select id="multipleSelect" style="position:relative;" name="multipleSelect" multiple="multiple">
-				<!--<option value="Spider" selected>Spider Chart</option><option value="Garbage">Garbage</option><option value="Noise">Noise</option><option value="Queues">Queues</option><option value="Spitting">Spitting</option><option value="Traffic">Traffic</option>
-				--></select>
+				</select>
 				<input style="position:relative;" type="button" id="filtercategory" class="btn btn-default" onclick="filterCat();" value="Filter">	
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<input style="position:relative;" type="button" id="getLoc" class="btn btn-default" onclick="">	
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<input style="position:relative;" id="pac-input" class="controls" type="text" placeholder="Search Locations">
 			</div>
 			<div id="separator" class="container">
