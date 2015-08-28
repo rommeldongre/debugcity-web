@@ -52,7 +52,7 @@
 				}
 				
 				xmlhttp.open("POST", url, true);
-				xmlhttp.responseType = 'JSON';
+				xmlhttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
 				xmlhttp.send();
 </script>
 
@@ -264,7 +264,7 @@ function submitBug(location)
 	}
 			
 	xmlhttp.open("POST", url, true);
-	xmlhttp.responseType = 'JSON';
+	xmlhttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
 	xmlhttp.send(JSON.stringify(subBugData));
 }
 

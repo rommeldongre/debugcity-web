@@ -84,7 +84,7 @@
 
 function initialize() {
     //var myOptions = {
-        //mapTypeId: google.maps.MapTypeId.ROADMAP
+      //  mapTypeId: google.maps.MapTypeId.ROADMAP
     //};
     //var map = new google.maps.Map(document.getElementById("map-canvas"),
       //      myOptions);
@@ -140,7 +140,9 @@ google.maps.event.addDomListener(window, "load", initialize);
  	    }
  	
  	xmlhttp.open("POST", url, true);
- 	xmlhttp.responseType ="JSON";
+ 	xmlhttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+	xmlhttp.timeout=120000;
+	xmlhttp.ontimeout = function () { alert("Timed out!!!"); }
  	xmlhttp.send(JSON.stringify(onloadData));	
  	
  }	
@@ -1034,7 +1036,7 @@ function vote(id)
  	}
  	
  	xmlhttp.open("POST", url, true);
- 	xmlhttp.responseType ="JSON";
+ 	xmlhttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
  	xmlhttp.send(JSON.stringify(voteData));	
 }
 
@@ -1171,7 +1173,9 @@ function filterCat()
 					}
 				}
 					xmlhttp.open("POST", url, true);
-					xmlhttp.responseType ="JSON";
+					xmlhttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+					xmlhttp.timeout=120000;
+					xmlhttp.ontimeout = function () { alert("Timed out!!!"); }
 					xmlhttp.send(JSON.stringify(filterCatData));
 				
 			}	
@@ -1202,8 +1206,10 @@ function filterCat()
 				}
 		
 				xmlhttp.open("POST", url, true);
-				xmlhttp.responseType ="JSON";
-				xmlhttp.send(JSON.stringify(filterCatData));
+				xmlhttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+				xmlhttp.timeout=120000;
+				xmlhttp.ontimeout = function () { alert("Timed out!!!"); }
+			 	xmlhttp.send(JSON.stringify(filterCatData));
 				
 			}
 					
@@ -1237,8 +1243,10 @@ function filterCat()
 				}
 			}		
 			xmlhttp.open("POST", url, true);
-			xmlhttp.responseType ="JSON";
-			xmlhttp.send(JSON.stringify(filterCatData));
+			xmlhttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+			xmlhttp.timeout=120000;
+			xmlhttp.ontimeout = function () { alert("Timed out!!!"); }
+		 	xmlhttp.send(JSON.stringify(filterCatData));
 		}
 	}
 }
