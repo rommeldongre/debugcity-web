@@ -75,10 +75,10 @@
       	background: url("css/gps.png") no-repeat center;
 	  }
 	  
-	  #getLoc:hover {
+	  /*#getLoc:hover {
       	width:50px;
       	background: url("css/gps4.png") no-repeat center;
-	  }
+	  }*/
 </style>
 <script type="text/javascript">
 
@@ -162,18 +162,25 @@ google.maps.event.addDomListener(window, "load", initialize);
              document.getElementById('map-canvas'), mapOptions
              );
              //place the initial marker
-             /*var marker = new google.maps.Marker({
-             position: coords,
-             map: map,
-             title: "Current location!"
-             });
-             */
+             
+             if(geo_flag==1)
+           	 {
+	             var marker = new google.maps.Marker({
+	             position: coords,
+	             map: map,
+	             title: "Current location!"
+	             });
+           	 }
              infowindow = new google.maps.InfoWindow({
             	    content: ''
             	  });
             
-             //bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
-            	
+
+             if(geo_flag==1)
+           	 {
+	          	bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
+           	 }
+             
           	 bounds = new google.maps.LatLngBounds();
           	 bounds.extend(coords);
           	
@@ -209,9 +216,9 @@ google.maps.event.addDomListener(window, "load", initialize);
               		 });
                	  bounds.extend(position);
                	  
-               	  if(count_flag==1)
-               	  	map.fitBounds(bounds);
-                	
+               	if(count_flag==1 || geo_flag==1)
+                  	map.fitBounds(bounds);
+  					
                	count_flag=1;
                	var obj=spiallloc[postal];
 			
@@ -406,8 +413,13 @@ google.maps.event.addDomListener(window, "load", initialize);
            geocoder.geocode( { 'latLng': latLng}, function(results, status) {
            	if (status == google.maps.GeocoderStatus.OK) {
          			 if (results[0]) {
-          			//document.getElementById('pac-input').value=results[0].formatted_address;
-          		}
+         				if(geo_flag==1)
+                   	    {
+        	          			document.getElementById('pac-input').value=results[0].formatted_address;
+                   	    }
+         				else
+           			  		    document.getElementById('pac-input').value="";
+                    }
         			else{
       	  			document.getElementById('pac-input').value="Geocode was unsucessfull in detecting your current location";
              		}
@@ -444,18 +456,25 @@ google.maps.event.addDomListener(window, "load", initialize);
                  document.getElementById('map-canvas'), mapOptions
                  );
                  //place the initial marker
-               /*  var marker = new google.maps.Marker({
-                 position: coords,
-                 map: map,
-                 title: "Current location!"
-                 });
-                 */
-                 var infowindow = new google.maps.InfoWindow({
-                	    content: ''
-                	  });
-                
-                 //bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
-                 
+                            
+	             if(geo_flag==1)
+	           	 {
+		             var marker = new google.maps.Marker({
+		             position: coords,
+		             map: map,
+		             title: "Current location!"
+		             });
+	           	 }
+	             infowindow = new google.maps.InfoWindow({
+	            	    content: ''
+	            	  });
+	            
+	
+	             if(geo_flag==1)
+	           	 {
+		          	bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
+	           	 }
+               
                  bounds = new google.maps.LatLngBounds();
                  bounds.extend(coords);
                  
@@ -491,7 +510,7 @@ google.maps.event.addDomListener(window, "load", initialize);
               		 });
                   bounds.extend(position);
                   
-                  if(count_flag==1)
+                  if(count_flag==1 || geo_flag==1)
                   	map.fitBounds(bounds);
   					
                   count_flag =1;
@@ -584,8 +603,18 @@ google.maps.event.addDomListener(window, "load", initialize);
     		                    		break;
     		                    	}
     		                	}
-               				//document.getElementById('pac-input').value=results[0].formatted_address;
-                		}
+               				if(geo_flag==1)
+                       	    {
+	               					$('#multipleSelectLoc')
+	               			     .append($("<option></option>")
+	               			     .attr("value",res)
+	               			     .text(res));
+	            	          		
+	               				 document.getElementById('pac-input').value=results[0].formatted_address;
+                       	    }
+               				else
+           							document.getElementById('pac-input').value="";
+                     	}
               			else{
             	  			document.getElementById('pac-input').value="Geocode was unsucessfull in detecting your current location";
                    		}
@@ -672,19 +701,25 @@ google.maps.event.addDomListener(window, "load", initialize);
      		 map = new google.maps.Map(
              document.getElementById('map-canvas'), mapOptions
              );
-             //place the initial marker
-             /*var marker = new google.maps.Marker({
-             position: coords,
-             map: map,
-             title: "Current location!"
-             });
-             */
-             var infowindow = new google.maps.InfoWindow({
-            	    content: ''
-            	  });
+             
+              if(geo_flag==1)
+           	  {
+	              var marker = new google.maps.Marker({
+	              position: coords,
+	              map: map,
+	              title: "Current location!"
+	          	   });
+           	  }
+              infowindow = new google.maps.InfoWindow({
+            	     content: ''
+            	   });
             
-             //bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
-            	
+
+              if(geo_flag==1)
+           	  {
+	          		bindInfoWindow(marker, map, infowindow, "<h3>Your current location !</h3><p><b> latitude:</b> " + latitude +"<b>,</b> <b>longitude:</b> "+ longitude + "</p>");  
+           	  }
+                 	
           	  bounds = new google.maps.LatLngBounds();
           	  bounds.extend(coords);
           	  var count=0;
@@ -833,8 +868,13 @@ google.maps.event.addDomListener(window, "load", initialize);
              geocoder.geocode( { 'latLng': latLng}, function(results, status) {
              	if (status == google.maps.GeocoderStatus.OK) {
            			 if (results[0]) {
-            			//document.getElementById('pac-input').value=results[0].formatted_address;
-            		}
+           				  if(geo_flag==1)
+                     	  {
+          	          			document.getElementById('pac-input').value=results[0].formatted_address;
+                     	  }
+           				  else
+           					  document.getElementById('pac-input').value="";
+                     }
           			else{
         	  			document.getElementById('pac-input').value="Geocode was unsucessfull in detecting your current location";
                		}
@@ -1041,10 +1081,8 @@ function vote(id)
 }
 
 
-function showFilterPre(filter_type)
+function showFilterPre()
 {
-	filter_type=filter_type;
-	   
 	if(geo_flag==0)
 	{
 	   var geocoder = new google.maps.Geocoder(); 	 
@@ -1076,12 +1114,13 @@ function currLatLng(curr_position)
 {
 	var lat = curr_position.coords.latitude;
 	var lng = curr_position.coords.longitude;
+	
 	if(filter_type=="stars")
-			showStars(lat, lng);
-		else if(filter_type=="locations")
-   			showLocations(lat, lng);
-		else if(filter_type=="starslocations")
-       		showStarsLocations(lat, lng);
+		showStars(lat, lng);
+	if(filter_type=="locations")
+  		showLocations(lat, lng);
+	if(filter_type=="starslocations")
+  		showStarsLocations(lat, lng);
 }
 
 function currentLoc()
@@ -1089,11 +1128,17 @@ function currentLoc()
 	if(geo_flag==0)
 	{	
 		geo_flag=1;
+		alert("Current location enabled on the map.");
+		document.getElementById("getLoc").style.backgroundImage = "url('css/gps4.png')";
+		document.getElementById("getLoc").style.backgroundRepeat = "no-repeat";
 		filterCat();
 	}
 	else
 	{
 		geo_flag=0;
+		alert("Current location disabled on the map.");
+		document.getElementById("getLoc").style.backgroundImage = "url('css/gps.png')";
+		document.getElementById("getLoc").style.backgroundRepeat = "no-repeat";
 		filterCat();
 	}
 }
@@ -1165,7 +1210,8 @@ function filterCat()
 			 				toploc=json.toploc;
 			 				topscore=json.topscore;
 
-			 				showFilterPre("locations");
+			 				filter_type="locations";
+			 				showFilterPre();
 			 				//if (navigator.geolocation)
 			 			    {
 			 			        //navigator.geolocation.getCurrentPosition(showCurrentLocation);
@@ -1197,7 +1243,8 @@ function filterCat()
 		 				toploc=json.toploc;
 		 				topscore=json.topscore;
 
-		 				showFilterPre("starslocations");
+		 				filter_type="starslocations";
+		 				showFilterPre();
 		 				//if (navigator.geolocation)
 		 			    {
 		 			        //navigator.geolocation.getCurrentPosition(showSpiderCurrentLocation);
@@ -1235,7 +1282,8 @@ function filterCat()
 		 				toploc=json.toploc;
 		 				topscore=json.topscore;
 		 				
-		 				showFilterPre("stars");
+		 				filter_type="stars";
+		 				showFilterPre();
 		 				//if (navigator.geolocation)
 		 		 	    {
 		 		 	        //navigator.geolocation.getCurrentPosition(showSpider);
@@ -1304,7 +1352,7 @@ google.load('visualization', '1.0', {'packages':['corechart']});
 				<select id="multipleSelect" style="position:relative;" name="multipleSelect" multiple="multiple">
 				</select>
 				<input style="position:relative;" type="button" id="filtercategory" class="btn btn-default" onclick="filterCat();" value="Filter">	
-				<input style="position:relative;" type="button" id="getLoc" class="btn btn-default" onclick="">	
+				<input style="position:relative;" type="button" id="getLoc" class="btn btn-default" onclick="currentLoc();">	
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<input style="position:relative;" id="pac-input" class="controls" type="text" placeholder="Search Locations">
 			</div>
