@@ -1,5 +1,6 @@
 package service;
 
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -24,16 +25,16 @@ import util.DataBaseConn;
 import util.IncidentDb;
 
 /**
- * Servlet implementation class GetIncident
+ * Servlet implementation class VoteIncident
  */
-@WebServlet(description = "Get the incidents", urlPatterns = { "/getincident" })
-public class GetIncident extends HttpServlet {
+@WebServlet("/VoteIncident")
+public class VoteIncident extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public GetIncident() {
+	public VoteIncident() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -42,10 +43,10 @@ public class GetIncident extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		// TODO Auto-generated method stub
+		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
@@ -57,44 +58,42 @@ public class GetIncident extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 
+		JSONObject ResponseObj = new JSONObject();
+		PrintWriter printout = response.getWriter();
+		response.setContentType("application/json; charset=UTF-8");
+
 		try {
 
-            ObjectMapper objectmapper = new ObjectMapper();
+			ObjectMapper objectmapper = new ObjectMapper();
 			Incident incident = objectmapper.readValue(request.getInputStream(), Incident.class);
 
-			System.out.println(incident.getIncident_id());
-
 			IncidentDb incident_details = new IncidentDb();
-			JSONObject ResponseObj = incident_details.getIncident(incident);
+			int check = incident_details.voteIncident(incident);
 
+			ResponseObj.put("returnCode", 200);
+			ResponseObj.put("returnToken", "");
 			response.setContentType("application/json; charset=UTF-8");
-			PrintWriter printout = response.getWriter();
-
 			printout.print(ResponseObj.toString());
-//			printout.print("anway".toString());
 
 		}
 
 		catch (Exception e) {
 
 			int returnCode = 400;
-			JSONObject ResponseObj = new JSONObject();
 			try {
 
 				ResponseObj.put("returnCode", returnCode);
 				ResponseObj.put("errorString", e.getMessage());
+				response.setContentType("application/json; charset=UTF-8");
 				ResponseObj.put("returnToken", "");
-
+				printout.print(ResponseObj.toString());
+				
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 
-			response.setContentType("text/json");
-			response.setContentType("application/json; charset=UTF-8");
-			PrintWriter printout = response.getWriter();
 			printout.print(ResponseObj.toString());
 		}
-		
 	}
 }

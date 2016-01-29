@@ -16,7 +16,7 @@ import pojo.SystemUser;
 import util.SystemUserDb;
 
 /**
- * Servlet implementation class LoginService
+ * Servlet implementation class UserLogin
  */
 @WebServlet("/userlogin")
 public class UserLogin extends HttpServlet {
