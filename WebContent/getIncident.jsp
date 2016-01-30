@@ -15,7 +15,7 @@
 
             var data= new Object();
 
-            data["incident_id"]= document.getElementById('incident_id').value;
+            data["incident_id"]= document.getElementById('getincident_id').value;
 
             xmlhttp.onreadystatechange=function() {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -35,6 +35,22 @@
                     else
                         document.getElementById("errorstring").value="";*/
 
+                    document.getElementById("incident_category").value = json['incident_category'];
+                    document.getElementById("incident_date_closed").value = json['incident_date_closed'];
+                    document.getElementById("incident_date_created").value = json['incident_date_created'];
+                    document.getElementById("incident_id").value = json['incident_id'];
+                    document.getElementById("incident_lat").value = json['incident_lat'];
+                    document.getElementById("incident_long").value = json['incident_long'];
+                    document.getElementById("incident_notes").value = json['incident_notes'];
+                    document.getElementById("incident_owner").value = json['incident_owner'];
+                    document.getElementById("incident_severity").value = json['incident_severity'];
+                    document.getElementById("incident_state").value = json['incident_state'];
+                    document.getElementById("incident_submitter").value = json['incident_submitter'];
+                    document.getElementById("incident_votes").value = json['incident_votes'];
+                    document.getElementById("returnCode").value = json['returnCode'];
+                    document.getElementById("error_string").value = json['errorString'];
+
+
                     console.log(json);
                 }
             };
@@ -47,13 +63,29 @@
 
 </head>
 <body>
+
 <h1>getIncident</h1>
 
 
 
-        <input type="text" placeholder="Incidnet Id" id="incident_id">
+        <input type="text" placeholder="Incidnet Id" id="getincident_id">
         <input type="Button" name="submit" id="submit" onclick="getIncident()" value="getIncident">
 
+
+        <br><br> <label> Incident Id </label> <input type="text" id="incident_id">
+        <br><br> <label> Incident lat </label> <input type="text" id="incident_lat">
+        <br><br> <label> Incident lng </label> <input type="text" id="incident_long">
+        <br><br> <label> Incident notes </label> <input type="text" id="incident_notes">
+        <br><br> <label> Incident owner </label> <input type="text" id="incident_owner">
+        <br><br> <label> Incident severity </label> <input type="text" id="incident_severity">
+        <br><br> <label> Incident state </label> <input type="text" id="incident_state">
+        <br><br> <label> Incident submitter </label> <input type="text" id="incident_submitter">
+        <br><br> <label> Incident votes </label> <input type="text" id="incident_votes">
+        <br><br> <label> Incident category </label> <input type="text" id="incident_category">
+        <br><br> <label> Incident date closed </label> <input type="text" id="incident_date_closed">
+        <br><br> <label> Incident date created </label> <input type="text" id="incident_date_created">
+        <br><br> <label> Return code </label> <input type="text" id="returnCode">
+        <br><br> <label> Error String </label> <input type="text" id="error_string">
 
 
 </body>

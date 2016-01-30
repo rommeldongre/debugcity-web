@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>getIncident</title>
+    <title>Get user info</title>
 
     <script type="text/javascript">
 
@@ -16,8 +16,8 @@
 
             var data= new Object();
 
-            data["user_id"]= document.getElementById('user_id').value;
-            data["user_auth"]= document.getElementById('user_auth').value;
+            data["user_id"]= document.getElementById('getuser_id').value;
+            data["user_auth"]= document.getElementById('getuser_auth').value;
 
             xmlhttp.onreadystatechange=function() {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -37,6 +37,15 @@
                     else
                         document.getElementById("errorstring").value="";*/
 
+                    document.getElementById("returnCode").value= json['returnCode'];
+                    document.getElementById("user_auth").value= json['user_auth'];
+                    document.getElementById("user_full_name").value= json['user_full_name'];
+                    document.getElementById("user_id").value= json['user_id'];
+                    document.getElementById("user_location").value= json['user_location'];
+                    document.getElementById("user_mobile").value= json['user_mobile'];
+                    document.getElementById("error_string").value= json['user_mobile'];
+
+
                     console.log(json);
                 }
             };
@@ -49,15 +58,24 @@
 
 </head>
 <body>
-<h1>getIncident</h1>
+<h1>Get User Info</h1>
 
 
 
-        <input type="text" placeholder="user_id Id" id="user_id">
-        <input type="text" placeholder="user_auth Id" id="user_auth">
+        <input type="text" placeholder="user_id Id" id="getuser_id">
+        <input type="text" placeholder="user_auth Id" id="getuser_auth">
 
 
         <input type="Button" name="submit" id="submit" onclick="getUserInfo()" value="getUserInfo">
+
+        <br><br> <label> user id </label> <input type="text" id="user_id">
+        <br><br> <label> user_auth </label> <input type="text" id="user_auth">
+        <br><br> <label> Fullname </label> <input type="text" id="user_full_name">
+        <br><br> <label> Location </label> <input type="text" id="user_location">
+        <br><br> <label> Mobile </label> <input type="text" id="user_mobile">
+        <br><br> <label> Return code </label> <input type="text" id="returnCode">
+        <br><br> <label> Error String </label> <input type="text" id="error_string">
+
 
 
 
