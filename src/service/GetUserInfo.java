@@ -31,14 +31,15 @@ public class GetUserInfo extends HttpServlet {
 		// TODO Auto-generated constructor stub
 	}
 
+
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
+
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+
 	}
 
 	/**
@@ -54,17 +55,19 @@ public class GetUserInfo extends HttpServlet {
 		PrintWriter printout = response.getWriter();
 	
 		try {
+
 			ObjectMapper objectmapper = new ObjectMapper();
 			SystemUser myUser = objectmapper.readValue(request.getInputStream(), SystemUser.class);
 
-			JSONObject ResponseObj = insertUser.getUserInfo(myUser);
+			JSONObject ResponseObj  = insertUser.getUserInfo(myUser);
 			System.out.println(ResponseObj);
 
 			response.setContentType("application/json; charset=UTF-8");
 			printout.print(ResponseObj.toString());
 
+
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+
 		}
 
 	}

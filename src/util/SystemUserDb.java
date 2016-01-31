@@ -43,6 +43,7 @@ public class SystemUserDb {
 			prep.close();
 
 			return flag;
+//			return 200;
 		} catch (SQLException e) {
 
 			System.out.println(e.getMessage());
@@ -72,12 +73,10 @@ public class SystemUserDb {
 			ResponseObj.put("returnCode", 400);
 			ResponseObj.put("errorString", "User is not present");
 			ResponseObj.put("returnToken", "");
-
-			
 		}
-		
 
 		return ResponseObj;
+//		return ResponseObj;
 	}
 
 }

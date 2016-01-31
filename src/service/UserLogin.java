@@ -16,7 +16,7 @@ import pojo.SystemUser;
 import util.SystemUserDb;
 
 /**
- * Servlet implementation class LoginService
+ * Servlet implementation class UserLogin
  */
 @WebServlet("/userlogin")
 public class UserLogin extends HttpServlet {
@@ -37,7 +37,7 @@ public class UserLogin extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+//		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**

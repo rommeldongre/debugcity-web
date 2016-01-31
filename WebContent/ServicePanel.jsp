@@ -16,6 +16,12 @@
 		<dd><a href="getLocations.jsp">getLocations</a></dd>
 		<dd><a href="getLocationVector.jsp">getLocationVector</a></dd>
 		<dd><a href="getCategories.jsp">getCategories</a></dd>
+
+		<dd><a href="getIncident.jsp">getIncident</a></dd>
+		<dd><a href="getUserInfo.jsp">getUserInfo</a></dd>
+
+
+
 		</dl>
 </body>
 </html>

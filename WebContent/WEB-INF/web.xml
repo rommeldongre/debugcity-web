@@ -182,7 +182,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>GetIncident</servlet-name>
-		<url-pattern>/service/GetIncident</url-pattern>
+		<url-pattern>/service/getIncident</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -212,5 +212,13 @@
 		<url-pattern>/service/userlogin</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>VoteIncident</servlet-name>
+		<servlet-class>service.VoteIncident</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>VoteIncident</servlet-name>
+		<url-pattern>/service/VoteIncident</url-pattern>
+	</servlet-mapping>
 
 </web-app>
